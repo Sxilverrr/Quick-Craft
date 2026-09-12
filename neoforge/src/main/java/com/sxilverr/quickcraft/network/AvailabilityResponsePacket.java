@@ -6,7 +6,6 @@ import com.sxilverr.quickcraft.crafting.Stations;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
@@ -46,7 +45,7 @@ public class AvailabilityResponsePacket implements CustomPacketPayload {
             buf.writeVarInt(entry.getValue());
             ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, msg.sources.getOrDefault(entry.getKey(), ItemStack.EMPTY));
         }
-        writeStations(msg.stations, buf);
+        msg.stations.write(buf);
     }
 
     private static AvailabilityResponsePacket read(RegistryFriendlyByteBuf buf) {
@@ -64,45 +63,8 @@ public class AvailabilityResponsePacket implements CustomPacketPayload {
             if (!source.isEmpty()) sources.put(key, source);
             if (stack.isDamaged()) samples.put(key, stack);
         }
-        Stations stations = readStations(buf);
+        Stations stations = Stations.read(buf);
         return new AvailabilityResponsePacket(counts, sources, samples, stations);
-    }
-
-    private static void writeStations(Stations s, RegistryFriendlyByteBuf buf) {
-        buf.writeVarInt(s.gridSize());
-        buf.writeBoolean(s.smithingTable());
-        buf.writeBoolean(s.stonecutter());
-        buf.writeBoolean(s.gunSmithTable());
-        buf.writeBoolean(s.ammoAssemblyTable());
-        buf.writeBoolean(s.attachmentTable());
-        buf.writeBoolean(s.extremeCrafting());
-        writeItem(s.craftingSource(), buf);
-        writeItem(s.smithingSource(), buf);
-        writeItem(s.stonecutterSource(), buf);
-    }
-
-    private static Stations readStations(RegistryFriendlyByteBuf buf) {
-        int gridSize = buf.readVarInt();
-        boolean smithing = buf.readBoolean();
-        boolean stonecutter = buf.readBoolean();
-        boolean gunSmith = buf.readBoolean();
-        boolean ammoAssembly = buf.readBoolean();
-        boolean attachment = buf.readBoolean();
-        boolean extreme = buf.readBoolean();
-        Item craftingSource = readItem(buf);
-        Item smithingSource = readItem(buf);
-        Item stonecutterSource = readItem(buf);
-        return new Stations(gridSize, smithing, stonecutter, gunSmith, ammoAssembly, attachment, extreme,
-                craftingSource, smithingSource, stonecutterSource);
-    }
-
-    private static void writeItem(Item item, RegistryFriendlyByteBuf buf) {
-        ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, item == null ? ItemStack.EMPTY : new ItemStack(item));
-    }
-
-    private static Item readItem(RegistryFriendlyByteBuf buf) {
-        ItemStack stack = ItemStack.OPTIONAL_STREAM_CODEC.decode(buf);
-        return stack.isEmpty() ? null : stack.getItem();
     }
 
     public static void handle(AvailabilityResponsePacket msg, IPayloadContext ctx) {

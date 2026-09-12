@@ -105,7 +105,7 @@ public final class ItemOrigins {
         for (RecipeEntries.Entry<Recipe<?>> entry : RecipeEntries.all(manager)) {
             Recipe<?> recipe = entry.recipe();
             ResourceLocation typeId = BuiltInRegistries.RECIPE_TYPE.getKey(recipe.getType());
-            if (typeId == null || ModStations.isSupportedRecipeType(typeId)) continue;
+            if (typeId == null || StationRules.isSupportedRecipeType(typeId)) continue;
             ItemStack result;
             try {
                 result = recipe.getResultItem(registryAccess);

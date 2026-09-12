@@ -7,35 +7,19 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
 public final class StationProviders {
-    private static final Map<Station, List<String>> IDS = Map.of(
-            Station.CRAFTING, List.of(
-                    "minecraft:crafting_table",
-                    "refinedstorage:crafting_grid",
-                    "ae2:crafting_terminal",
-                    "ae2:wireless_crafting_terminal",
-                    "refinedstorageaddons:wireless_crafting_grid",
-                    "toms_storage:ts.storage_terminal",
-                    "toms_storage:ts.crafting_terminal",
-                    "toms_storage:ts.adv_wireless_terminal",
-                    "sophisticatedbackpacks:crafting_upgrade"),
-            Station.SMITHING, List.of("minecraft:smithing_table", "sophisticatedbackpacks:smithing_upgrade"),
-            Station.STONECUTTER, List.of("minecraft:stonecutter", "sophisticatedbackpacks:stonecutter_upgrade"),
-            Station.GUN_SMITH_TABLE, List.of("tacz:gun_smith_table"),
-            Station.AMMO_ASSEMBLY_TABLE, List.of("tacz:workbench_a"),
-            Station.ATTACHMENT_TABLE, List.of("tacz:workbench_c"),
-            Station.EXTREME_CRAFTING, List.of("avaritia:extreme_crafting_table")
-    );
+    private static final Map<Station, List<String>> IDS = new EnumMap<>(Station.class);
 
     private StationProviders() {
     }
 
     public static List<ItemStack> icons(Station station) {
         List<ItemStack> out = new ArrayList<>();
-        for (String id : IDS.getOrDefault(station, List.of())) {
+        for (String id : IDS.computeIfAbsent(station, StationRules::providerIds)) {
             ItemStack stack = iconFor(id);
             if (!stack.isEmpty()) out.add(stack);
         }

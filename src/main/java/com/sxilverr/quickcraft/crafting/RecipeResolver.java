@@ -102,15 +102,15 @@ public class RecipeResolver {
     }
 
     private void indexModded(RecipeManager recipeManager) {
-        Map<String, Station> types = ModStations.recipeTypeStations();
+        Map<String, StationRules.RecipeRule> types = StationRules.recipeTypes();
         if (types.isEmpty()) return;
         int count = 0;
         for (RecipeEntries.Entry<Recipe<?>> entry : RecipeEntries.all(recipeManager)) {
             Recipe<?> recipe = entry.recipe();
             ResourceLocation typeId = BuiltInRegistries.RECIPE_TYPE.getKey(recipe.getType());
-            if (!ModStations.isSupportedRecipeType(typeId)) continue;
-            Station station = types.get(typeId.toString());
-            if (station == null) continue;
+            StationRules.RecipeRule rule = typeId == null ? null : types.get(typeId.toString());
+            if (rule == null) continue;
+            Station station = StationRules.stationFor(recipe, rule);
             ItemStack result;
             try {
                 result = recipe.getResultItem(registryAccess);

@@ -44,6 +44,6 @@ public class StonecutterRecipeOption implements RecipeOption {
 
     @Override
     public boolean fits(Stations stations) {
-        return stations.stonecutter();
+        return stations.has(Station.STONECUTTER);
     }
 }

@@ -7,7 +7,11 @@ public enum Station {
     GUN_SMITH_TABLE("Gun Smith Table", "tacz:gun_smith_table"),
     AMMO_ASSEMBLY_TABLE("Ammo Assembly Table", "tacz:workbench_a"),
     ATTACHMENT_TABLE("Attachment Table", "tacz:workbench_c"),
-    EXTREME_CRAFTING("Extreme Crafting Table", "avaritia:extreme_crafting_table");
+    EXTREME_CRAFTING("Extreme Crafting Table", "avaritia:extreme_crafting_table"),
+    EXTENDED_BASIC("Basic Crafting Table", "extendedcrafting:basic_table"),
+    EXTENDED_ADVANCED("Advanced Crafting Table", "extendedcrafting:advanced_table"),
+    EXTENDED_ELITE("Elite Crafting Table", "extendedcrafting:elite_table"),
+    EXTENDED_ULTIMATE("Ultimate Crafting Table", "extendedcrafting:ultimate_table");
 
     private final String displayName;
     private final String iconId;

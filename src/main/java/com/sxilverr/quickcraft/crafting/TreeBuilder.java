@@ -32,7 +32,7 @@ public class TreeBuilder {
     private Map<ItemKey, ResourceLocation> recipeOverrides = Map.of();
     private Map<String, Item> ingredientChoices = Map.of();
     private Availability availability = Availability.NONE;
-    private Stations stations = new Stations(3, true, false, false, false, false, false, null, null, null);
+    private Stations stations = Stations.of(Station.CRAFTING, Station.SMITHING);
     private boolean collapseOwned = true;
     private boolean hideLooping = false;
     private final Map<ItemKey, Integer> claimedStock = new HashMap<>();

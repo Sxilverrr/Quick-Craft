@@ -1,5 +1,6 @@
 package com.sxilverr.quickcraft.forge.integration.projecte;
 
+import com.sxilverr.quickcraft.forge.integration.curios.CuriosSlots;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -72,7 +73,7 @@ public final class ProjectEIntegration {
             ItemStack stack = inv.getItem(i);
             if (isTablet(stack, tablets)) return stack;
         }
-        if (curiosLoaded()) return CuriosTablet.find(player, stack -> isTablet(stack, tablets));
+        if (curiosLoaded()) return CuriosSlots.find(player, stack -> isTablet(stack, tablets));
         return ItemStack.EMPTY;
     }
 

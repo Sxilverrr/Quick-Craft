@@ -44,6 +44,6 @@ public class SmithingRecipeOption implements RecipeOption {
 
     @Override
     public boolean fits(Stations stations) {
-        return stations.smithingTable();
+        return stations.has(Station.SMITHING);
     }
 }

@@ -1,4 +1,4 @@
-package com.sxilverr.quickcraft.forge.integration.projecte;
+package com.sxilverr.quickcraft.neoforge.integration.curios;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -8,13 +8,13 @@ import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 
 import java.util.function.Predicate;
 
-final class CuriosTablet {
-    private CuriosTablet() {
+public final class CuriosSlots {
+    private CuriosSlots() {
     }
 
-    static ItemStack find(Player player, Predicate<ItemStack> matcher) {
+    public static ItemStack find(Player player, Predicate<ItemStack> matcher) {
         try {
-            ICuriosItemHandler handler = CuriosApi.getCuriosInventory(player).resolve().orElse(null);
+            ICuriosItemHandler handler = CuriosApi.getCuriosInventory(player).orElse(null);
             if (handler == null) return ItemStack.EMPTY;
             return handler.findFirstCurio(matcher).map(SlotResult::stack).orElse(ItemStack.EMPTY);
         } catch (RuntimeException | LinkageError e) {

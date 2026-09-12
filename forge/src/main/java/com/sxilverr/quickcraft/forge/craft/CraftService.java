@@ -13,7 +13,7 @@ import com.sxilverr.quickcraft.crafting.ItemKey;
 import com.sxilverr.quickcraft.crafting.RecipeResolver;
 import com.sxilverr.quickcraft.crafting.ServerRecipeCache;
 import com.sxilverr.quickcraft.crafting.Station;
-import com.sxilverr.quickcraft.forge.crafting.StationScan;
+import com.sxilverr.quickcraft.crafting.StationScan;
 import com.sxilverr.quickcraft.crafting.Stations;
 import com.sxilverr.quickcraft.crafting.TreeBuilder;
 import com.sxilverr.quickcraft.forge.integration.projecte.EmcDeposit;

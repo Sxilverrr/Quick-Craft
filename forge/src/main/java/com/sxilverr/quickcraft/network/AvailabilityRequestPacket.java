@@ -2,7 +2,7 @@ package com.sxilverr.quickcraft.network;
 
 import com.sxilverr.quickcraft.forge.craft.CraftService;
 import com.sxilverr.quickcraft.crafting.ItemKey;
-import com.sxilverr.quickcraft.forge.crafting.StationScan;
+import com.sxilverr.quickcraft.crafting.StationScan;
 import com.sxilverr.quickcraft.crafting.Stations;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;

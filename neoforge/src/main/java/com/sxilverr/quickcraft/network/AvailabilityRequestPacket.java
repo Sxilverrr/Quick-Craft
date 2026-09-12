@@ -2,7 +2,7 @@ package com.sxilverr.quickcraft.network;
 
 import com.sxilverr.quickcraft.neoforge.craft.CraftService;
 import com.sxilverr.quickcraft.crafting.ItemKey;
-import com.sxilverr.quickcraft.neoforge.crafting.StationScan;
+import com.sxilverr.quickcraft.crafting.StationScan;
 import com.sxilverr.quickcraft.crafting.Stations;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;

@@ -22,7 +22,7 @@ import com.sxilverr.quickcraft.crafting.RecipeOption;
 import com.sxilverr.quickcraft.crafting.RecipeResolver;
 import com.sxilverr.quickcraft.crafting.Station;
 import com.sxilverr.quickcraft.crafting.StationProviders;
-import com.sxilverr.quickcraft.forge.crafting.StationScan;
+import com.sxilverr.quickcraft.crafting.StationScan;
 import com.sxilverr.quickcraft.crafting.Stations;
 import com.sxilverr.quickcraft.crafting.TreeBuilder;
 import net.minecraft.ChatFormatting;

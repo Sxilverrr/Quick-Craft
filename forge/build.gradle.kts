@@ -68,6 +68,8 @@ dependencies {
     modCompileOnly("curse.maven:toms-storage-378609:6418133")
     modCompileOnly("maven.modrinth:sophisticated-core:1.20.1-1.3.65.2126")
     modCompileOnly("maven.modrinth:sophisticated-backpacks:1.20.1-3.24.59.1960")
+    modCompileOnly("maven.modrinth:sophisticated-storage:1.20.1-1.4.86.2131")
+    modCompileOnly("maven.modrinth:travelersbackpack:1.20.1-9.1.57")
 
     commonBundle(project(common.path, "namedElements")) { isTransitive = false }
     shadowBundle(project(common.path, "transformProductionForge")) { isTransitive = false }

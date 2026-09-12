@@ -65,6 +65,8 @@ dependencies {
     modCompileOnly("curse.maven:just-enough-resources-240630:6174588")
     modCompileOnly("maven.modrinth:sophisticated-core:1.21.1-1.4.88.2283")
     modCompileOnly("maven.modrinth:sophisticated-backpacks:1.21.1-3.25.77.2086")
+    modCompileOnly("maven.modrinth:sophisticated-storage:1.21.1-1.5.91.2127")
+    modCompileOnly("maven.modrinth:travelersbackpack:1.21.1-10.1.39")
 
     commonBundle(project(common.path, "namedElements")) { isTransitive = false }
     shadowBundle(project(common.path, "transformProductionNeoForge")) { isTransitive = false }
