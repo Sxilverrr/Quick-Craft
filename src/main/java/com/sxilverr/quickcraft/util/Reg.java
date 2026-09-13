@@ -25,7 +25,7 @@ public final class Reg {
     }
 
     public static Item item(String id) {
-        ResourceLocation loc = rl(stripMeta(id));
+        ResourceLocation loc = rl(baseId(id));
         if (loc == null) return null;
         Item item = ForgeRegistries.ITEMS.getValue(loc);
         return item == null || item == Items.AIR ? null : item;
@@ -41,7 +41,7 @@ public final class Reg {
     public static ItemStack stack(String id) {
         Item item = item(id);
         if (item == null) return ItemStack.EMPTY;
-        return new ItemStack(item, 1, meta(id));
+        return new ItemStack(item, 1, Math.max(0, metaOf(id)));
     }
 
     public static boolean loaded(String modId) {
@@ -56,20 +56,20 @@ public final class Reg {
         return block == null ? null : block.getRegistryName();
     }
 
-    private static String stripMeta(String id) {
+    public static String baseId(String id) {
         if (id == null) return null;
         int at = id.indexOf('@');
         return at < 0 ? id : id.substring(0, at);
     }
 
-    private static int meta(String id) {
-        if (id == null) return 0;
+    public static int metaOf(String id) {
+        if (id == null) return -1;
         int at = id.indexOf('@');
-        if (at < 0 || at + 1 >= id.length()) return 0;
+        if (at < 0 || at + 1 >= id.length()) return -1;
         try {
             return Integer.parseInt(id.substring(at + 1).trim());
         } catch (NumberFormatException e) {
-            return 0;
+            return -1;
         }
     }
 }

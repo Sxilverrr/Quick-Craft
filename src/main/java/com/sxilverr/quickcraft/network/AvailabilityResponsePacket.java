@@ -3,7 +3,6 @@ package com.sxilverr.quickcraft.network;
 import com.sxilverr.quickcraft.crafting.ItemKey;
 import com.sxilverr.quickcraft.crafting.Stations;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -43,14 +42,7 @@ public class AvailabilityResponsePacket implements IMessage {
             ItemStack source = sources.get(entry.getKey());
             Buf.writeStack(buf, source == null ? ItemStack.EMPTY : source);
         }
-        buf.writeInt(stations.gridSize());
-        buf.writeBoolean(stations.extremeCrafting());
-        buf.writeBoolean(stations.stonecutter());
-        buf.writeBoolean(stations.smithing());
-        Buf.writeItem(buf, stations.craftingSource());
-        Buf.writeItem(buf, stations.extremeSource());
-        Buf.writeItem(buf, stations.stonecutterSource());
-        Buf.writeItem(buf, stations.smithingSource());
+        stations.write(buf);
     }
 
     @Override
@@ -69,16 +61,7 @@ public class AvailabilityResponsePacket implements IMessage {
             if (!source.isEmpty()) sources.put(key, source);
             if (stack.isItemDamaged()) samples.put(key, stack);
         }
-        int gridSize = buf.readInt();
-        boolean extremeCrafting = buf.readBoolean();
-        boolean stonecutter = buf.readBoolean();
-        boolean smithing = buf.readBoolean();
-        Item craftingSource = Buf.readItem(buf);
-        Item extremeSource = Buf.readItem(buf);
-        Item stonecutterSource = Buf.readItem(buf);
-        Item smithingSource = Buf.readItem(buf);
-        stations = new Stations(gridSize, extremeCrafting, stonecutter, smithing, craftingSource, extremeSource,
-                stonecutterSource, smithingSource);
+        stations = Stations.read(buf);
     }
 
     public static class Handler implements IMessageHandler<AvailabilityResponsePacket, IMessage> {

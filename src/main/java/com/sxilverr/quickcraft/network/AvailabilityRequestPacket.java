@@ -2,8 +2,8 @@ package com.sxilverr.quickcraft.network;
 
 import com.sxilverr.quickcraft.craft.CraftService;
 import com.sxilverr.quickcraft.crafting.ItemKey;
+import com.sxilverr.quickcraft.crafting.StationScan;
 import com.sxilverr.quickcraft.crafting.Stations;
-import com.sxilverr.quickcraft.station.StationScan;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;

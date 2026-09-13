@@ -1,4 +1,4 @@
-package com.sxilverr.quickcraft.station;
+package com.sxilverr.quickcraft.crafting;
 
 import com.sxilverr.quickcraft.util.Reflect;
 import net.minecraft.item.ItemStack;

@@ -2,6 +2,7 @@ package com.sxilverr.quickcraft.crafting;
 
 import com.sxilverr.quickcraft.QuickCraft;
 import com.sxilverr.quickcraft.integration.avaritia.AvaritiaSupport;
+import com.sxilverr.quickcraft.integration.extendedcrafting.ExtendedCraftingSupport;
 import com.sxilverr.quickcraft.integration.futuremc.FutureMcSupport;
 import com.sxilverr.quickcraft.integration.ubm.UbmSupport;
 import net.minecraft.item.Item;
@@ -41,6 +42,7 @@ public class RecipeResolver {
         indexCrafting();
         indexAvaritia();
         indexBackports();
+        indexExtendedCrafting();
         indexCooking();
     }
 
@@ -144,6 +146,18 @@ public class RecipeResolver {
         }
         if (count > 0) {
             QuickCraft.LOGGER.info("Quick Craft indexed {} stonecutter/smithing recipe(s) from backport mods", count);
+        }
+    }
+
+    private void indexExtendedCrafting() {
+        if (!ExtendedCraftingSupport.available()) return;
+        int count = 0;
+        for (ModdedRecipeOption option : ExtendedCraftingSupport.tableRecipes()) {
+            add(option.result().getItem(), option);
+            count++;
+        }
+        if (count > 0) {
+            QuickCraft.LOGGER.info("Quick Craft indexed {} Extended Crafting table recipe(s)", count);
         }
     }
 
