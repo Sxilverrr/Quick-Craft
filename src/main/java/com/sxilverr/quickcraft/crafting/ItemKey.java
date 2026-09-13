@@ -43,7 +43,7 @@ public final class ItemKey {
     }
     *///?} else {
     private static CompoundTag withoutDamage(ItemStack stack, CompoundTag tag) {
-        if (tag == null) return null;
+        if (tag == null || tag.isEmpty()) return null;
         if (!tag.contains("Damage") || !stack.isDamageableItem()) return tag.copy();
         CompoundTag copy = tag.copy();
         copy.remove("Damage");

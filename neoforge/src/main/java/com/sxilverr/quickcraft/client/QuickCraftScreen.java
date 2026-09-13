@@ -1,5 +1,6 @@
 package com.sxilverr.quickcraft.client;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.sxilverr.quickcraft.craft.Deposit;
 import com.sxilverr.quickcraft.neoforge.QuickCraftClientConfig;
 import com.sxilverr.quickcraft.neoforge.QuickCraftConfig;
@@ -36,6 +37,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
@@ -48,10 +50,12 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class QuickCraftScreen extends Screen {
     private int COLOR_HAVE = 0xFF55FF55;
@@ -105,6 +109,10 @@ public class QuickCraftScreen extends Screen {
     private static final int TAB_BTN_W = 28;
     private static final int COPY_DROP_W = 152;
     private static final int COPY_ROW_H = 14;
+    private static final int EYE_W = 14;
+    private static final int EYE_H = 12;
+    private static final ResourceLocation VIEW_TREE = ResourceLocation.fromNamespaceAndPath("quickcraft", "textures/gui/view_tree.png");
+    private static final ResourceLocation HIDE_TREE = ResourceLocation.fromNamespaceAndPath("quickcraft", "textures/gui/hide_tree.png");
     private static final String[] COPY_OPTIONS = {"Copy full list", "Copy missing materials", "Copy material shortages"};
     private static final String[] CONTROL_LINES = {
             "Drag/Scroll: pan/zoom",
@@ -167,6 +175,7 @@ public class QuickCraftScreen extends Screen {
     private int summaryRowCount;
     private final Map<CraftNode, double[]> animData = new IdentityHashMap<>();
     private final Map<CraftNode, Boolean> achievableCache = new IdentityHashMap<>();
+    private final Map<CraftNode, Boolean> peekEmcCache = new IdentityHashMap<>();
     private int maxCraftableCache = -1;
 
     private boolean bookmarkDragging;
@@ -198,6 +207,9 @@ public class QuickCraftScreen extends Screen {
     private boolean historyOpen;
     private int historyScroll;
     private List<CraftHistory.Entry> historyEntries = List.of();
+    private final Set<ItemKey> peekOpen = new HashSet<>();
+    private final Map<ItemKey, Long> peekStarts = new HashMap<>();
+    private boolean eyeHovered;
 
     public QuickCraftScreen(ItemStack target, int quantity) {
         super(Component.literal("Quick Craft"));
@@ -287,6 +299,7 @@ public class QuickCraftScreen extends Screen {
         autoFit();
         animate = QuickCraftConfig.animationsEnabled();
         treeAnimStart = Util.getMillis();
+        peekStarts.clear();
         com.sxilverr.quickcraft.network.QuickCraftNetwork.requestDepositTargets();
     }
 
@@ -379,6 +392,7 @@ public class QuickCraftScreen extends Screen {
             if (showMobs && JerIntegration.available()) attachMobSources(root);
             else detachMobSources(root);
             achievableCache.clear();
+            peekEmcCache.clear();
             layout = new TreeLayout(root, this::nodeWidth);
         }
     }
@@ -421,6 +435,7 @@ public class QuickCraftScreen extends Screen {
         emcAffordable = emcRequired.compareTo(owned) <= 0;
         if (QuickCraftClientConfig.showEmc()) emcTotalText = ProjectEClient.format(owned);
         computeSummaryEmc(summaryItems);
+        peekEmcCache.clear();
     }
 
     @Override
@@ -567,7 +582,6 @@ public class QuickCraftScreen extends Screen {
 
         if (showMobs && JerIntegration.available()) attachMobSources(root);
         primeOrigins(root);
-        layout = new TreeLayout(root, this::nodeWidth);
         Station missing = CraftTrees.missingStation(root);
         if (missing != missingStation) stationSelectedIndex = 0;
         stationProblem = missing != null;
@@ -575,8 +589,11 @@ public class QuickCraftScreen extends Screen {
         stationWarning = missing == null ? "" : StationIcons.name(missing);
         treeLimited = CraftTrees.truncated(root);
         achievableCache.clear();
+        peekEmcCache.clear();
         maxCraftableCache = -1;
         computeSummary();
+        attachPeeks(root, stations, collapse, hideLoop, requestKeys, new HashSet<>());
+        layout = new TreeLayout(root, this::nodeWidth);
         if (!applyingAvailability) {
             com.sxilverr.quickcraft.network.QuickCraftNetwork.requestAvailability(requestKeys);
         }
@@ -598,6 +615,63 @@ public class QuickCraftScreen extends Screen {
     private void detachMobSources(CraftNode node) {
         node.children.removeIf(CraftNode::isMobSource);
         for (CraftNode child : node.children) detachMobSources(child);
+    }
+
+    private boolean hasEye(CraftNode node) {
+        return (node.owned || node.emcBuy) && node.selected() != null;
+    }
+
+    private void attachPeeks(CraftNode node, Stations stations, boolean collapse, boolean hideLoop,
+                             Set<ItemKey> keys, Set<ItemKey> path) {
+        ItemKey key = ItemKey.of(node.output);
+        if (hasEye(node) && peekOpen.contains(key) && !path.contains(key)) {
+            CraftNode fresh = builder.build(node.output, node.requiredCount, overrides, ingredientChoices,
+                    Availability.exact(haveCounts), stations, collapse, hideLoop);
+            if (fresh.selected() == null || fresh.children.isEmpty()) return;
+            node.selectedRecipe = fresh.selectedRecipe;
+            node.autoRecipe = fresh.autoRecipe;
+            node.resultPerCraft = fresh.resultPerCraft;
+            node.craftsNeeded = fresh.craftsNeeded;
+            node.children.addAll(0, fresh.children);
+            path.add(key);
+            for (CraftNode child : fresh.children) {
+                collectTreeKeys(child, keys);
+                if (showMobs && JerIntegration.available()) attachMobSources(child);
+                primeOrigins(child);
+                attachPeeks(child, stations, collapse, hideLoop, keys, path);
+            }
+            path.remove(key);
+            return;
+        }
+        for (CraftNode child : node.children) attachPeeks(child, stations, collapse, hideLoop, keys, path);
+    }
+
+    private void togglePeek(CraftNode node) {
+        ItemKey key = ItemKey.of(node.output);
+        if (peekOpen.remove(key)) {
+            peekStarts.remove(key);
+        } else {
+            peekOpen.add(key);
+            peekStarts.put(key, Util.getMillis());
+        }
+        hoveredView = null;
+        eyeHovered = false;
+        playClick();
+        rebuild();
+    }
+
+    private boolean overEye(NodeView view, double mouseX, double mouseY) {
+        double wx = (mouseX - panX) / zoom;
+        double wy = (mouseY - panY) / zoom;
+        if (QuickCraftConfig.hoverBulge() && view == hoveredView) {
+            double cx = view.x + view.width / 2.0;
+            double cy = view.y + NodeView.HEIGHT / 2.0;
+            wx = cx + (wx - cx) / HOVER_BULGE;
+            wy = cy + (wy - cy) / HOVER_BULGE;
+        }
+        int ex = view.x + view.width - 2 - EYE_W;
+        int ey = view.y + 2;
+        return wx >= ex - 1 && wx <= ex + EYE_W + 1 && wy >= ey - 1 && wy <= ey + EYE_H + 1;
     }
 
     private java.util.Set<ItemKey> relevantKeys() {
@@ -722,6 +796,7 @@ public class QuickCraftScreen extends Screen {
         boolean overChrome = overDepositBox(mouseX, mouseY) || (depositMenuOpen && overDepositMenu(mouseX, mouseY))
                 || overControlsArea(mouseX, mouseY) || overHistoryTab(mouseX, mouseY) || overHistoryPanel(mouseX, mouseY);
         hoveredView = (overChrome || (showSummary && overSummaryPanel(mouseX, mouseY))) ? null : nodeAt(mouseX, mouseY);
+        eyeHovered = hoveredView != null && hasEye(hoveredView.node) && overEye(hoveredView, mouseX, mouseY);
         boolean bulge = QuickCraftConfig.hoverBulge() && hoveredView != null;
 
         g.pose().pushPose();
@@ -794,6 +869,9 @@ public class QuickCraftScreen extends Screen {
 
         if (hoveringStationName && stationNameX >= 0) {
             renderStationDropdown(g, stationNameX);
+        } else if (hoveredView != null && eyeHovered) {
+            boolean open = peekOpen.contains(ItemKey.of(hoveredView.node.output));
+            g.renderTooltip(this.font, Component.literal(open ? "Hide crafting tree" : "Show crafting tree"), mouseX, mouseY);
         } else if (hoveredView != null) {
             drawTooltip(g, hoveredView, mouseX, mouseY);
         } else if (!depositMenuOpen && overDepositBox(mouseX, mouseY)) {
@@ -1153,10 +1231,11 @@ public class QuickCraftScreen extends Screen {
     }
 
     private void drawTreeAnimated(GuiGraphics g) {
-        long elapsed = Util.getMillis() - treeAnimStart;
+        long now = Util.getMillis();
+        long elapsed = now - treeAnimStart;
         animData.clear();
         NodeView rootView = layout.views.get(root);
-        computeAnim(root, rootView.x + rootView.width / 2.0, rootView.y + NodeView.HEIGHT / 2.0, elapsed);
+        computeAnim(root, rootView.x + rootView.width / 2.0, rootView.y + NodeView.HEIGHT / 2.0, elapsed, now);
 
         for (NodeView view : layout.ordered) {
             double[] pa = animData.get(view.node);
@@ -1181,7 +1260,7 @@ public class QuickCraftScreen extends Screen {
         }
     }
 
-    private void computeAnim(CraftNode node, double parentCx, double parentCy, long elapsed) {
+    private void computeAnim(CraftNode node, double parentCx, double parentCy, long elapsed, long now) {
         NodeView v = layout.views.get(node);
         if (v == null) return;
         int depth = node.depth;
@@ -1192,8 +1271,16 @@ public class QuickCraftScreen extends Screen {
         double cx = parentCx + (fcx - parentCx) * e;
         double cy = parentCy + (fcy - parentCy) * e;
         animData.put(node, new double[]{cx, cy, e});
+        long childElapsed = elapsed;
+        if (!node.children.isEmpty() && hasEye(node)) {
+            ItemKey key = ItemKey.of(node.output);
+            if (peekOpen.contains(key)) {
+                Long start = peekStarts.get(key);
+                childElapsed = start == null ? elapsed - depth * TREE_DEPTH_DELAY : now - start;
+            }
+        }
         for (CraftNode child : node.children) {
-            computeAnim(child, cx, cy, elapsed);
+            computeAnim(child, cx, cy, childElapsed, now);
         }
     }
 
@@ -1413,7 +1500,7 @@ public class QuickCraftScreen extends Screen {
         String badge = node.alternatives.size() > 1 && !node.children.isEmpty()
                 ? "[" + (node.selectedRecipe + 1) + "/" + node.alternatives.size() + "]" : "";
         int badgeExtra = badge.isEmpty() ? 0 : this.font.width(badge) + 4;
-        int nameNeeded = 30 + this.font.width(node.output.getHoverName().getString()) + badgeExtra;
+        int nameNeeded = 30 + this.font.width(node.output.getHoverName().getString()) + badgeExtra + (hasEye(node) ? EYE_W + 2 : 0);
 
         RecipeOption recipe = node.selected();
         boolean hasStationIcon = recipe == null
@@ -1468,7 +1555,24 @@ public class QuickCraftScreen extends Screen {
         ItemKey key = ItemKey.of(node.output);
         if (effectiveHave(key) >= node.requiredCount) return true;
         Integer color = summaryEmcColor.get(key);
-        return color != null && color == COLOR_EMC;
+        if (color != null) return color == COLOR_EMC;
+        return peekEmcCovered(node);
+    }
+
+    private boolean peekEmcCovered(CraftNode node) {
+        Boolean cached = peekEmcCache.get(node);
+        if (cached != null) return cached;
+        boolean result = computePeekEmcCovered(node);
+        peekEmcCache.put(node, result);
+        return result;
+    }
+
+    private boolean computePeekEmcCovered(CraftNode node) {
+        if (emcSource == null || lastEmc == null) return false;
+        if (!emcSource.learned(node.output)) return false;
+        long unit = emcSource.value(node.output);
+        if (unit <= 0L) return false;
+        return BigInteger.valueOf(unit).multiply(BigInteger.valueOf(node.requiredCount)).compareTo(lastEmc) <= 0;
     }
 
     private boolean isCompleted(CraftNode node) {
@@ -1560,9 +1664,15 @@ public class QuickCraftScreen extends Screen {
         String badge = view.node.alternatives.size() > 1 && !view.node.children.isEmpty()
                 ? "[" + (view.node.selectedRecipe + 1) + "/" + view.node.alternatives.size() + "]" : "";
         int nameWidth = w - 30;
+        int textRight = sx + w - 4;
+        if (hasEye(view.node)) {
+            drawEye(g, view, sx + w - 2 - EYE_W, sy + 2);
+            textRight -= EYE_W + 2;
+            nameWidth -= EYE_W + 2;
+        }
         if (!badge.isEmpty()) {
             int badgeWidth = this.font.width(badge);
-            g.drawString(this.font, badge, sx + w - 4 - badgeWidth, sy + 5, COLOR_CRAFT, false);
+            g.drawString(this.font, badge, textRight - badgeWidth, sy + 5, COLOR_CRAFT, false);
             nameWidth -= badgeWidth + 4;
         }
         String name = ellipsize(icon.getHoverName().getString(), nameWidth);
@@ -1587,6 +1697,14 @@ public class QuickCraftScreen extends Screen {
             g.renderItem(stationIcon, 0, 0);
             g.pose().popPose();
         }
+    }
+
+    private void drawEye(GuiGraphics g, NodeView view, int x, int y) {
+        if (eyeHovered && view == hoveredView) g.fill(x - 1, y - 1, x + EYE_W + 1, y + EYE_H + 1, 0x40FFFFFF);
+        boolean open = peekOpen.contains(ItemKey.of(view.node.output));
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        g.blit(open ? HIDE_TREE : VIEW_TREE, x, y, 0, 0, EYE_W, EYE_H, EYE_W, EYE_H);
     }
 
     private void drawMobNode(GuiGraphics g, NodeView view) {
@@ -1710,7 +1828,9 @@ public class QuickCraftScreen extends Screen {
             if (node.alternatives.size() > 1) {
                 lines.add(Component.literal("Left-click: swap recipe (" + node.alternatives.size() + " options)").withStyle(ChatFormatting.AQUA));
             }
-            if (node != root && !node.truncated && node.reference == null && !node.emcBuy) {
+            if (hasEye(node)) {
+                lines.add(Component.literal("Eye icon: show or hide the crafting tree").withStyle(ChatFormatting.AQUA));
+            } else if (node != root && !node.truncated && node.reference == null && !node.emcBuy) {
                 boolean expanded = !node.children.isEmpty();
                 lines.add(Component.literal(expanded ? "Right-click: hide recipe (supply yourself)" : "Right-click: reveal recipe")
                         .withStyle(ChatFormatting.AQUA));
@@ -1912,6 +2032,10 @@ public class QuickCraftScreen extends Screen {
         if (showSummary && overSummaryPanel(mouseX, mouseY)) return true;
         NodeView view = nodeAt(mouseX, mouseY);
         if (view != null) {
+            if (button == 0 && hasEye(view.node) && overEye(view, mouseX, mouseY)) {
+                togglePeek(view.node);
+                return true;
+            }
             handleNodeClick(view.node, button);
             return true;
         }

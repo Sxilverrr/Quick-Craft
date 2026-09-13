@@ -96,14 +96,24 @@ public final class CraftPlanner {
         Map<ItemKey, Integer> totals = CraftTrees.leafTotals(root);
         Map<ItemKey, CraftNode> samples = CraftTrees.leafSamples(root);
         List<Blocker> out = new ArrayList<>();
+        List<Blocker> unbought = new ArrayList<>();
+        BigInteger unboughtCost = BigInteger.ZERO;
         boolean stationMissing = CraftTrees.missingStation(root) != null;
         for (Map.Entry<ItemKey, Integer> entry : totals.entrySet()) {
             ItemKey key = entry.getKey();
             int bought = bank == null ? 0 : bank.purchased().getOrDefault(key, 0);
             int missing = entry.getValue() - initial.count(key) - bought;
             if (missing <= 0) continue;
-            out.add(new Blocker(key, missing, reasonFor(samples.get(key), key, emc, stationMissing)));
+            Reason reason = reasonFor(samples.get(key), key, emc, stationMissing);
+            if (reason != Reason.NOT_ENOUGH_EMC) {
+                out.add(new Blocker(key, missing, reason));
+                continue;
+            }
+            long unit = bank == null ? 0L : bank.value(key);
+            unboughtCost = unboughtCost.add(BigInteger.valueOf(unit).multiply(BigInteger.valueOf(missing)));
+            unbought.add(new Blocker(key, missing, reason));
         }
+        if (bank == null || !bank.canAfford(unboughtCost)) out.addAll(unbought);
         return out;
     }
 
