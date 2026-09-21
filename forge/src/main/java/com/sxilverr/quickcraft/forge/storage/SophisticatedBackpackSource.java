@@ -5,10 +5,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.p3pp3rf1y.sophisticatedbackpacks.api.CapabilityBackpackWrapper;
 import net.p3pp3rf1y.sophisticatedbackpacks.backpack.BackpackBlockEntity;
 import net.p3pp3rf1y.sophisticatedbackpacks.backpack.wrapper.IBackpackWrapper;
-import net.p3pp3rf1y.sophisticatedbackpacks.util.PlayerInventoryProvider;
 
 import java.util.List;
 
@@ -17,15 +15,10 @@ public final class SophisticatedBackpackSource {
     }
 
     public static void addBackpacks(ServerPlayer player, List<LabeledSource> out) {
-        PlayerInventoryProvider.get().runOnBackpacks(player, (backpack, inventoryName, identifier, slot) -> {
-            IBackpackWrapper wrapper = backpack.getCapability(CapabilityBackpackWrapper.getCapabilityInstance())
-                    .resolve().orElse(null);
-            if (wrapper != null) {
-                ItemStack icon = backpack.copy();
-                out.add(new LabeledSource("sbp:" + inventoryName + ":" + slot, backpack.getHoverName().getString(),
-                        icon, null, new HandlerItemSource(wrapper.getInventoryHandler(), icon), true));
-            }
-            return false;
+        SbBackpacks.forEach(player, (backpack, wrapper, inventoryName, slot) -> {
+            ItemStack icon = backpack.copy();
+            out.add(new LabeledSource("sbp:" + inventoryName + ":" + slot, backpack.getHoverName().getString(),
+                    icon, null, new HandlerItemSource(wrapper.getInventoryHandler(), icon), true));
         });
     }
 

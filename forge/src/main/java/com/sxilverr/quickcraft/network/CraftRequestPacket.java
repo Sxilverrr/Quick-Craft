@@ -1,5 +1,6 @@
 package com.sxilverr.quickcraft.network;
 
+import com.sxilverr.quickcraft.QuickCraftCommon;
 import com.sxilverr.quickcraft.forge.craft.CraftService;
 import com.sxilverr.quickcraft.craft.CraftPlanner;
 import com.sxilverr.quickcraft.craft.CraftSummary;
@@ -85,8 +86,16 @@ public class CraftRequestPacket {
         context.enqueueWork(() -> {
             ServerPlayer player = context.getSender();
             if (player == null || msg.target.isEmpty()) return;
-            CraftSummary summary = CraftService.execute(player, msg.target, msg.quantity, msg.overrides,
-                    msg.ingredientChoices, msg.destinationId);
+            CraftSummary summary;
+            try {
+                summary = CraftService.execute(player, msg.target, msg.quantity, msg.overrides,
+                        msg.ingredientChoices, msg.destinationId);
+            } catch (Throwable t) {
+                QuickCraftCommon.LOGGER.error("Quick Craft craft failed for {}", msg.target, t);
+                player.displayClientMessage(Component.literal("Quick Craft: crafting failed with an error, check the game log")
+                        .withStyle(ChatFormatting.RED), false);
+                return;
+            }
             player.displayClientMessage(feedback(summary, msg.target), false);
         });
         context.setPacketHandled(true);

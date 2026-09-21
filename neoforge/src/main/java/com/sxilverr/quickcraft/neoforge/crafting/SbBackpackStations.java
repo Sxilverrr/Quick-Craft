@@ -3,17 +3,15 @@ package com.sxilverr.quickcraft.neoforge.crafting;
 import com.sxilverr.quickcraft.crafting.Station;
 import com.sxilverr.quickcraft.crafting.StationSink;
 import com.sxilverr.quickcraft.crafting.Stations;
+import com.sxilverr.quickcraft.neoforge.storage.SbBackpacks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.p3pp3rf1y.sophisticatedbackpacks.backpack.BackpackBlockEntity;
-import net.p3pp3rf1y.sophisticatedbackpacks.backpack.wrapper.BackpackWrapper;
 import net.p3pp3rf1y.sophisticatedbackpacks.backpack.wrapper.IBackpackWrapper;
-import net.p3pp3rf1y.sophisticatedbackpacks.util.PlayerInventoryProvider;
 import net.p3pp3rf1y.sophisticatedcore.upgrades.UpgradeHandler;
 
 public final class SbBackpackStations {
@@ -22,20 +20,8 @@ public final class SbBackpackStations {
 
     public static void scan(Player player, StationSink sink) {
         if (player.level().isClientSide) return;
-        PlayerInventoryProvider.get().runOnBackpacks(player, (backpack, inventoryName, identifier, slot) -> {
-            IBackpackWrapper wrapper = wrapperOf(backpack);
-            if (wrapper != null) scan(wrapper.getUpgradeHandler(), sink);
-            return false;
-        });
+        SbBackpacks.forEach(player, (backpack, wrapper, inventoryName, slot) -> scan(wrapper.getUpgradeHandler(), sink));
         scanNearbyBlocks(player, sink);
-    }
-
-    private static IBackpackWrapper wrapperOf(ItemStack stack) {
-        try {
-            return BackpackWrapper.fromStack(stack);
-        } catch (Throwable t) {
-            return null;
-        }
     }
 
     private static void scanNearbyBlocks(Player player, StationSink sink) {
