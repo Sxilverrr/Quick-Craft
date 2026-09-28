@@ -34,8 +34,11 @@ public class AvailabilityResponsePacket implements IMessage {
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(counts.size());
+        int n = Math.min(MAX_ENTRIES, counts.size());
+        buf.writeInt(n);
+        int written = 0;
         for (Map.Entry<ItemKey, Integer> entry : counts.entrySet()) {
+            if (written++ >= n) break;
             ItemStack sample = samples.get(entry.getKey());
             Buf.writeStack(buf, sample == null ? entry.getKey().toStack(1) : sample);
             buf.writeInt(entry.getValue());

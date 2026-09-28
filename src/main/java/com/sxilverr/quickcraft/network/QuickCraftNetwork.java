@@ -32,18 +32,17 @@ public final class QuickCraftNetwork {
         CHANNEL.registerMessage(AvailabilityResponsePacket.Handler.class, AvailabilityResponsePacket.class, id++, Side.CLIENT);
         CHANNEL.registerMessage(DepositTargetsRequestPacket.Handler.class, DepositTargetsRequestPacket.class, id++, Side.SERVER);
         CHANNEL.registerMessage(DepositTargetsResponsePacket.Handler.class, DepositTargetsResponsePacket.class, id++, Side.CLIENT);
-        CHANNEL.registerMessage(CraftPreviewRequestPacket.Handler.class, CraftPreviewRequestPacket.class, id++, Side.SERVER);
         CHANNEL.registerMessage(CraftPreviewResponsePacket.Handler.class, CraftPreviewResponsePacket.class, id++, Side.CLIENT);
     }
 
     public static void sendCraftRequest(ItemStack target, int quantity, Map<ItemKey, ResourceLocation> overrides,
                                         Map<String, Item> ingredientChoices, String destinationId) {
-        CHANNEL.sendToServer(new CraftRequestPacket(target, quantity, overrides, ingredientChoices, destinationId));
+        CHANNEL.sendToServer(new CraftRequestPacket(target, quantity, overrides, ingredientChoices, destinationId, false));
     }
 
     public static void sendCraftPreviewRequest(ItemStack target, int quantity, Map<ItemKey, ResourceLocation> overrides,
                                                Map<String, Item> ingredientChoices) {
-        CHANNEL.sendToServer(new CraftPreviewRequestPacket(target, quantity, overrides, ingredientChoices));
+        CHANNEL.sendToServer(new CraftRequestPacket(target, quantity, overrides, ingredientChoices, null, true));
     }
 
     public static void sendCraftPreview(EntityPlayerMP player, CraftPreview.Result result) {

@@ -19,14 +19,26 @@ public final class EmcBank {
         this.budget = budget == null ? BigInteger.ZERO : budget;
     }
 
+    public EmcBank copy() {
+        EmcBank other = new EmcBank(values, budget);
+        other.purchased.putAll(purchased);
+        other.gained = gained;
+        return other;
+    }
+
+    void restore(EmcBank other) {
+        budget = other.budget;
+        purchased.clear();
+        purchased.putAll(other.purchased);
+        gained = other.gained;
+    }
+
     public boolean supplies(ItemKey key) {
-        Long v = values.get(key);
-        return v != null && v > 0L;
+        return value(key) > 0L;
     }
 
     public long value(ItemKey key) {
-        Long v = values.get(key);
-        return v == null ? 0L : v;
+        return values.getOrDefault(key, 0L);
     }
 
     public boolean canAfford(BigInteger cost) {

@@ -26,12 +26,6 @@ public final class Stations {
         return new Stations(Collections.<Station, ItemStack>emptyMap());
     }
 
-    public static Stations of(Station... stations) {
-        Map<Station, ItemStack> map = new EnumMap<Station, ItemStack>(Station.class);
-        for (Station station : stations) map.put(station, ItemStack.EMPTY);
-        return new Stations(map);
-    }
-
     public int gridSize() {
         return has(Station.CRAFTING) ? 3 : 2;
     }

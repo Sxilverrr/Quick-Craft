@@ -17,7 +17,6 @@ public class TreeLayout {
 
     public final Map<CraftNode, NodeView> views = new IdentityHashMap<CraftNode, NodeView>();
     public final List<NodeView> ordered = new ArrayList<NodeView>();
-    public final int hGap = H_GAP;
     private final Map<CraftNode, Integer> widthCache = new IdentityHashMap<CraftNode, Integer>();
     private final List<Integer> columnX = new ArrayList<Integer>();
     private int nextLeafY;

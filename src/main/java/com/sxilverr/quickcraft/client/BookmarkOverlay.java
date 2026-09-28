@@ -5,13 +5,16 @@ import com.sxilverr.quickcraft.crafting.ItemKey;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.MathHelper;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public final class BookmarkOverlay {
     private static final float SCALE = 0.75f;
@@ -24,9 +27,6 @@ public final class BookmarkOverlay {
     private static final long APPEAR_ROW_SLIDE = 170;
     private static final int COLOR_BG = 0xB0080808;
     private static final int COLOR_HEADER = 0xC0202020;
-    private static final int COLOR_HAVE = 0xFF55FF55;
-    private static final int COLOR_CRAFT = 0xFFFFC64B;
-    private static final int COLOR_MISSING = 0xFFFF5555;
     private static final int X_LX = 2;
     private static final int X_LY = 2;
     private static final int X_LW = 11;
@@ -44,8 +44,7 @@ public final class BookmarkOverlay {
     private static double fy = 0.0;
     private static int scroll;
     private static long appearStart;
-    private static final List<ItemKey> keys = new ArrayList<ItemKey>();
-    private static final List<Integer> needs = new ArrayList<Integer>();
+    private static final List<Map.Entry<ItemKey, Integer>> entries = new ArrayList<Map.Entry<ItemKey, Integer>>();
     private static final Map<ItemKey, Integer> availability = new HashMap<ItemKey, Integer>();
     private static boolean hasAvailability;
 
@@ -57,22 +56,19 @@ public final class BookmarkOverlay {
     }
 
     public static void set(List<Map.Entry<ItemKey, Integer>> items) {
-        keys.clear();
-        needs.clear();
+        entries.clear();
         for (Map.Entry<ItemKey, Integer> e : items) {
-            keys.add(e.getKey());
-            needs.add(e.getValue());
+            entries.add(new AbstractMap.SimpleImmutableEntry<ItemKey, Integer>(e.getKey(), e.getValue()));
         }
         sortByAvailability();
-        active = !keys.isEmpty();
+        active = !entries.isEmpty();
         scroll = 0;
         appearStart = now();
     }
 
     public static void clear() {
         active = false;
-        keys.clear();
-        needs.clear();
+        entries.clear();
         scroll = 0;
     }
 
@@ -83,29 +79,11 @@ public final class BookmarkOverlay {
     }
 
     private static void sortByAvailability() {
-        if (keys.size() < 2) return;
-        final Map<ItemKey, Integer> have = availabilityCounts();
-        List<Integer> order = new ArrayList<Integer>();
-        for (int i = 0; i < keys.size(); i++) order.add(i);
-        Collections.sort(order, new Comparator<Integer>() {
-            @Override
-            public int compare(Integer a, Integer b) {
-                int tierA = tier(have, keys.get(a), needs.get(a));
-                int tierB = tier(have, keys.get(b), needs.get(b));
-                if (tierA != tierB) return tierA - tierB;
-                return needs.get(b) - needs.get(a);
-            }
-        });
-        List<ItemKey> newKeys = new ArrayList<ItemKey>(keys.size());
-        List<Integer> newNeeds = new ArrayList<Integer>(needs.size());
-        for (int i : order) {
-            newKeys.add(keys.get(i));
-            newNeeds.add(needs.get(i));
-        }
-        keys.clear();
-        keys.addAll(newKeys);
-        needs.clear();
-        needs.addAll(newNeeds);
+        if (entries.size() < 2) return;
+        Map<ItemKey, Integer> have = availabilityCounts();
+        entries.sort(Comparator
+                .comparingInt((Map.Entry<ItemKey, Integer> e) -> tier(have, e.getKey(), e.getValue()))
+                .thenComparingInt(e -> -e.getValue()));
     }
 
     private static int tier(Map<ItemKey, Integer> have, ItemKey key, int need) {
@@ -123,7 +101,7 @@ public final class BookmarkOverlay {
     }
 
     public static List<ItemKey> requestedKeys() {
-        return new ArrayList<ItemKey>(keys);
+        return entries.stream().map(Map.Entry::getKey).collect(Collectors.toList());
     }
 
     public static void cycleCorner() {
@@ -133,7 +111,7 @@ public final class BookmarkOverlay {
     }
 
     public static void scroll(int delta) {
-        scroll = Math.max(0, Math.min(maxScroll(), scroll + delta));
+        scroll = MathHelper.clamp(scroll + delta, 0, maxScroll());
     }
 
     public static boolean overPanel(int screenW, int screenH, double mx, double my) {
@@ -158,8 +136,8 @@ public final class BookmarkOverlay {
     public static void setOrigin(int screenW, int screenH, double ox, double oy) {
         double rangeX = Math.max(1, screenW - scaledW() - 2 * MARGIN);
         double rangeY = Math.max(1, screenH - scaledH() - 2 * MARGIN);
-        fx = clamp01((ox - MARGIN) / rangeX);
-        fy = clamp01((oy - MARGIN) / rangeY);
+        fx = MathHelper.clamp((ox - MARGIN) / rangeX, 0.0, 1.0);
+        fy = MathHelper.clamp((oy - MARGIN) / rangeY, 0.0, 1.0);
     }
 
     public static boolean handleClick(int screenW, int screenH, double mx, double my) {
@@ -185,7 +163,7 @@ public final class BookmarkOverlay {
 
         double ox = originX(screenW);
         double oy = originY(screenH);
-        scroll = Math.max(0, Math.min(maxScroll(), scroll));
+        scroll = MathHelper.clamp(scroll, 0, maxScroll());
 
         Draw.push();
         Draw.translate(ox, oy, 0);
@@ -212,19 +190,21 @@ public final class BookmarkOverlay {
         int vis = visibleRows();
         for (int r = 0; r < vis; r++) {
             int idx = r + scroll;
-            if (idx >= keys.size()) break;
-            ItemStack stack = keys.get(idx).toStack(1);
-            int need = needs.get(idx);
-            Integer owned = have.get(keys.get(idx));
+            if (idx >= entries.size()) break;
+            Map.Entry<ItemKey, Integer> entry = entries.get(idx);
+            ItemStack stack = entry.getKey().toStack(1);
+            int need = entry.getValue();
+            Integer owned = have.get(entry.getKey());
             int has = owned == null ? 0 : owned;
             int y = bodyTop + r * ROW_H;
             int rx = 0;
             if (anim) {
-                double p = clamp01((elapsed - (long) r * APPEAR_ROW_STAGGER) / (double) APPEAR_ROW_SLIDE);
+                double p = MathHelper.clamp((elapsed - (long) r * APPEAR_ROW_STAGGER) / (double) APPEAR_ROW_SLIDE, 0.0, 1.0);
                 rx = (int) ((1 - easeIn(p)) * LOCAL_W);
             }
             Draw.item(stack, rx + 2, y);
-            int color = has >= need ? COLOR_HAVE : (has > 0 ? COLOR_CRAFT : COLOR_MISSING);
+            int color = has >= need ? QuickCraftConfig.colorAvailable()
+                    : (has > 0 ? QuickCraftConfig.colorCrafted() : QuickCraftConfig.colorMissing());
             Draw.string(mc.fontRenderer, has + "/" + need, rx + 21, y + 4, color, false);
         }
         Draw.scissorOff();
@@ -244,11 +224,11 @@ public final class BookmarkOverlay {
     }
 
     private static int maxScroll() {
-        return Math.max(0, keys.size() - VISIBLE_ROWS);
+        return Math.max(0, entries.size() - VISIBLE_ROWS);
     }
 
     private static int visibleRows() {
-        return Math.min(VISIBLE_ROWS, keys.size());
+        return Math.min(VISIBLE_ROWS, entries.size());
     }
 
     private static int localHeight() {
@@ -264,11 +244,11 @@ public final class BookmarkOverlay {
     }
 
     private static double originX(int screenW) {
-        return MARGIN + clamp01(fx) * Math.max(0, screenW - scaledW() - 2 * MARGIN);
+        return MARGIN + MathHelper.clamp(fx, 0.0, 1.0) * Math.max(0, screenW - scaledW() - 2 * MARGIN);
     }
 
     private static double originY(int screenH) {
-        return MARGIN + clamp01(fy) * Math.max(0, screenH - scaledH() - 2 * MARGIN);
+        return MARGIN + MathHelper.clamp(fy, 0.0, 1.0) * Math.max(0, screenH - scaledH() - 2 * MARGIN);
     }
 
     private static boolean inLocalRect(double mouseX, double mouseY, double ox, double oy,
@@ -282,11 +262,7 @@ public final class BookmarkOverlay {
         return p * p * p;
     }
 
-    private static double clamp01(double v) {
-        return v < 0 ? 0 : (v > 1 ? 1 : v);
-    }
-
-    private static Map<ItemKey, Integer> inventoryCounts(InventoryPlayer inv) {
+    static Map<ItemKey, Integer> inventoryCounts(InventoryPlayer inv) {
         Map<ItemKey, Integer> counts = new HashMap<ItemKey, Integer>();
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stack = inv.getStackInSlot(i);

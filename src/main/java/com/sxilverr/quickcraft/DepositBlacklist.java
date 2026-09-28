@@ -52,18 +52,16 @@ public final class DepositBlacklist {
     }
 
     public boolean matches(Block block) {
-        if (block == null) return false;
-        if (matchesId(Reg.idOf(block))) return true;
-        if (oreNames.isEmpty()) return false;
-        Item item = Item.getItemFromBlock(block);
-        return item != null && matchesOre(new ItemStack(item, 1, OreDictionary.WILDCARD_VALUE));
+        return block != null && matches(Reg.idOf(block), Item.getItemFromBlock(block));
     }
 
     public boolean matches(Item item) {
-        if (item == null) return false;
-        if (matchesId(Reg.idOf(item))) return true;
-        if (oreNames.isEmpty()) return false;
-        return matchesOre(new ItemStack(item, 1, OreDictionary.WILDCARD_VALUE));
+        return item != null && matches(Reg.idOf(item), item);
+    }
+
+    private boolean matches(ResourceLocation id, Item item) {
+        if (matchesId(id)) return true;
+        return !oreNames.isEmpty() && item != null && matchesOre(new ItemStack(item, 1, OreDictionary.WILDCARD_VALUE));
     }
 
     private boolean matchesId(ResourceLocation id) {

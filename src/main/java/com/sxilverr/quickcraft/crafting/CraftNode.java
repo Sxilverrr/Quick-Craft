@@ -39,10 +39,6 @@ public class CraftNode {
         this.selectedRecipe = alternatives.isEmpty() ? -1 : 0;
     }
 
-    public boolean isLeaf() {
-        return children.isEmpty();
-    }
-
     public boolean isCraftable() {
         return !alternatives.isEmpty();
     }

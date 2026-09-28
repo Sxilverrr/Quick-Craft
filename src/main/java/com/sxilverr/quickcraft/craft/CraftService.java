@@ -37,8 +37,6 @@ import java.util.Map;
 import java.util.Set;
 
 public final class CraftService {
-    private static final int MAX_QUANTITY = 1000000;
-    private static final int INVENTORY_SLOTS = 36;
     private static final int MAX_COMMIT_ATTEMPTS = 8;
 
     private static final class Shortfall {
@@ -60,7 +58,7 @@ public final class CraftService {
                                        Map<ItemKey, ResourceLocation> overrides, Map<String, Item> ingredientChoices,
                                        String destinationId) {
         if (target.isEmpty()) return CraftSummary.empty();
-        int qty = Math.max(1, Math.min(MAX_QUANTITY, quantity));
+        int qty = Math.max(1, Math.min(CraftPlanner.MAX_QUANTITY, quantity));
 
         List<LabeledSource> labeled = ItemSourceFactory.scan(player, QuickCraftConfig.containerScanRange());
         Deposit deposit = Deposit.to(labeled, destinationId, player);
@@ -69,7 +67,7 @@ public final class CraftService {
         }
 
         if (QuickCraftConfig.creativeBypass() && player.capabilities.isCreativeMode) {
-            int given = creativeQuantity(target, qty);
+            int given = CraftPlanner.creativeQuantity(target, qty);
             deposit.put(ItemKey.of(target), given, true);
             playCraftSound(player);
             return new CraftSummary(given, given, null, deposit.placements(), deposit.dropped(), deposit.byproducts());
@@ -108,13 +106,13 @@ public final class CraftService {
     public static CraftPreview.Result preview(EntityPlayerMP player, ItemStack target, int quantity,
                                               Map<ItemKey, ResourceLocation> overrides,
                                               Map<String, Item> ingredientChoices) {
-        int qty = Math.max(1, Math.min(MAX_QUANTITY, quantity));
+        int qty = Math.max(1, Math.min(CraftPlanner.MAX_QUANTITY, quantity));
         if (target.isEmpty()) {
             return new CraftPreview.Result(0, qty, Collections.<CraftPreview.Gain>emptyList());
         }
 
         if (QuickCraftConfig.creativeBypass() && player.capabilities.isCreativeMode) {
-            int given = creativeQuantity(target, qty);
+            int given = CraftPlanner.creativeQuantity(target, qty);
             List<CraftPreview.Gain> gains = new ArrayList<CraftPreview.Gain>();
             gains.add(new CraftPreview.Gain(ItemKey.of(target), given));
             return new CraftPreview.Result(given, given, gains);
@@ -133,10 +131,6 @@ public final class CraftService {
         RecipeResolver resolver = ServerRecipeCache.get();
         return new TreeBuilder(resolver, QuickCraftConfig.preferredItems(),
                 QuickCraftConfig.maxTreeDepth(), QuickCraftConfig.maxTreeNodes());
-    }
-
-    private static int creativeQuantity(ItemStack target, int requested) {
-        return Math.min(requested, Math.max(1, target.getMaxStackSize()) * INVENTORY_SLOTS);
     }
 
     private static EmcSession openEmcSession(EntityPlayerMP player) {

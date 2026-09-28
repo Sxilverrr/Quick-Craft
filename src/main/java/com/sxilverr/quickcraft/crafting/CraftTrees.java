@@ -10,10 +10,6 @@ public final class CraftTrees {
     private CraftTrees() {
     }
 
-    public static boolean hasStationBlock(CraftNode node) {
-        return missingStation(node) != null;
-    }
-
     public static Station missingStation(CraftNode node) {
         if (node.isBlockedByStation()) return node.requiredStation();
         for (CraftNode child : node.children) {
@@ -50,18 +46,10 @@ public final class CraftTrees {
             return;
         }
         if (node.catalyst && !catalysts.add(ItemKey.of(node.output))) return;
-        boolean hasRealChild = false;
-        for (CraftNode child : node.children) {
-            if (!child.isMobSource()) {
-                hasRealChild = true;
-                break;
-            }
-        }
-        if (!hasRealChild) {
+        if (!hasRealChild(node)) {
             ItemKey key = ItemKey.of(node.output);
-            Integer existing = totals.get(key);
-            totals.put(key, existing == null ? required : clamp((long) existing + required));
-            if (samples != null && !samples.containsKey(key)) samples.put(key, node);
+            totals.put(key, clamp((long) totals.getOrDefault(key, 0) + required));
+            if (samples != null) samples.putIfAbsent(key, node);
             return;
         }
         int crafts = ceilDiv(required, Math.max(1, node.resultPerCraft));
@@ -71,6 +59,13 @@ public final class CraftTrees {
             int childNeed = child.catalyst ? child.requiredCount : clamp((long) (child.requiredCount / ownCrafts) * crafts);
             collect(child, childNeed, totals, samples, catalysts);
         }
+    }
+
+    private static boolean hasRealChild(CraftNode node) {
+        for (CraftNode child : node.children) {
+            if (!child.isMobSource()) return true;
+        }
+        return false;
     }
 
     private static int ceilDiv(int a, int b) {

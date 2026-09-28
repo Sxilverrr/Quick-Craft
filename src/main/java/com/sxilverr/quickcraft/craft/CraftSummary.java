@@ -116,8 +116,4 @@ public final class CraftSummary {
     public boolean partial() {
         return crafted > 0 && crafted < requested;
     }
-
-    public boolean nothing() {
-        return crafted <= 0;
-    }
 }

@@ -37,10 +37,6 @@ public final class JerIntegration {
         return list == null ? Collections.<MobItemSource>emptyList() : list;
     }
 
-    public static void invalidate() {
-        cache = null;
-    }
-
     private static Map<Item, List<MobItemSource>> index() {
         Map<Item, List<MobItemSource>> local = cache;
         if (local == null) {

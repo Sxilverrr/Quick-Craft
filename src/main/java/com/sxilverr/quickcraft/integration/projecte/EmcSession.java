@@ -15,7 +15,6 @@ import java.util.Set;
 
 public final class EmcSession implements EmcSource {
     private static final BigInteger LONG_CAP = BigInteger.valueOf(Long.MAX_VALUE);
-    private static final BigInteger CAPACITY_CAP = BigInteger.valueOf(1000000);
 
     private final Object provider;
     private final boolean fullKnowledge;
@@ -62,10 +61,6 @@ public final class EmcSession implements EmcSource {
         return fullKnowledge || ProjectESupport.hasKnowledge(provider, stack);
     }
 
-    public boolean emcable(ItemStack stack) {
-        return value(stack) > 0L;
-    }
-
     public Map<ItemKey, Long> values(Set<ItemKey> keys) {
         Map<ItemKey, Long> values = new HashMap<ItemKey, Long>();
         for (ItemKey key : keys) {
@@ -75,24 +70,6 @@ public final class EmcSession implements EmcSource {
             if (v > 0L) values.put(key, v);
         }
         return values;
-    }
-
-    public Map<ItemKey, Integer> capacity(Set<ItemKey> keys, ItemKey exclude) {
-        Map<ItemKey, Integer> capacity = new HashMap<ItemKey, Integer>();
-        BigInteger owned = emc();
-        for (Map.Entry<ItemKey, Long> entry : values(keys).entrySet()) {
-            if (exclude != null && entry.getKey().equals(exclude)) continue;
-            long unit = entry.getValue();
-            if (unit <= 0L) continue;
-            BigInteger max = owned.divide(BigInteger.valueOf(unit));
-            capacity.put(entry.getKey(), max.compareTo(CAPACITY_CAP) >= 0
-                    ? CAPACITY_CAP.intValue() : max.intValue());
-        }
-        return capacity;
-    }
-
-    public EmcBank bank(Set<ItemKey> keys) {
-        return new EmcBank(values(keys), emc());
     }
 
     public EmcBank bank(Set<ItemKey> keys, BigInteger budget) {

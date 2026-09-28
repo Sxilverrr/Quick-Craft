@@ -14,8 +14,6 @@ public interface EmcSource extends EmcLookup {
 
     boolean learned(ItemStack stack);
 
-    EmcBank bank(Set<ItemKey> keys);
-
     EmcBank bank(Set<ItemKey> keys, BigInteger budget);
 
     @Override

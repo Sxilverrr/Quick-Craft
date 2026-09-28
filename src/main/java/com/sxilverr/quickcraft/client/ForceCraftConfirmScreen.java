@@ -102,33 +102,12 @@ public class ForceCraftConfirmScreen extends GuiScreen {
         for (int i = 0; i < shown; i++) {
             CraftPlanner.Blocker blocker = list.get(i);
             String line = "Missing " + blocker.missing() + "x " + trim(blocker.key().toStack(1).getDisplayName(), 28)
-                    + reasonLabel(blocker.reason());
+                    + blocker.reason().label;
             Draw.centeredString(this.fontRenderer, line, cx, y, 0xFFFF5555);
             y += 10;
         }
         if (list.size() > shown) {
             Draw.centeredString(this.fontRenderer, "... +" + (list.size() - shown) + " more", cx, y, 0xFF909090);
-        }
-    }
-
-    public static String reasonLabel(CraftPlanner.Reason reason) {
-        switch (reason) {
-            case NOT_LEARNED:
-                return " (not learned)";
-            case NOT_ENOUGH_EMC:
-                return " (not enough EMC)";
-            case CATALYST:
-                return " (catalyst)";
-            case STATION:
-                return " (needs a station)";
-            case TREE_LIMIT:
-                return " (tree limit)";
-            case LOOP:
-                return " (loop)";
-            case MANUAL:
-                return " (supplied by you)";
-            default:
-                return "";
         }
     }
 

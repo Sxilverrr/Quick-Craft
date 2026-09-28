@@ -1,7 +1,9 @@
 package com.sxilverr.quickcraft.network;
 
-import com.sxilverr.quickcraft.craft.CraftService;
+import com.sxilverr.quickcraft.QuickCraft;
 import com.sxilverr.quickcraft.craft.CraftPlanner;
+import com.sxilverr.quickcraft.craft.CraftPreview;
+import com.sxilverr.quickcraft.craft.CraftService;
 import com.sxilverr.quickcraft.craft.CraftSummary;
 import com.sxilverr.quickcraft.crafting.ItemKey;
 import io.netty.buffer.ByteBuf;
@@ -16,6 +18,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,17 +31,19 @@ public class CraftRequestPacket implements IMessage {
     private Map<ItemKey, ResourceLocation> overrides = new HashMap<ItemKey, ResourceLocation>();
     private Map<String, Item> ingredientChoices = new HashMap<String, Item>();
     private String destinationId = "";
+    private boolean preview;
 
     public CraftRequestPacket() {
     }
 
     public CraftRequestPacket(ItemStack target, int quantity, Map<ItemKey, ResourceLocation> overrides,
-                              Map<String, Item> ingredientChoices, String destinationId) {
+                              Map<String, Item> ingredientChoices, String destinationId, boolean preview) {
         this.target = target;
         this.quantity = quantity;
         this.overrides = overrides;
         this.ingredientChoices = ingredientChoices;
         this.destinationId = destinationId == null ? "" : destinationId;
+        this.preview = preview;
     }
 
     @Override
@@ -46,13 +51,20 @@ public class CraftRequestPacket implements IMessage {
         Buf.writeStack(buf, target);
         buf.writeInt(quantity);
         Buf.writeString(buf, destinationId);
-        buf.writeInt(overrides.size());
+        buf.writeBoolean(preview);
+        int overrideCount = Math.min(MAX_OVERRIDES, overrides.size());
+        buf.writeInt(overrideCount);
+        int written = 0;
         for (Map.Entry<ItemKey, ResourceLocation> entry : overrides.entrySet()) {
+            if (written++ >= overrideCount) break;
             Buf.writeStack(buf, entry.getKey().toStack(1));
             Buf.writeId(buf, entry.getValue());
         }
-        buf.writeInt(ingredientChoices.size());
+        int choiceCount = Math.min(MAX_OVERRIDES, ingredientChoices.size());
+        buf.writeInt(choiceCount);
+        written = 0;
         for (Map.Entry<String, Item> entry : ingredientChoices.entrySet()) {
+            if (written++ >= choiceCount) break;
             Buf.writeString(buf, entry.getKey());
             Buf.writeItem(buf, entry.getValue());
         }
@@ -63,6 +75,7 @@ public class CraftRequestPacket implements IMessage {
         target = Buf.readStack(buf);
         quantity = buf.readInt();
         destinationId = Buf.readString(buf);
+        preview = buf.readBoolean();
         int count = Math.min(MAX_OVERRIDES, buf.readInt());
         overrides = new HashMap<ItemKey, ResourceLocation>();
         for (int i = 0; i < count; i++) {
@@ -87,6 +100,10 @@ public class CraftRequestPacket implements IMessage {
                 @Override
                 public void run() {
                     if (msg.target.isEmpty()) return;
+                    if (msg.preview) {
+                        preview(player, msg);
+                        return;
+                    }
                     CraftSummary summary = CraftService.execute(player, msg.target, msg.quantity, msg.overrides,
                             msg.ingredientChoices, msg.destinationId);
                     player.sendStatusMessage(feedback(summary, msg.target), false);
@@ -96,13 +113,24 @@ public class CraftRequestPacket implements IMessage {
         }
     }
 
+    private static void preview(EntityPlayerMP player, CraftRequestPacket msg) {
+        CraftPreview.Result result;
+        try {
+            result = CraftService.preview(player, msg.target, msg.quantity, msg.overrides, msg.ingredientChoices);
+        } catch (Throwable t) {
+            QuickCraft.LOGGER.error("Quick Craft preview failed for " + msg.target, t);
+            result = new CraftPreview.Result(0, Math.max(1, msg.quantity), Collections.<CraftPreview.Gain>emptyList());
+        }
+        QuickCraftNetwork.sendCraftPreview(player, result);
+    }
+
     private static ITextComponent feedback(CraftSummary summary, ItemStack target) {
         String name = target.getDisplayName();
         if (summary.aborted()) {
             return colored("Quick Craft: could not pull " + summary.blockedCount() + "x "
                     + summary.blocked().getDisplayName() + " out of storage, nothing was crafted", TextFormatting.RED);
         }
-        if (summary.full()) {
+        if (summary.full() || (summary.partial() && summary.requested() >= CraftPlanner.MAX_QUANTITY)) {
             return withPlacements(colored("Quick Craft: crafted " + summary.crafted() + "x " + name,
                     TextFormatting.GREEN), summary);
         }
@@ -135,7 +163,7 @@ public class CraftRequestPacket implements IMessage {
             CraftPlanner.Blocker blocker = blockers.get(i);
             if (i > 0) sb.append(", ");
             sb.append(blocker.missing()).append("x ").append(blocker.key().toStack(1).getDisplayName())
-                    .append(com.sxilverr.quickcraft.client.ForceCraftConfirmScreen.reasonLabel(blocker.reason()));
+                    .append(blocker.reason().label);
         }
         if (blockers.size() > shown) sb.append(", +").append(blockers.size() - shown).append(" more");
         return sb.toString();
@@ -170,6 +198,6 @@ public class CraftRequestPacket implements IMessage {
     }
 
     private static String requestedLabel(int requested) {
-        return requested >= 1000000 ? "Max" : requested + "x";
+        return requested >= CraftPlanner.MAX_QUANTITY ? "Max" : requested + "x";
     }
 }

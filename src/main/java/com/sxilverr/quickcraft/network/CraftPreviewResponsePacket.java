@@ -37,13 +37,15 @@ public class CraftPreviewResponsePacket implements IMessage {
     public void toBytes(ByteBuf buf) {
         buf.writeInt(craftable);
         buf.writeInt(requested);
-        buf.writeInt(gained.size());
-        for (CraftPreview.Gain gain : gained) {
+        List<CraftPreview.Gain> gains = gained.subList(0, Math.min(MAX_ENTRIES, gained.size()));
+        buf.writeInt(gains.size());
+        for (CraftPreview.Gain gain : gains) {
             Buf.writeStack(buf, gain.key().toStack(1));
             buf.writeInt(gain.count());
         }
-        buf.writeInt(blockers.size());
-        for (CraftPlanner.Blocker blocker : blockers) {
+        List<CraftPlanner.Blocker> sent = blockers.subList(0, Math.min(MAX_ENTRIES, blockers.size()));
+        buf.writeInt(sent.size());
+        for (CraftPlanner.Blocker blocker : sent) {
             Buf.writeStack(buf, blocker.key().toStack(1));
             buf.writeInt(blocker.missing());
             buf.writeInt(blocker.reason().ordinal());

@@ -31,7 +31,6 @@ import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Set;
@@ -56,12 +55,6 @@ public final class ItemSourceFactory {
         addInventoryItemSources(player, extraSources, blacklist, out);
 
         return out;
-    }
-
-    public static ItemSource forPlayer(EntityPlayerMP player, int scanRange) {
-        List<ItemSource> sources = new ArrayList<ItemSource>();
-        for (LabeledSource labeled : scan(player, scanRange)) sources.add(labeled.source());
-        return new CompositeItemSource(sources);
     }
 
     public static String posKey(BlockPos pos) {

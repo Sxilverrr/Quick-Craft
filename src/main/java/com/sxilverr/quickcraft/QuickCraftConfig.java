@@ -1,5 +1,6 @@
 package com.sxilverr.quickcraft;
 
+import com.sxilverr.quickcraft.craft.CraftPlanner;
 import com.sxilverr.quickcraft.util.Reg;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -277,7 +278,7 @@ public final class QuickCraftConfig {
 
     public static int shiftCraftAmount() {
         try {
-            return Math.max(1, Math.min(1000000, Integer.parseInt(shiftCraftAmount.trim())));
+            return Math.max(1, Math.min(CraftPlanner.MAX_QUANTITY, Integer.parseInt(shiftCraftAmount.trim())));
         } catch (NumberFormatException e) {
             return 64;
         }

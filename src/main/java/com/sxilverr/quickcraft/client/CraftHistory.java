@@ -121,10 +121,4 @@ public final class CraftHistory {
         }
         return out;
     }
-
-    public static synchronized void clear() {
-        ensureLoaded();
-        ENTRIES.clear();
-        save();
-    }
 }

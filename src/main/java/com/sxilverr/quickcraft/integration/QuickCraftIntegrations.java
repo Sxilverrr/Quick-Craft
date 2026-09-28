@@ -4,35 +4,39 @@ import net.minecraft.item.ItemStack;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.BooleanSupplier;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public final class QuickCraftIntegrations {
-    private static HoveredItemProvider hoveredItemProvider;
-    private static RecipeViewer recipeViewer;
-    private static OriginProvider originProvider;
-    private static TextInputFocus textInputFocused;
+    private static Supplier<ItemStack> hoveredItemProvider;
+    private static BiConsumer<ItemStack, Boolean> recipeViewer;
+    private static Function<ItemStack, List<OriginHint>> originProvider;
+    private static BooleanSupplier textInputFocused;
 
     private QuickCraftIntegrations() {
     }
 
-    public static void setTextInputFocused(TextInputFocus supplier) {
+    public static void setTextInputFocused(BooleanSupplier supplier) {
         textInputFocused = supplier;
     }
 
     public static boolean isTextInputFocused() {
-        return textInputFocused != null && textInputFocused.isFocused();
+        return textInputFocused != null && textInputFocused.getAsBoolean();
     }
 
-    public static void setHoveredItemProvider(HoveredItemProvider provider) {
+    public static void setHoveredItemProvider(Supplier<ItemStack> provider) {
         hoveredItemProvider = provider;
     }
 
     public static ItemStack hoveredItem() {
         if (hoveredItemProvider == null) return ItemStack.EMPTY;
-        ItemStack stack = hoveredItemProvider.getHoveredItem();
+        ItemStack stack = hoveredItemProvider.get();
         return stack == null ? ItemStack.EMPTY : stack;
     }
 
-    public static void setRecipeViewer(RecipeViewer viewer) {
+    public static void setRecipeViewer(BiConsumer<ItemStack, Boolean> viewer) {
         recipeViewer = viewer;
     }
 
@@ -41,14 +45,14 @@ public final class QuickCraftIntegrations {
     }
 
     public static void showRecipe(ItemStack stack) {
-        if (recipeViewer != null && stack != null && !stack.isEmpty()) recipeViewer.show(stack, false);
+        if (recipeViewer != null && stack != null && !stack.isEmpty()) recipeViewer.accept(stack, false);
     }
 
     public static void showUses(ItemStack stack) {
-        if (recipeViewer != null && stack != null && !stack.isEmpty()) recipeViewer.show(stack, true);
+        if (recipeViewer != null && stack != null && !stack.isEmpty()) recipeViewer.accept(stack, true);
     }
 
-    public static void setOriginProvider(OriginProvider provider) {
+    public static void setOriginProvider(Function<ItemStack, List<OriginHint>> provider) {
         originProvider = provider;
     }
 
@@ -58,7 +62,7 @@ public final class QuickCraftIntegrations {
 
     public static List<OriginHint> origins(ItemStack stack) {
         if (originProvider == null || stack == null || stack.isEmpty()) return Collections.emptyList();
-        List<OriginHint> hints = originProvider.find(stack);
+        List<OriginHint> hints = originProvider.apply(stack);
         return hints == null ? Collections.<OriginHint>emptyList() : hints;
     }
 }

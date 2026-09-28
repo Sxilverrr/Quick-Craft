@@ -24,11 +24,12 @@ public class TreeBuilder {
     private final int maxDepth;
     private final int maxNodes;
     private static final int REACH_DEPTH = 6;
+    private static final int CHOICE_TIERS = 4;
 
     private Map<ItemKey, ResourceLocation> recipeOverrides = Collections.emptyMap();
     private Map<String, Item> ingredientChoices = Collections.emptyMap();
     private Availability availability = Availability.NONE;
-    private Stations stations = Stations.of(Station.CRAFTING);
+    private Stations stations;
     private boolean collapseOwned = true;
     private boolean hideLooping = false;
     private final Map<ItemKey, Integer> claimedStock = new HashMap<ItemKey, Integer>();
@@ -76,14 +77,13 @@ public class TreeBuilder {
         node.catalyst = catalyst;
 
         ItemKey outputKey = ItemKey.of(output);
-        Integer claimedValue = claimedStock.get(outputKey);
-        int claimed = catalyst || claimedValue == null ? 0 : claimedValue;
+        int claimed = catalyst ? 0 : claimedStock.getOrDefault(outputKey, 0);
         int freeStock = availability.available(outputKey) - claimed;
         node.freeStock = Math.max(0, freeStock);
 
         boolean root = depth == 0;
-        node.autoRecipe = alternatives.isEmpty() ? -1 : autoBestIndex(output, alternatives, requiredCount);
-        node.selectedRecipe = resolveSelection(output, alternatives, node.autoRecipe);
+        node.autoRecipe = alternatives.isEmpty() ? -1 : autoBestIndex(output, alternatives, requiredCount, path);
+        node.selectedRecipe = resolveSelection(output, alternatives, node.autoRecipe, requiredCount, path);
         if (node.selectedRecipe < 0) {
             if (!catalyst) claimedStock.put(outputKey, claimed + Math.min(node.freeStock, requiredCount));
             if (!root && freeStock < requiredCount && emcLookup.obtainable(outputKey)) node.emcBuy = true;
@@ -164,7 +164,7 @@ public class TreeBuilder {
         return node;
     }
 
-    private boolean stockCraftable(RecipeOption option, int requiredCount) {
+    private Map<ItemKey, Integer> needs(RecipeOption option, int requiredCount) {
         int crafts = ceilDiv(Math.max(1, requiredCount), Math.max(1, option.resultCount()));
         Map<ItemKey, Integer> needs = new HashMap<ItemKey, Integer>();
         for (Ingredient ingredient : option.inputs()) {
@@ -172,17 +172,17 @@ public class TreeBuilder {
             ItemStack choice = chooseIngredient(ingredient);
             if (choice.isEmpty()) continue;
             ItemKey key = ItemKey.of(choice);
-            if (isCatalystIngredient(Ingredients.matching(ingredient))) {
-                if (!needs.containsKey(key)) needs.put(key, 1);
-            } else {
-                Integer existing = needs.get(key);
-                needs.put(key, existing == null ? crafts : clamp((long) existing + crafts));
-            }
+            if (isCatalystIngredient(Ingredients.matching(ingredient))) needs.putIfAbsent(key, 1);
+            else needs.put(key, clamp((long) needs.getOrDefault(key, 0) + crafts));
         }
+        return needs;
+    }
+
+    private boolean stockCraftable(RecipeOption option, int requiredCount) {
+        Map<ItemKey, Integer> needs = needs(option, requiredCount);
         if (needs.isEmpty()) return false;
         for (Map.Entry<ItemKey, Integer> entry : needs.entrySet()) {
-            Integer claimedValue = claimedStock.get(entry.getKey());
-            int free = availability.available(entry.getKey()) - (claimedValue == null ? 0 : claimedValue);
+            int free = availability.available(entry.getKey()) - claimedStock.getOrDefault(entry.getKey(), 0);
             if (free < entry.getValue()) return false;
         }
         return true;
@@ -196,7 +196,7 @@ public class TreeBuilder {
         child.tagSignature = ingredientSignature(options);
     }
 
-    public static String ingredientSignature(ItemStack[] items) {
+    private static String ingredientSignature(ItemStack[] items) {
         List<String> ids = new ArrayList<String>();
         for (ItemStack stack : items) {
             ResourceLocation id = Reg.idOf(stack.getItem());
@@ -205,32 +205,29 @@ public class TreeBuilder {
             ids.add(meta == 0 ? base : base + "@" + meta);
         }
         Collections.sort(ids);
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < ids.size(); i++) {
-            if (i > 0) sb.append(',');
-            sb.append(ids.get(i));
-        }
-        return sb.toString();
+        return String.join(",", ids);
     }
 
-    private int resolveSelection(ItemStack output, List<RecipeOption> alternatives, int auto) {
+    private int resolveSelection(ItemStack output, List<RecipeOption> alternatives, int auto, int requiredCount,
+                                 Set<ItemKey> path) {
         if (alternatives.isEmpty()) return -1;
 
         ResourceLocation override = recipeOverrides.get(ItemKey.of(output));
         if (MANUAL.equals(override)) return -1;
         if (override != null) {
             for (int i = 0; i < alternatives.size(); i++) {
-                if (alternatives.get(i).id().equals(override)) return i;
+                if (!alternatives.get(i).id().equals(override)) continue;
+                return Collections.disjoint(needs(alternatives.get(i), requiredCount).keySet(), path) ? i : auto;
             }
         }
         return auto;
     }
 
-    private int autoBestIndex(ItemStack output, List<RecipeOption> alternatives, int requiredCount) {
-        int best = 0;
+    private int autoBestIndex(ItemStack output, List<RecipeOption> alternatives, int requiredCount, Set<ItemKey> path) {
+        int best = -1;
         int bestScore = Integer.MIN_VALUE;
         for (int i = 0; i < alternatives.size(); i++) {
-            int score = recipeScore(output, alternatives.get(i), requiredCount);
+            int score = recipeScore(output, alternatives.get(i), requiredCount, path);
             if (score > bestScore) {
                 bestScore = score;
                 best = i;
@@ -239,27 +236,15 @@ public class TreeBuilder {
         return best;
     }
 
-    private int recipeScore(ItemStack output, RecipeOption option, int requiredCount) {
+    private int recipeScore(ItemStack output, RecipeOption option, int requiredCount, Set<ItemKey> path) {
+        Map<ItemKey, Integer> needs = needs(option, requiredCount);
+        if (!Collections.disjoint(needs.keySet(), path)) return Integer.MIN_VALUE;
         boolean fits = option.fits(stations);
         boolean selfReferencing = referencesOutput(output, option);
         boolean missingCatalyst = missingCatalyst(option);
-        int resultPer = Math.max(1, option.resultCount());
-        int crafts = ceilDiv(Math.max(1, requiredCount), resultPer);
-
-        Map<ItemKey, Integer> needs = new HashMap<ItemKey, Integer>();
         int preferredHits = 0;
         for (Ingredient ingredient : option.inputs()) {
-            if (Ingredients.isEmpty(ingredient)) continue;
-            if (ingredientAcceptsPreferred(ingredient)) preferredHits++;
-            ItemStack choice = chooseIngredient(ingredient);
-            if (choice.isEmpty()) continue;
-            ItemKey choiceKey = ItemKey.of(choice);
-            if (isCatalystIngredient(Ingredients.matching(ingredient))) {
-                if (!needs.containsKey(choiceKey)) needs.put(choiceKey, 1);
-            } else {
-                Integer existing = needs.get(choiceKey);
-                needs.put(choiceKey, existing == null ? crafts : clamp((long) existing + crafts));
-            }
+            if (!Ingredients.isEmpty(ingredient) && ingredientAcceptsPreferred(ingredient)) preferredHits++;
         }
 
         int fullyAvailable = 0;
@@ -269,6 +254,7 @@ public class TreeBuilder {
             if (have > 0) anyAvailable++;
             if (have >= entry.getValue()) fullyAvailable++;
         }
+        if (selfReferencing && anyAvailable == 0 && !anyObtainable(needs.keySet())) return Integer.MIN_VALUE;
 
         return (fits ? 1000000 : 0)
                 - (selfReferencing ? 500000 : 0)
@@ -277,6 +263,13 @@ public class TreeBuilder {
                 + anyAvailable * 100
                 + preferredHits * 10
                 - needs.size();
+    }
+
+    private boolean anyObtainable(Set<ItemKey> keys) {
+        for (ItemKey key : keys) {
+            if (emcLookup.obtainable(key)) return true;
+        }
+        return false;
     }
 
     private boolean referencesOutput(ItemStack output, RecipeOption option) {
@@ -471,36 +464,36 @@ public class TreeBuilder {
                 }
             }
         }
-        for (Item pref : preferred) {
-            for (ItemStack stack : items) {
-                if (stack.getItem() == pref && availability.available(ItemKey.of(stack)) > 0) return stack.copy();
-            }
-        }
-        for (ItemStack stack : items) {
-            if (availability.available(ItemKey.of(stack)) > 0) return stack.copy();
-        }
-        for (Item pref : preferred) {
-            for (ItemStack stack : items) {
-                if (stack.getItem() == pref && emcLookup.obtainable(ItemKey.of(stack))) return stack.copy();
-            }
-        }
-        for (ItemStack stack : items) {
-            if (emcLookup.obtainable(ItemKey.of(stack))) return stack.copy();
-        }
-        for (Item pref : preferred) {
-            for (ItemStack stack : items) {
-                if (stack.getItem() == pref && resolver.canCraft(stack)) return stack.copy();
-            }
-        }
-        for (ItemStack stack : items) {
-            if (resolver.canCraft(stack)) return stack.copy();
-        }
-        for (Item pref : preferred) {
-            for (ItemStack stack : items) {
-                if (stack.getItem() == pref) return stack.copy();
-            }
+        for (int tier = 0; tier < CHOICE_TIERS; tier++) {
+            ItemStack hit = pick(items, tier);
+            if (hit != null) return hit;
         }
         return items[0].copy();
+    }
+
+    private ItemStack pick(ItemStack[] items, int tier) {
+        for (Item pref : preferred) {
+            for (ItemStack stack : items) {
+                if (stack.getItem() == pref && passes(stack, tier)) return stack.copy();
+            }
+        }
+        for (ItemStack stack : items) {
+            if (passes(stack, tier)) return stack.copy();
+        }
+        return null;
+    }
+
+    private boolean passes(ItemStack stack, int tier) {
+        switch (tier) {
+            case 0:
+                return availability.available(ItemKey.of(stack)) > 0;
+            case 1:
+                return emcLookup.obtainable(ItemKey.of(stack));
+            case 2:
+                return resolver.canCraft(stack);
+            default:
+                return true;
+        }
     }
 
     private static int ceilDiv(int a, int b) {

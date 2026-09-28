@@ -126,7 +126,18 @@ public class VirtualPool {
         VirtualPool other = new VirtualPool(loose);
         other.counts.putAll(this.counts);
         other.byLoose.putAll(this.byLoose);
-        other.emc = this.emc;
+        other.produced.putAll(this.produced);
+        other.emc = this.emc == null ? null : this.emc.copy();
         return other;
+    }
+
+    void restore(VirtualPool other) {
+        counts.clear();
+        counts.putAll(other.counts);
+        byLoose.clear();
+        byLoose.putAll(other.byLoose);
+        produced.clear();
+        produced.putAll(other.produced);
+        if (emc != null && other.emc != null) emc.restore(other.emc);
     }
 }

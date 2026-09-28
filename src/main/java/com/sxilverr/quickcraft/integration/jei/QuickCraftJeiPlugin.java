@@ -1,11 +1,7 @@
 package com.sxilverr.quickcraft.integration.jei;
 
-import com.sxilverr.quickcraft.integration.HoveredItemProvider;
 import com.sxilverr.quickcraft.integration.OriginHint;
-import com.sxilverr.quickcraft.integration.OriginProvider;
 import com.sxilverr.quickcraft.integration.QuickCraftIntegrations;
-import com.sxilverr.quickcraft.integration.RecipeViewer;
-import com.sxilverr.quickcraft.integration.TextInputFocus;
 import com.sxilverr.quickcraft.util.Reflect;
 import mezz.jei.api.IJeiRuntime;
 import mezz.jei.api.IModPlugin;
@@ -24,6 +20,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.BooleanSupplier;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 @JEIPlugin
 public class QuickCraftJeiPlugin implements IModPlugin {
@@ -38,27 +38,27 @@ public class QuickCraftJeiPlugin implements IModPlugin {
     @Override
     public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
         this.runtime = jeiRuntime;
-        QuickCraftIntegrations.setHoveredItemProvider(new HoveredItemProvider() {
+        QuickCraftIntegrations.setHoveredItemProvider(new Supplier<ItemStack>() {
             @Override
-            public ItemStack getHoveredItem() {
+            public ItemStack get() {
                 return hoveredItem();
             }
         });
-        QuickCraftIntegrations.setRecipeViewer(new RecipeViewer() {
+        QuickCraftIntegrations.setRecipeViewer(new BiConsumer<ItemStack, Boolean>() {
             @Override
-            public void show(ItemStack stack, boolean uses) {
+            public void accept(ItemStack stack, Boolean uses) {
                 showRecipe(stack, uses);
             }
         });
-        QuickCraftIntegrations.setOriginProvider(new OriginProvider() {
+        QuickCraftIntegrations.setOriginProvider(new Function<ItemStack, List<OriginHint>>() {
             @Override
-            public List<OriginHint> find(ItemStack output) {
+            public List<OriginHint> apply(ItemStack output) {
                 return findOrigins(output);
             }
         });
-        QuickCraftIntegrations.setTextInputFocused(new TextInputFocus() {
+        QuickCraftIntegrations.setTextInputFocused(new BooleanSupplier() {
             @Override
-            public boolean isFocused() {
+            public boolean getAsBoolean() {
                 return searchFocused();
             }
         });
