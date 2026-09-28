@@ -2,14 +2,14 @@ package com.sxilverr.quickcraft.network;
 
 import com.sxilverr.quickcraft.QuickCraftCommon;
 import com.sxilverr.quickcraft.neoforge.craft.CraftService;
-import com.sxilverr.quickcraft.craft.CraftPlanner;
+import com.sxilverr.quickcraft.craft.CraftFeedback;
+import com.sxilverr.quickcraft.craft.CraftPreview;
 import com.sxilverr.quickcraft.craft.CraftSummary;
 import com.sxilverr.quickcraft.crafting.ItemKey;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
@@ -22,7 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CraftRequestPacket implements CustomPacketPayload {
+public record CraftRequestPacket(ItemStack target, int quantity, Map<ItemKey, ResourceLocation> overrides,
+                                 Map<String, Item> ingredientChoices, String destinationId, boolean preview)
+        implements CustomPacketPayload {
     private static final int MAX_OVERRIDES = 8192;
 
     public static final Type<CraftRequestPacket> TYPE = new Type<>(QuickCraftNetwork.id("craft_request"));
@@ -30,19 +32,8 @@ public class CraftRequestPacket implements CustomPacketPayload {
     public static final StreamCodec<RegistryFriendlyByteBuf, CraftRequestPacket> STREAM_CODEC =
             StreamCodec.of(CraftRequestPacket::write, CraftRequestPacket::read);
 
-    private final ItemStack target;
-    private final int quantity;
-    private final Map<ItemKey, ResourceLocation> overrides;
-    private final Map<String, Item> ingredientChoices;
-    private final String destinationId;
-
-    public CraftRequestPacket(ItemStack target, int quantity, Map<ItemKey, ResourceLocation> overrides,
-                              Map<String, Item> ingredientChoices, String destinationId) {
-        this.target = target;
-        this.quantity = quantity;
-        this.overrides = overrides;
-        this.ingredientChoices = ingredientChoices;
-        this.destinationId = destinationId == null ? "" : destinationId;
+    public CraftRequestPacket {
+        if (destinationId == null) destinationId = "";
     }
 
     @Override
@@ -51,16 +42,19 @@ public class CraftRequestPacket implements CustomPacketPayload {
     }
 
     private static void write(RegistryFriendlyByteBuf buf, CraftRequestPacket msg) {
-        ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, msg.target);
-        buf.writeVarInt(msg.quantity);
-        buf.writeUtf(msg.destinationId);
-        buf.writeVarInt(msg.overrides.size());
-        for (Map.Entry<ItemKey, ResourceLocation> entry : msg.overrides.entrySet()) {
+        ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, msg.target());
+        buf.writeVarInt(msg.quantity());
+        buf.writeUtf(msg.destinationId());
+        buf.writeBoolean(msg.preview());
+        List<Map.Entry<ItemKey, ResourceLocation>> overrides = msg.overrides().entrySet().stream().limit(MAX_OVERRIDES).toList();
+        buf.writeVarInt(overrides.size());
+        for (Map.Entry<ItemKey, ResourceLocation> entry : overrides) {
             ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, entry.getKey().toStack(1));
             buf.writeResourceLocation(entry.getValue());
         }
-        buf.writeVarInt(msg.ingredientChoices.size());
-        for (Map.Entry<String, Item> entry : msg.ingredientChoices.entrySet()) {
+        List<Map.Entry<String, Item>> choices = msg.ingredientChoices().entrySet().stream().limit(MAX_OVERRIDES).toList();
+        buf.writeVarInt(choices.size());
+        for (Map.Entry<String, Item> entry : choices) {
             buf.writeUtf(entry.getKey());
             buf.writeResourceLocation(itemId(entry.getValue()));
         }
@@ -70,6 +64,7 @@ public class CraftRequestPacket implements CustomPacketPayload {
         ItemStack target = ItemStack.OPTIONAL_STREAM_CODEC.decode(buf);
         int quantity = buf.readVarInt();
         String destinationId = buf.readUtf();
+        boolean preview = buf.readBoolean();
         int count = Math.min(MAX_OVERRIDES, buf.readVarInt());
         Map<ItemKey, ResourceLocation> overrides = new HashMap<>();
         for (int i = 0; i < count; i++) {
@@ -84,7 +79,7 @@ public class CraftRequestPacket implements CustomPacketPayload {
             Item item = BuiltInRegistries.ITEM.getOptional(buf.readResourceLocation()).orElse(null);
             if (item != null) ingredientChoices.put(signature, item);
         }
-        return new CraftRequestPacket(target, quantity, overrides, ingredientChoices, destinationId);
+        return new CraftRequestPacket(target, quantity, overrides, ingredientChoices, destinationId, preview);
     }
 
     private static ResourceLocation itemId(Item item) {
@@ -93,102 +88,32 @@ public class CraftRequestPacket implements CustomPacketPayload {
     }
 
     public static void handle(CraftRequestPacket msg, IPayloadContext ctx) {
-        if (!(ctx.player() instanceof ServerPlayer player) || msg.target.isEmpty()) return;
+        if (!(ctx.player() instanceof ServerPlayer player) || msg.target().isEmpty()) return;
+        if (msg.preview()) {
+            preview(player, msg);
+            return;
+        }
         CraftSummary summary;
         try {
-            summary = CraftService.execute(player, msg.target, msg.quantity, msg.overrides,
-                    msg.ingredientChoices, msg.destinationId);
+            summary = CraftService.execute(player, msg.target(), msg.quantity(), msg.overrides(),
+                    msg.ingredientChoices(), msg.destinationId());
         } catch (Throwable t) {
-            QuickCraftCommon.LOGGER.error("Quick Craft craft failed for {}", msg.target, t);
+            QuickCraftCommon.LOGGER.error("Quick Craft craft failed for {}", msg.target(), t);
             player.displayClientMessage(Component.literal("Quick Craft: crafting failed with an error, check the game log")
                     .withStyle(ChatFormatting.RED), false);
             return;
         }
-        player.displayClientMessage(feedback(summary, msg.target), false);
+        player.displayClientMessage(CraftFeedback.of(summary, msg.target()), false);
     }
 
-    private static Component feedback(CraftSummary summary, ItemStack target) {
-        Component name = target.getHoverName();
-        if (summary.aborted()) {
-            return Component.literal("Quick Craft: could not pull " + summary.blockedCount() + "x ")
-                    .append(summary.blocked().getHoverName())
-                    .append(Component.literal(" out of storage, nothing was crafted")).withStyle(ChatFormatting.RED);
+    private static void preview(ServerPlayer player, CraftRequestPacket msg) {
+        CraftPreview.Result result;
+        try {
+            result = CraftService.preview(player, msg.target(), msg.quantity(), msg.overrides(), msg.ingredientChoices());
+        } catch (Throwable t) {
+            QuickCraftCommon.LOGGER.error("Quick Craft preview failed for {}", msg.target(), t);
+            result = new CraftPreview.Result(0, Math.max(1, msg.quantity()), List.of());
         }
-        if (summary.full()) {
-            MutableComponent msg = Component.literal("Quick Craft: crafted " + summary.crafted() + "x ")
-                    .append(name).withStyle(ChatFormatting.GREEN);
-            return appendPlacements(msg, summary);
-        }
-        if (summary.partial()) {
-            MutableComponent msg = Component.literal("Quick Craft: crafted " + summary.crafted() + "/" + requestedLabel(summary.requested()) + " ")
-                    .append(name).append(Component.literal(" - ran out of materials" + limitHint(summary))).withStyle(ChatFormatting.YELLOW);
-            return appendBlockers(appendPlacements(msg, summary), summary);
-        }
-        if (summary.missingStation() != null) {
-            return Component.literal("Quick Craft: needs a " + summary.missingStation() + " nearby to craft ")
-                    .append(name).withStyle(ChatFormatting.RED);
-        }
-        MutableComponent msg = Component.literal("Quick Craft: not enough materials to craft ")
-                .append(name).append(Component.literal(limitHint(summary))).withStyle(ChatFormatting.RED);
-        return appendBlockers(msg, summary);
-    }
-
-    private static MutableComponent appendBlockers(MutableComponent msg, CraftSummary summary) {
-        List<CraftPlanner.Blocker> blockers = summary.blockers();
-        if (blockers.isEmpty()) return msg;
-        MutableComponent tail = Component.literal(" - missing: ");
-        int shown = Math.min(3, blockers.size());
-        for (int i = 0; i < shown; i++) {
-            CraftPlanner.Blocker blocker = blockers.get(i);
-            if (i > 0) tail.append(Component.literal(", "));
-            tail.append(Component.literal(blocker.missing() + "x ")).append(blocker.key().toStack(1).getHoverName())
-                    .append(Component.literal(reasonLabel(blocker.reason())));
-        }
-        if (blockers.size() > shown) tail.append(Component.literal(", +" + (blockers.size() - shown) + " more"));
-        return msg.append(tail.withStyle(ChatFormatting.GRAY));
-    }
-
-    private static String reasonLabel(CraftPlanner.Reason reason) {
-        return switch (reason) {
-            case NOT_LEARNED -> " (not learned)";
-            case NOT_ENOUGH_EMC -> " (not enough EMC)";
-            case CATALYST -> " (catalyst)";
-            case STATION -> " (needs a station)";
-            case TREE_LIMIT -> " (tree limit)";
-            case LOOP -> " (loop)";
-            case MANUAL -> " (supplied by you)";
-            default -> "";
-        };
-    }
-
-    private static String limitHint(CraftSummary summary) {
-        return summary.treeLimited() ? " (recipe tree hit the maxTreeNodes limit, raise it in the config)" : "";
-    }
-
-    private static MutableComponent appendPlacements(MutableComponent msg, CraftSummary summary) {
-        List<CraftSummary.Placement> placements = summary.placements();
-        if (placements.isEmpty() && summary.dropped() <= 0 && summary.byproducts() <= 0) return msg;
-        StringBuilder sb = new StringBuilder(" → ");
-        boolean first = true;
-        for (CraftSummary.Placement placement : placements) {
-            if (!first) sb.append(", ");
-            sb.append(placement.count()).append(" to ").append(placement.where());
-            first = false;
-        }
-        if (summary.dropped() > 0) {
-            if (!first) sb.append(", ");
-            sb.append(summary.dropped()).append(" dropped at your feet");
-            first = false;
-        }
-        if (summary.byproducts() > 0) {
-            if (!first) sb.append(", ");
-            sb.append("+").append(summary.byproducts())
-                    .append(summary.byproducts() == 1 ? " leftover item" : " leftover items");
-        }
-        return msg.append(Component.literal(sb.toString()).withStyle(ChatFormatting.GRAY));
-    }
-
-    private static String requestedLabel(int requested) {
-        return requested >= 1_000_000 ? "Max" : requested + "x";
+        QuickCraftNetwork.sendCraftPreview(player, result);
     }
 }

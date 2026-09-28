@@ -11,23 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class DepositTargetsResponsePacket {
+public record DepositTargetsResponsePacket(List<ClientDepositTargets.Target> entries) {
     private static final int MAX_ENTRIES = 4096;
 
-    public record Entry(String id, String label, ItemStack icon, int freeSlots, int totalSlots) {
-    }
-
-    private final List<Entry> entries;
-
-    public DepositTargetsResponsePacket(List<Entry> entries) {
-        this.entries = entries;
-    }
-
     public static void encode(DepositTargetsResponsePacket msg, FriendlyByteBuf buf) {
-        int n = Math.min(MAX_ENTRIES, msg.entries.size());
+        int n = Math.min(MAX_ENTRIES, msg.entries().size());
         buf.writeVarInt(n);
         for (int i = 0; i < n; i++) {
-            Entry e = msg.entries.get(i);
+            ClientDepositTargets.Target e = msg.entries().get(i);
             buf.writeUtf(e.id());
             buf.writeUtf(e.label());
             buf.writeItem(e.icon());
@@ -38,14 +29,14 @@ public class DepositTargetsResponsePacket {
 
     public static DepositTargetsResponsePacket decode(FriendlyByteBuf buf) {
         int n = Math.min(MAX_ENTRIES, buf.readVarInt());
-        List<Entry> entries = new ArrayList<>(n);
+        List<ClientDepositTargets.Target> entries = new ArrayList<>(n);
         for (int i = 0; i < n; i++) {
             String id = buf.readUtf();
             String label = buf.readUtf();
             ItemStack icon = buf.readItem();
             int freeSlots = buf.readInt();
             int totalSlots = buf.readInt();
-            entries.add(new Entry(id, label, icon, freeSlots, totalSlots));
+            entries.add(new ClientDepositTargets.Target(id, label, icon, freeSlots, totalSlots));
         }
         return new DepositTargetsResponsePacket(entries);
     }
@@ -53,7 +44,7 @@ public class DepositTargetsResponsePacket {
     public static void handle(DepositTargetsResponsePacket msg, Supplier<NetworkEvent.Context> ctx) {
         NetworkEvent.Context context = ctx.get();
         context.enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
-                () -> () -> ClientDepositTargets.accept(msg.entries)));
+                () -> () -> ClientDepositTargets.accept(msg.entries())));
         context.setPacketHandled(true);
     }
 }

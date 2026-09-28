@@ -6,7 +6,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CraftingRecipeOption implements RecipeOption {
@@ -19,10 +18,7 @@ public class CraftingRecipeOption implements RecipeOption {
         this.id = id;
         this.recipe = recipe;
         this.result = recipe.getResultItem(access);
-        this.inputs = new ArrayList<>();
-        for (Ingredient ingredient : recipe.getIngredients()) {
-            if (!ingredient.isEmpty()) inputs.add(ingredient);
-        }
+        this.inputs = RecipeResolver.nonEmptyInputs(recipe);
     }
 
     @Override

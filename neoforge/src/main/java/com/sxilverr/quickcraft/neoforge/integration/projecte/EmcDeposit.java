@@ -1,6 +1,7 @@
 package com.sxilverr.quickcraft.neoforge.integration.projecte;
 
-import com.sxilverr.quickcraft.neoforge.QuickCraftConfig;
+import com.sxilverr.quickcraft.integration.projecte.ProjectEIntegration;
+import com.sxilverr.quickcraft.config.QuickCraftConfig;
 import com.sxilverr.quickcraft.storage.ItemSource;
 import com.sxilverr.quickcraft.storage.LabeledSource;
 import net.minecraft.core.BlockPos;
@@ -10,7 +11,6 @@ import net.minecraft.world.level.block.Block;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public final class EmcDeposit {
     public static final String TABLET_ID = "emc:tablet";
@@ -31,11 +31,6 @@ public final class EmcDeposit {
         public ItemStack insert(ItemStack stack, boolean simulate) {
             return stack;
         }
-
-        @Override
-        public Optional<ItemStack> sourceIconFor(ItemStack representative) {
-            return Optional.empty();
-        }
     };
 
     private EmcDeposit() {
@@ -51,8 +46,7 @@ public final class EmcDeposit {
 
         ItemStack tablet = ProjectEIntegration.findTablet(player);
         if (!tablet.isEmpty()) {
-            ItemStack icon = tablet.copy();
-            icon.setCount(1);
+            ItemStack icon = tablet.copyWithCount(1);
             out.add(new LabeledSource(TABLET_ID, icon.getHoverName().getString(), icon, null, SINK, true));
         }
 

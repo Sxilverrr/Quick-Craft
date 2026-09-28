@@ -20,29 +20,24 @@ public final class RecipeEntries {
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T> List<Entry<T>> of(RecipeManager manager, RecipeType<?> type) {
         List<Entry<T>> out = new ArrayList<>();
-        for (Object entry : manager.getAllRecipesFor((RecipeType) type)) {
-            //? if >=1.20.2 {
-            /*RecipeHolder holder = (RecipeHolder) entry;
-            out.add(new Entry<>(holder.id(), (T) holder.value()));
-            *///?} else {
-            Recipe recipe = (Recipe) entry;
-            out.add(new Entry<>(recipe.getId(), (T) recipe));
-            //?}
-        }
+        for (Object entry : manager.getAllRecipesFor((RecipeType) type)) out.add(entry(entry));
         return out;
     }
 
     public static List<Entry<Recipe<?>>> all(RecipeManager manager) {
         List<Entry<Recipe<?>>> out = new ArrayList<>();
-        for (Object entry : manager.getRecipes()) {
-            //? if >=1.20.2 {
-            /*RecipeHolder<?> holder = (RecipeHolder<?>) entry;
-            out.add(new Entry<>(holder.id(), holder.value()));
-            *///?} else {
-            Recipe<?> recipe = (Recipe<?>) entry;
-            out.add(new Entry<>(recipe.getId(), recipe));
-            //?}
-        }
+        for (Object entry : manager.getRecipes()) out.add(entry(entry));
         return out;
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static <T> Entry<T> entry(Object entry) {
+        //? if >=1.20.2 {
+        /*RecipeHolder holder = (RecipeHolder) entry;
+        return new Entry<>(holder.id(), (T) holder.value());
+        *///?} else {
+        Recipe recipe = (Recipe) entry;
+        return new Entry<>(recipe.getId(), (T) recipe);
+        //?}
     }
 }

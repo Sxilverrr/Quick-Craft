@@ -1,8 +1,8 @@
 package com.sxilverr.quickcraft.forge;
 
-import com.sxilverr.quickcraft.forge.QuickCraftClientConfig;
+import com.sxilverr.quickcraft.config.QuickCraftClientConfig;
 import com.sxilverr.quickcraft.QuickCraftCommon;
-import com.sxilverr.quickcraft.forge.QuickCraftConfig;
+import com.sxilverr.quickcraft.config.QuickCraftConfig;
 import com.sxilverr.quickcraft.crafting.ServerRecipeCache;
 import com.sxilverr.quickcraft.network.QuickCraftNetwork;
 import net.minecraftforge.common.MinecraftForge;
@@ -15,8 +15,12 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 public class QuickCraftForge {
 
     public QuickCraftForge(FMLJavaModLoadingContext context) {
-        context.registerConfig(ModConfig.Type.COMMON, QuickCraftConfig.SPEC);
-        context.registerConfig(ModConfig.Type.CLIENT, QuickCraftClientConfig.SPEC);
+        ForgeConfigBuilder common = new ForgeConfigBuilder();
+        QuickCraftConfig.define(common);
+        context.registerConfig(ModConfig.Type.COMMON, common.build());
+        ForgeConfigBuilder client = new ForgeConfigBuilder();
+        QuickCraftClientConfig.define(client);
+        context.registerConfig(ModConfig.Type.CLIENT, client.build());
         QuickCraftNetwork.register();
         MinecraftForge.EVENT_BUS.addListener(QuickCraftForge::onServerStopped);
     }

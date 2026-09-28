@@ -10,33 +10,23 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class AvailabilityResponsePacket {
+public record AvailabilityResponsePacket(Map<ItemKey, Integer> counts, Map<ItemKey, ItemStack> sources,
+                                         Map<ItemKey, ItemStack> samples, Stations stations) {
     private static final int MAX_ENTRIES = 65536;
 
-    private final Map<ItemKey, Integer> counts;
-    private final Map<ItemKey, ItemStack> sources;
-    private final Map<ItemKey, ItemStack> samples;
-    private final Stations stations;
-
-    public AvailabilityResponsePacket(Map<ItemKey, Integer> counts, Map<ItemKey, ItemStack> sources,
-                                      Map<ItemKey, ItemStack> samples, Stations stations) {
-        this.counts = counts;
-        this.sources = sources;
-        this.samples = samples;
-        this.stations = stations;
-    }
-
     public static void encode(AvailabilityResponsePacket msg, FriendlyByteBuf buf) {
-        buf.writeVarInt(msg.counts.size());
-        for (Map.Entry<ItemKey, Integer> entry : msg.counts.entrySet()) {
-            buf.writeItem(msg.samples.getOrDefault(entry.getKey(), entry.getKey().toStack(1)));
+        List<Map.Entry<ItemKey, Integer>> counts = msg.counts().entrySet().stream().limit(MAX_ENTRIES).toList();
+        buf.writeVarInt(counts.size());
+        for (Map.Entry<ItemKey, Integer> entry : counts) {
+            buf.writeItem(msg.samples().getOrDefault(entry.getKey(), entry.getKey().toStack(1)));
             buf.writeVarInt(entry.getValue());
-            buf.writeItem(msg.sources.getOrDefault(entry.getKey(), ItemStack.EMPTY));
+            buf.writeItem(msg.sources().getOrDefault(entry.getKey(), ItemStack.EMPTY));
         }
-        msg.stations.write(buf);
+        msg.stations().write(buf);
     }
 
     public static AvailabilityResponsePacket decode(FriendlyByteBuf buf) {
@@ -61,7 +51,7 @@ public class AvailabilityResponsePacket {
     public static void handle(AvailabilityResponsePacket msg, Supplier<NetworkEvent.Context> ctx) {
         NetworkEvent.Context context = ctx.get();
         context.enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
-                () -> () -> ClientNetworkHandler.onAvailability(msg.counts, msg.sources, msg.samples, msg.stations)));
+                () -> () -> ClientNetworkHandler.onAvailability(msg.counts(), msg.sources(), msg.samples(), msg.stations())));
         context.setPacketHandled(true);
     }
 }

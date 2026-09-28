@@ -1,14 +1,14 @@
 modLoader = "javafml"
 loaderVersion = "*"
 license = "MIT"
-issueTrackerURL = "https://www.curseforge.com/minecraft/mc-mods/quick-craft"
+issueTrackerURL = "https://github.com/Sxilverrr/Quick-Craft/issues"
 
 [[mods]]
 modId = "${id}"
 version = "${version}"
 displayName = "${name}"
 displayURL = "https://www.curseforge.com/minecraft/mc-mods/quick-craft"
-logoFile = "icon.png"
+logoFile = "logo.png"
 authors = "Sxilverr"
 description = '''Effortless instant autocrafting. Microcrafting is a thing of the past!'''
 

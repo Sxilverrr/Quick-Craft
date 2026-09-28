@@ -124,8 +124,7 @@ public final class Rs2ItemSource implements ItemSource {
                 simulate ? Action.SIMULATE : Action.EXECUTE, actor);
         int remaining = stack.getCount() - (int) Math.min(inserted, stack.getCount());
         if (remaining <= 0) return ItemStack.EMPTY;
-        ItemStack rem = stack.copy();
-        rem.setCount(remaining);
+        ItemStack rem = stack.copyWithCount(remaining);
         return rem;
     }
 }

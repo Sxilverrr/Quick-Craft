@@ -15,10 +15,41 @@ public final class CraftExecutor {
 
     public static void simulate(CraftNode root, VirtualPool pool) {
         ItemKey rootKey = ItemKey.of(root.output);
-        int goal = clamp((long) pool.count(rootKey) + root.requiredCount);
-        for (int pass = 0; pass < MAX_PASSES && pool.count(rootKey) < goal; pass++) {
-            if (ensure(root, goal, pool) == 0) break;
+        int want = root.requiredCount;
+        VirtualPool best = attempt(root, pool, rootKey, want);
+        if (best == null) {
+            int lo = 0;
+            int hi = want;
+            for (int k = 1; k < want; k = (int) Math.min(want, 2L * k)) {
+                VirtualPool trial = attempt(root, pool, rootKey, k);
+                if (trial == null) {
+                    hi = k;
+                    break;
+                }
+                best = trial;
+                lo = k;
+            }
+            while (hi - lo > 1) {
+                int mid = lo + (hi - lo) / 2;
+                VirtualPool trial = attempt(root, pool, rootKey, mid);
+                if (trial == null) {
+                    hi = mid;
+                } else {
+                    best = trial;
+                    lo = mid;
+                }
+            }
         }
+        if (best != null) pool.restore(best);
+    }
+
+    private static VirtualPool attempt(CraftNode root, VirtualPool pool, ItemKey rootKey, int amount) {
+        VirtualPool trial = pool.copy();
+        int goal = clamp((long) trial.count(rootKey) + amount);
+        for (int pass = 0; pass < MAX_PASSES && trial.count(rootKey) < goal; pass++) {
+            if (ensure(root, goal, trial) == 0) break;
+        }
+        return trial.count(rootKey) >= goal ? trial : null;
     }
 
     private static int ensure(CraftNode node, int need, VirtualPool pool) {

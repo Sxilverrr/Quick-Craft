@@ -37,10 +37,7 @@ public final class DamageMatch {
     }
 
     private static boolean holds(List<ItemStack> stacks, ItemStack candidate) {
-        for (ItemStack stack : stacks) {
-            if (sameVariant(stack, candidate)) return true;
-        }
-        return false;
+        return stacks.stream().anyMatch(stack -> sameVariant(stack, candidate));
     }
 
     private static boolean sameVariant(ItemStack a, ItemStack b) {

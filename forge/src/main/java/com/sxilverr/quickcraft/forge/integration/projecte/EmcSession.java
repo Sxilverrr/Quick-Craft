@@ -1,9 +1,10 @@
 package com.sxilverr.quickcraft.forge.integration.projecte;
 
+import com.sxilverr.quickcraft.integration.projecte.ProjectEIntegration;
 import com.sxilverr.quickcraft.craft.EmcBank;
 import com.sxilverr.quickcraft.craft.EmcSource;
 import com.sxilverr.quickcraft.crafting.ItemKey;
-import com.sxilverr.quickcraft.forge.QuickCraftConfig;
+import com.sxilverr.quickcraft.config.QuickCraftConfig;
 import moze_intel.projecte.api.ItemInfo;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.capabilities.PECapabilities;
@@ -104,10 +105,6 @@ public final class EmcSession implements EmcSource {
         }
     }
 
-    public boolean emcable(ItemStack stack) {
-        return value(stack) > 0L;
-    }
-
     public Map<ItemKey, Long> values(Set<ItemKey> keys) {
         Map<ItemKey, Long> values = new HashMap<>();
         for (ItemKey key : keys) {
@@ -117,10 +114,6 @@ public final class EmcSession implements EmcSource {
             if (v > 0L) values.put(key, v);
         }
         return values;
-    }
-
-    public EmcBank bank(Set<ItemKey> keys) {
-        return new EmcBank(values(keys), emc());
     }
 
     public EmcBank bank(Set<ItemKey> keys, BigInteger budget) {

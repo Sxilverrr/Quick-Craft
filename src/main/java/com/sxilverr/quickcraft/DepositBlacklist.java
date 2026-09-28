@@ -1,5 +1,6 @@
 package com.sxilverr.quickcraft;
 
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -51,17 +52,15 @@ public final class DepositBlacklist {
     }
 
     public boolean matches(Block block) {
-        if (block == null) return false;
-        if (matchesId(BuiltInRegistries.BLOCK.getKey(block))) return true;
-        if (!hasTags()) return false;
-        return block.builtInRegistryHolder().tags().anyMatch(this::matchesTag);
+        return block != null && matches(BuiltInRegistries.BLOCK.getKey(block), block.builtInRegistryHolder());
     }
 
     public boolean matches(Item item) {
-        if (item == null) return false;
-        if (matchesId(BuiltInRegistries.ITEM.getKey(item))) return true;
-        if (!hasTags()) return false;
-        return item.builtInRegistryHolder().tags().anyMatch(this::matchesTag);
+        return item != null && matches(BuiltInRegistries.ITEM.getKey(item), item.builtInRegistryHolder());
+    }
+
+    private boolean matches(ResourceLocation id, Holder<?> holder) {
+        return matchesId(id) || (hasTags() && holder.tags().anyMatch(this::matchesTag));
     }
 
     private boolean hasTags() {

@@ -44,7 +44,7 @@ final class JerMobIndex {
             if (lines.isEmpty()) continue;
             MobDropInfo info = new MobDropInfo(id, entry.getMobName(), biomes, light, exp, lines);
             for (DropLine line : lines) {
-                map.computeIfAbsent(line.item.getItem(), k -> new ArrayList<>()).add(new MobItemSource(info, line));
+                map.computeIfAbsent(line.item().getItem(), k -> new ArrayList<>()).add(new MobItemSource(info, line));
             }
         }
         return map;

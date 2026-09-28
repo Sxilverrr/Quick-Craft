@@ -35,8 +35,4 @@ public record CraftSummary(int crafted, int requested, String missingStation,
     public boolean partial() {
         return crafted > 0 && crafted < requested;
     }
-
-    public boolean nothing() {
-        return crafted <= 0;
-    }
 }

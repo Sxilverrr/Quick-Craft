@@ -1,5 +1,6 @@
 package com.sxilverr.quickcraft.forge.storage;
 
+import com.sxilverr.quickcraft.platform.Services;
 import com.sxilverr.quickcraft.storage.ItemSource;
 import com.sxilverr.quickcraft.storage.LabeledSource;
 import com.refinedmods.refinedstorage.api.network.INetwork;
@@ -17,7 +18,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
@@ -63,7 +63,7 @@ public final class RsItemSource implements ItemSource {
         for (int i = 0; i < inv.getContainerSize(); i++) {
             ItemStack stack = inv.getItem(i);
             if (stack.isEmpty() || !(stack.getItem() instanceof NetworkItem netItem)) continue;
-            if (!hasPower(stack)) continue;
+            if (!Services.STATIONS.hasEnergy(stack)) continue;
             ItemStack wirelessIcon = stack.copy();
             int slot = i;
             try {
@@ -115,10 +115,6 @@ public final class RsItemSource implements ItemSource {
     private static ItemStack diskDriveIcon() {
         Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation("refinedstorage", "disk_drive"));
         return item == null ? ItemStack.EMPTY : new ItemStack(item);
-    }
-
-    private static boolean hasPower(ItemStack stack) {
-        return stack.getCapability(ForgeCapabilities.ENERGY).map(energy -> energy.getEnergyStored() > 0).orElse(true);
     }
 
     @Override

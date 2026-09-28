@@ -11,12 +11,14 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 public final class StationRules {
     public enum Kind {
@@ -147,17 +149,12 @@ public final class StationRules {
     }
 
     private static List<String> colouredStuffTables() {
-        List<String> ids = new ArrayList<>();
-        ids.add("colouredstuff:crafting_table_none");
-        for (DyeColor color : DyeColor.values()) ids.add("colouredstuff:crafting_table_" + color.getName());
-        ids.add("colouredstuff:crafting_table_rainbow");
-        return List.copyOf(ids);
+        Stream<String> names = Stream.concat(Stream.of("none"), Arrays.stream(DyeColor.values()).map(DyeColor::getName));
+        return Stream.concat(names, Stream.of("rainbow")).map(name -> "colouredstuff:crafting_table_" + name).toList();
     }
 
     private static List<String> bblColorsTables() {
-        List<String> ids = new ArrayList<>();
-        for (DyeColor color : DyeColor.values()) ids.add("colors:" + color.getName() + "_crafting_table");
-        return List.copyOf(ids);
+        return Arrays.stream(DyeColor.values()).map(color -> "colors:" + color.getName() + "_crafting_table").toList();
     }
 
     public static int rank(Rule rule) {

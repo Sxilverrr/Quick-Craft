@@ -13,7 +13,9 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CraftPreviewResponsePacket implements CustomPacketPayload {
+public record CraftPreviewResponsePacket(int craftable, int requested, List<CraftPreview.Gain> gained,
+                                         List<CraftPlanner.Blocker> blockers)
+        implements CustomPacketPayload {
     private static final int MAX_ENTRIES = 65536;
 
     public static final Type<CraftPreviewResponsePacket> TYPE = new Type<>(QuickCraftNetwork.id("craft_preview_response"));
@@ -21,34 +23,21 @@ public class CraftPreviewResponsePacket implements CustomPacketPayload {
     public static final StreamCodec<RegistryFriendlyByteBuf, CraftPreviewResponsePacket> STREAM_CODEC =
             StreamCodec.of(CraftPreviewResponsePacket::write, CraftPreviewResponsePacket::read);
 
-    private final int craftable;
-    private final int requested;
-    private final List<CraftPreview.Gain> gained;
-    private final List<CraftPlanner.Blocker> blockers;
-
-    public CraftPreviewResponsePacket(int craftable, int requested, List<CraftPreview.Gain> gained,
-                                      List<CraftPlanner.Blocker> blockers) {
-        this.craftable = craftable;
-        this.requested = requested;
-        this.gained = gained;
-        this.blockers = blockers;
-    }
-
     @Override
     public Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 
     private static void write(RegistryFriendlyByteBuf buf, CraftPreviewResponsePacket msg) {
-        buf.writeVarInt(msg.craftable);
-        buf.writeVarInt(msg.requested);
-        buf.writeVarInt(msg.gained.size());
-        for (CraftPreview.Gain gain : msg.gained) {
+        buf.writeVarInt(msg.craftable());
+        buf.writeVarInt(msg.requested());
+        buf.writeVarInt(msg.gained().size());
+        for (CraftPreview.Gain gain : msg.gained()) {
             ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, gain.key().toStack(1));
             buf.writeVarInt(gain.count());
         }
-        buf.writeVarInt(msg.blockers.size());
-        for (CraftPlanner.Blocker blocker : msg.blockers) {
+        buf.writeVarInt(msg.blockers().size());
+        for (CraftPlanner.Blocker blocker : msg.blockers()) {
             ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, blocker.key().toStack(1));
             buf.writeVarInt(blocker.missing());
             buf.writeVarInt(blocker.reason().ordinal());
@@ -79,6 +68,6 @@ public class CraftPreviewResponsePacket implements CustomPacketPayload {
     }
 
     public static void handle(CraftPreviewResponsePacket msg, IPayloadContext ctx) {
-        ClientNetworkHandler.onCraftPreview(msg.craftable, msg.requested, msg.gained, msg.blockers);
+        ClientNetworkHandler.onCraftPreview(msg.craftable(), msg.requested(), msg.gained(), msg.blockers());
     }
 }

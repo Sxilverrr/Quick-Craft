@@ -16,8 +16,8 @@ public final class TaczRecipes {
     private TaczRecipes() {
     }
 
-    public static List<ModdedRecipeOption> collect() {
-        List<ModdedRecipeOption> out = new ArrayList<>();
+    public static List<StationRecipeOption> collect() {
+        List<StationRecipeOption> out = new ArrayList<>();
         //? if >=1.20.5 {
         /*return out;
         *///?} else {
@@ -42,7 +42,7 @@ public final class TaczRecipes {
     }
 
     //? if <1.20.5 {
-    private static void addRecipe(Object recipe, List<ModdedRecipeOption> out) {
+    private static void addRecipe(Object recipe, List<StationRecipeOption> out) {
         try {
             try {
                 recipe.getClass().getMethod("init").invoke(recipe);
@@ -62,7 +62,7 @@ public final class TaczRecipes {
             }
             if (ingredients.isEmpty()) return;
             ResourceLocation id = ((Recipe<?>) recipe).getId();
-            out.add(new ModdedRecipeOption(id, result.copy(), ingredients, stationFor(result)));
+            out.add(new StationRecipeOption(id, result.copy(), ingredients, stationFor(result)));
         } catch (Throwable ignored) {
         }
     }

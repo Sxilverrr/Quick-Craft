@@ -12,8 +12,6 @@ val common: Project = requireNotNull(stonecutter.node.sibling("")?.project) {
     "No common project for $project"
 }
 
-val jeiVersion = "15.20.0.112"
-
 version = "${mod.version}-$minecraft-$loader"
 base {
     archivesName.set(mod.id)
@@ -41,8 +39,6 @@ configurations {
 
 repositories {
     maven("https://maven.minecraftforge.net")
-    maven("https://maven.blamejared.com")
-    maven("https://modmaven.dev")
     maven("https://cursemaven.com") { name = "CurseMaven" }
     strictMaven("https://api.modrinth.com/maven", "Modrinth", "maven.modrinth")
     strictMaven("https://maven.theillusivec4.top", "Curios", "top.theillusivec4.curios")
@@ -103,7 +99,7 @@ tasks.remapJar {
 tasks.shadowJar {
     configurations = listOf(shadowBundle)
     archiveClassifier = "dev-shadow"
-    exclude("fabric.mod.json", "architectury.common.json")
+    exclude("architectury.common.json")
 }
 
 tasks.processResources {

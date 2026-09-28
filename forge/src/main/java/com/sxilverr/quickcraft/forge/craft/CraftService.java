@@ -6,7 +6,7 @@ import com.sxilverr.quickcraft.craft.CraftSummary;
 import com.sxilverr.quickcraft.craft.Deposit;
 import com.sxilverr.quickcraft.craft.EmcBank;
 import com.sxilverr.quickcraft.craft.VirtualPool;
-import com.sxilverr.quickcraft.forge.QuickCraftConfig;
+import com.sxilverr.quickcraft.config.QuickCraftConfig;
 import com.sxilverr.quickcraft.crafting.Availability;
 import com.sxilverr.quickcraft.crafting.CraftTrees;
 import com.sxilverr.quickcraft.crafting.ItemKey;
@@ -18,7 +18,7 @@ import com.sxilverr.quickcraft.crafting.Stations;
 import com.sxilverr.quickcraft.crafting.TreeBuilder;
 import com.sxilverr.quickcraft.forge.integration.projecte.EmcDeposit;
 import com.sxilverr.quickcraft.forge.integration.projecte.EmcSession;
-import com.sxilverr.quickcraft.forge.integration.projecte.ProjectEIntegration;
+import com.sxilverr.quickcraft.integration.projecte.ProjectEIntegration;
 import com.sxilverr.quickcraft.storage.CompositeItemSource;
 import com.sxilverr.quickcraft.storage.DamageMatch;
 import com.sxilverr.quickcraft.storage.ItemSource;
@@ -43,8 +43,6 @@ import java.util.Map;
 import java.util.Set;
 
 public final class CraftService {
-    private static final int MAX_QUANTITY = 1000000;
-    private static final int INVENTORY_SLOTS = 36;
     private static final int MAX_COMMIT_ATTEMPTS = 8;
 
     private record Shortfall(ItemKey key, int wanted, int got) {
@@ -57,7 +55,7 @@ public final class CraftService {
                                        Map<ItemKey, ResourceLocation> overrides, Map<String, Item> ingredientChoices,
                                        String destinationId) {
         if (target.isEmpty()) return CraftSummary.empty();
-        int qty = Math.max(1, Math.min(MAX_QUANTITY, quantity));
+        int qty = Math.max(1, Math.min(CraftPlanner.MAX_QUANTITY, quantity));
 
         List<LabeledSource> labeled = ItemSourceFactory.scan(player, QuickCraftConfig.containerScanRange());
         Deposit deposit = Deposit.to(labeled, destinationId, player);
@@ -66,7 +64,7 @@ public final class CraftService {
         }
 
         if (QuickCraftConfig.creativeBypass() && player.getAbilities().instabuild) {
-            int given = creativeQuantity(target, qty);
+            int given = CraftPlanner.creativeQuantity(target, qty);
             deposit.put(ItemKey.of(target), given, true);
             playCraftSound(player);
             return new CraftSummary(given, given, null, deposit.placements(), deposit.dropped(), deposit.byproducts());
@@ -105,11 +103,11 @@ public final class CraftService {
 
     public static CraftPreview.Result preview(ServerPlayer player, ItemStack target, int quantity,
                                               Map<ItemKey, ResourceLocation> overrides, Map<String, Item> ingredientChoices) {
-        int qty = Math.max(1, Math.min(MAX_QUANTITY, quantity));
+        int qty = Math.max(1, Math.min(CraftPlanner.MAX_QUANTITY, quantity));
         if (target.isEmpty()) return new CraftPreview.Result(0, qty, List.of());
 
         if (QuickCraftConfig.creativeBypass() && player.getAbilities().instabuild) {
-            int given = creativeQuantity(target, qty);
+            int given = CraftPlanner.creativeQuantity(target, qty);
             return new CraftPreview.Result(given, given, List.of(new CraftPreview.Gain(ItemKey.of(target), given)));
         }
 
@@ -126,10 +124,6 @@ public final class CraftService {
         RecipeResolver resolver = ServerRecipeCache.get(level.getRecipeManager(), level.registryAccess());
         return new TreeBuilder(resolver, QuickCraftConfig.preferredItems(),
                 QuickCraftConfig.maxTreeDepth(), QuickCraftConfig.maxTreeNodes());
-    }
-
-    private static int creativeQuantity(ItemStack target, int requested) {
-        return Math.min(requested, Math.max(1, target.getMaxStackSize()) * INVENTORY_SLOTS);
     }
 
     private static EmcSession openEmcSession(ServerPlayer player) {
@@ -258,8 +252,7 @@ public final class CraftService {
                 int left = stack.getCount();
                 while (left > 0) {
                     int n = Math.min(left, max);
-                    ItemStack chunk = stack.copy();
-                    chunk.setCount(n);
+                    ItemStack chunk = stack.copyWithCount(n);
                     ItemStack remainder = entry.getKey().insert(chunk, false);
                     if (!remainder.isEmpty()) remainder = fallback.insert(remainder, false);
                     if (!remainder.isEmpty()) player.drop(remainder, false);

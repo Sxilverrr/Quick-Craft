@@ -1,6 +1,7 @@
 package com.sxilverr.quickcraft.network;
 
 import com.sxilverr.quickcraft.QuickCraftCommon;
+import com.sxilverr.quickcraft.client.ClientDepositTargets;
 import com.sxilverr.quickcraft.craft.CraftPreview;
 import com.sxilverr.quickcraft.crafting.ItemKey;
 import com.sxilverr.quickcraft.crafting.Stations;
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 public final class QuickCraftNetwork {
-    private static final String PROTOCOL = "1";
+    private static final String PROTOCOL = "2";
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(QuickCraftCommon.MODID, "main"),
@@ -40,20 +41,18 @@ public final class QuickCraftNetwork {
                 DepositTargetsRequestPacket::encode, DepositTargetsRequestPacket::decode, DepositTargetsRequestPacket::handle);
         CHANNEL.registerMessage(id++, DepositTargetsResponsePacket.class,
                 DepositTargetsResponsePacket::encode, DepositTargetsResponsePacket::decode, DepositTargetsResponsePacket::handle);
-        CHANNEL.registerMessage(id++, CraftPreviewRequestPacket.class,
-                CraftPreviewRequestPacket::encode, CraftPreviewRequestPacket::decode, CraftPreviewRequestPacket::handle);
         CHANNEL.registerMessage(id++, CraftPreviewResponsePacket.class,
                 CraftPreviewResponsePacket::encode, CraftPreviewResponsePacket::decode, CraftPreviewResponsePacket::handle);
     }
 
     public static void sendCraftRequest(ItemStack target, int quantity, Map<ItemKey, ResourceLocation> overrides,
                                         Map<String, Item> ingredientChoices, String destinationId) {
-        CHANNEL.sendToServer(new CraftRequestPacket(target, quantity, overrides, ingredientChoices, destinationId));
+        CHANNEL.sendToServer(new CraftRequestPacket(target, quantity, overrides, ingredientChoices, destinationId, false));
     }
 
     public static void sendCraftPreviewRequest(ItemStack target, int quantity, Map<ItemKey, ResourceLocation> overrides,
                                                Map<String, Item> ingredientChoices) {
-        CHANNEL.sendToServer(new CraftPreviewRequestPacket(target, quantity, overrides, ingredientChoices));
+        CHANNEL.sendToServer(new CraftRequestPacket(target, quantity, overrides, ingredientChoices, null, true));
     }
 
     public static void sendCraftPreview(ServerPlayer player, CraftPreview.Result result) {
@@ -66,9 +65,9 @@ public final class QuickCraftNetwork {
     }
 
     public static void sendDepositTargets(ServerPlayer player, List<LabeledSource> targets) {
-        List<DepositTargetsResponsePacket.Entry> entries = new ArrayList<>(targets.size());
+        List<ClientDepositTargets.Target> entries = new ArrayList<>(targets.size());
         for (LabeledSource target : targets) {
-            entries.add(new DepositTargetsResponsePacket.Entry(target.id(), target.pickerLabel(), target.icon(),
+            entries.add(new ClientDepositTargets.Target(target.id(), target.pickerLabel(), target.icon(),
                     target.source().freeSlots(), target.source().totalSlots()));
         }
         CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new DepositTargetsResponsePacket(entries));

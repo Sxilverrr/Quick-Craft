@@ -20,11 +20,27 @@ import java.util.Map;
 import java.util.Set;
 
 public final class CraftPlanner {
+    public static final int MAX_QUANTITY = 1_000_000;
+    private static final int INVENTORY_SLOTS = 36;
+
     private CraftPlanner() {
     }
 
     public enum Reason {
-        NO_RECIPE, NOT_LEARNED, NOT_ENOUGH_EMC, CATALYST, STATION, TREE_LIMIT, LOOP, MANUAL
+        NO_RECIPE(""),
+        NOT_LEARNED(" (not learned)"),
+        NOT_ENOUGH_EMC(" (not enough EMC)"),
+        CATALYST(" (catalyst)"),
+        STATION(" (needs a station)"),
+        TREE_LIMIT(" (tree limit)"),
+        LOOP(" (loop)"),
+        MANUAL(" (supplied by you)");
+
+        public final String label;
+
+        Reason(String label) {
+            this.label = label;
+        }
     }
 
     public record Blocker(ItemKey key, int missing, Reason reason) {
@@ -67,18 +83,23 @@ public final class CraftPlanner {
         Set<ItemKey> keys = collectKeys(root, new HashSet<>());
         keys.addAll(builder.loopIngredientKeys());
         EmcBank bank = null;
-        if (emc != null) bank = budget == null ? emc.bank(keys) : emc.bank(keys, budget);
+        if (emc != null) bank = emc.bank(keys, budget == null ? emc.emc() : budget);
         VirtualPool working = initial.copy();
         working.setEmc(bank);
         CraftExecutor.simulate(root, working);
         ItemKey targetKey = ItemKey.of(target);
         buyTarget(bank, initial, working, targetKey, qty);
         int craftable = Math.max(0, Math.min(qty, working.count(targetKey) - initial.count(targetKey)));
-        List<Blocker> blockers = craftable >= qty ? List.of() : diagnose(root, initial, bank, emc);
+        List<Blocker> blockers = craftable >= qty ? List.of() : diagnose(root, craftable > 0 ? working : initial, bank, emc,
+                craftable > 0, qty, qty >= MAX_QUANTITY ? 1 : qty - craftable);
         return new Plan(root, initial, working, bank, keys, qty, craftable, builder.truncated(), blockers);
     }
 
-    public static Set<ItemKey> collectKeys(CraftNode node, Set<ItemKey> out) {
+    public static int creativeQuantity(ItemStack target, int requested) {
+        return Math.min(requested, Math.max(1, target.getMaxStackSize()) * INVENTORY_SLOTS);
+    }
+
+    private static Set<ItemKey> collectKeys(CraftNode node, Set<ItemKey> out) {
         out.add(ItemKey.of(node.output));
         for (CraftNode child : node.children) collectKeys(child, out);
         return out;
@@ -92,7 +113,8 @@ public final class CraftPlanner {
         if (buy > 0 && bank.buy(targetKey, buy)) working.produce(targetKey, buy);
     }
 
-    private static List<Blocker> diagnose(CraftNode root, VirtualPool initial, EmcBank bank, EmcSource emc) {
+    private static List<Blocker> diagnose(CraftNode root, VirtualPool have, EmcBank bank, EmcSource emc,
+                                          boolean afterCrafting, int qty, int remaining) {
         Map<ItemKey, Integer> totals = CraftTrees.leafTotals(root);
         Map<ItemKey, CraftNode> samples = CraftTrees.leafSamples(root);
         List<Blocker> out = new ArrayList<>();
@@ -101,8 +123,9 @@ public final class CraftPlanner {
         boolean stationMissing = CraftTrees.missingStation(root) != null;
         for (Map.Entry<ItemKey, Integer> entry : totals.entrySet()) {
             ItemKey key = entry.getKey();
-            int bought = bank == null ? 0 : bank.purchased().getOrDefault(key, 0);
-            int missing = entry.getValue() - initial.count(key) - bought;
+            int bought = afterCrafting || bank == null ? 0 : bank.purchased().getOrDefault(key, 0);
+            long need = ((long) entry.getValue() * remaining + qty - 1) / qty;
+            int missing = (int) Math.min(Integer.MAX_VALUE, need - have.count(key) - bought);
             if (missing <= 0) continue;
             Reason reason = reasonFor(samples.get(key), key, emc, stationMissing);
             if (reason != Reason.NOT_ENOUGH_EMC) {
@@ -122,7 +145,7 @@ public final class CraftPlanner {
             if (node.truncated) return Reason.TREE_LIMIT;
             if (node.cyclic) return Reason.LOOP;
             if (node.isBlockedByStation()) return Reason.STATION;
-            if (node.isCraftable() && node.selected() == null) return Reason.MANUAL;
+            if (node.isCraftable() && node.selected() == null) return node.autoRecipe < 0 ? Reason.LOOP : Reason.MANUAL;
         }
         if (emc != null) {
             ItemStack stack = key.toStack(1);

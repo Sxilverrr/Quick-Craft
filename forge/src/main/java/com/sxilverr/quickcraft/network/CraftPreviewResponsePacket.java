@@ -14,32 +14,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class CraftPreviewResponsePacket {
+public record CraftPreviewResponsePacket(int craftable, int requested, List<CraftPreview.Gain> gained,
+                                         List<CraftPlanner.Blocker> blockers) {
     private static final int MAX_ENTRIES = 65536;
 
-    private final int craftable;
-    private final int requested;
-    private final List<CraftPreview.Gain> gained;
-    private final List<CraftPlanner.Blocker> blockers;
-
-    public CraftPreviewResponsePacket(int craftable, int requested, List<CraftPreview.Gain> gained,
-                                      List<CraftPlanner.Blocker> blockers) {
-        this.craftable = craftable;
-        this.requested = requested;
-        this.gained = gained;
-        this.blockers = blockers;
-    }
-
     public static void encode(CraftPreviewResponsePacket msg, FriendlyByteBuf buf) {
-        buf.writeVarInt(msg.craftable);
-        buf.writeVarInt(msg.requested);
-        buf.writeVarInt(msg.gained.size());
-        for (CraftPreview.Gain gain : msg.gained) {
+        buf.writeVarInt(msg.craftable());
+        buf.writeVarInt(msg.requested());
+        buf.writeVarInt(msg.gained().size());
+        for (CraftPreview.Gain gain : msg.gained()) {
             buf.writeItem(gain.key().toStack(1));
             buf.writeVarInt(gain.count());
         }
-        buf.writeVarInt(msg.blockers.size());
-        for (CraftPlanner.Blocker blocker : msg.blockers) {
+        buf.writeVarInt(msg.blockers().size());
+        for (CraftPlanner.Blocker blocker : msg.blockers()) {
             buf.writeItem(blocker.key().toStack(1));
             buf.writeVarInt(blocker.missing());
             buf.writeVarInt(blocker.reason().ordinal());
@@ -72,7 +60,7 @@ public class CraftPreviewResponsePacket {
     public static void handle(CraftPreviewResponsePacket msg, Supplier<NetworkEvent.Context> ctx) {
         NetworkEvent.Context context = ctx.get();
         context.enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
-                () -> () -> ClientNetworkHandler.onCraftPreview(msg.craftable, msg.requested, msg.gained, msg.blockers)));
+                () -> () -> ClientNetworkHandler.onCraftPreview(msg.craftable(), msg.requested(), msg.gained(), msg.blockers())));
         context.setPacketHandled(true);
     }
 }

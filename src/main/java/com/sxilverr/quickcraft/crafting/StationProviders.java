@@ -1,10 +1,7 @@
 package com.sxilverr.quickcraft.crafting;
 
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -27,10 +24,8 @@ public final class StationProviders {
     }
 
     public static ItemStack iconFor(String id) {
-        ResourceLocation rl = ResourceLocation.tryParse(id);
-        if (rl == null) return ItemStack.EMPTY;
-        Item item = BuiltInRegistries.ITEM.getOptional(rl).orElse(null);
-        if (item == null || item == Items.AIR) return ItemStack.EMPTY;
+        Item item = StationRules.item(id);
+        if (item == null) return ItemStack.EMPTY;
         ItemStack stack = new ItemStack(item);
         String blockIndex = switch (id) {
             case "tacz:workbench_a" -> "tacz:ammo_workbench";

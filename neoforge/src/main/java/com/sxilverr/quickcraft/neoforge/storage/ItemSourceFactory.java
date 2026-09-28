@@ -4,7 +4,7 @@ import com.sxilverr.quickcraft.storage.CompositeItemSource;
 import com.sxilverr.quickcraft.storage.ItemSource;
 import com.sxilverr.quickcraft.storage.LabeledSource;
 import com.sxilverr.quickcraft.DepositBlacklist;
-import com.sxilverr.quickcraft.neoforge.QuickCraftConfig;
+import com.sxilverr.quickcraft.config.QuickCraftConfig;
 import com.sxilverr.quickcraft.neoforge.integration.projecte.AlchBagSource;
 import com.sxilverr.quickcraft.platform.Services;
 import net.minecraft.core.BlockPos;
@@ -68,12 +68,6 @@ public final class ItemSourceFactory {
         addExtraItemSources(player, extraSources, blacklist, out);
 
         return out;
-    }
-
-    public static ItemSource forPlayer(ServerPlayer player, int scanRange) {
-        List<ItemSource> sources = new ArrayList<>();
-        for (LabeledSource labeled : scan(player, scanRange)) sources.add(labeled.source());
-        return new CompositeItemSource(sources);
     }
 
     public static String posKey(BlockPos pos) {

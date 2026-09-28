@@ -83,7 +83,7 @@ public class RecipeResolver {
             if (!additions.isEmpty()) inputs.add(Ingredient.of(additions.stream()));
             if (inputs.isEmpty()) continue;
 
-            add(result.getItem(), new SmithingRecipeOption(entry.id(), result, inputs));
+            add(result.getItem(), new StationRecipeOption(entry.id(), result, inputs, Station.SMITHING));
         }
     }
 
@@ -92,12 +92,9 @@ public class RecipeResolver {
             StonecutterRecipe recipe = entry.recipe();
             ItemStack result = recipe.getResultItem(registryAccess);
             if (result.isEmpty()) continue;
-            List<Ingredient> inputs = new ArrayList<>();
-            for (Ingredient ingredient : recipe.getIngredients()) {
-                if (ingredient != null && !ingredient.isEmpty()) inputs.add(ingredient);
-            }
+            List<Ingredient> inputs = nonEmptyInputs(recipe);
             if (inputs.isEmpty()) continue;
-            add(result.getItem(), new StonecutterRecipeOption(entry.id(), result.copy(), inputs));
+            add(result.getItem(), new StationRecipeOption(entry.id(), result.copy(), inputs, Station.STONECUTTER));
         }
     }
 
@@ -111,23 +108,16 @@ public class RecipeResolver {
             StationRules.RecipeRule rule = typeId == null ? null : types.get(typeId.toString());
             if (rule == null) continue;
             Station station = StationRules.stationFor(recipe, rule);
-            ItemStack result;
+            ItemStack result = safeResult(recipe, registryAccess);
+            if (result.isEmpty()) continue;
+            List<Ingredient> inputs;
             try {
-                result = recipe.getResultItem(registryAccess);
-            } catch (Throwable t) {
-                continue;
-            }
-            if (result == null || result.isEmpty()) continue;
-            List<Ingredient> inputs = new ArrayList<>();
-            try {
-                for (Ingredient ingredient : recipe.getIngredients()) {
-                    if (ingredient != null && !ingredient.isEmpty()) inputs.add(ingredient);
-                }
+                inputs = nonEmptyInputs(recipe);
             } catch (Throwable t) {
                 continue;
             }
             if (inputs.isEmpty()) continue;
-            add(result.getItem(), new ModdedRecipeOption(entry.id(), result.copy(), inputs, station));
+            add(result.getItem(), new StationRecipeOption(entry.id(), result.copy(), inputs, station));
             count++;
         }
         if (count > 0) {
@@ -136,7 +126,7 @@ public class RecipeResolver {
     }
 
     private void indexTacz() {
-        for (ModdedRecipeOption option : TaczRecipes.collect()) {
+        for (StationRecipeOption option : TaczRecipes.collect()) {
             add(option.result().getItem(), option);
         }
     }
@@ -146,19 +136,25 @@ public class RecipeResolver {
         for (RecipeType<?> type : types) {
             for (RecipeEntries.Entry<AbstractCookingRecipe> entry : RecipeEntries.<AbstractCookingRecipe>of(recipeManager, type)) {
                 AbstractCookingRecipe recipe = entry.recipe();
-                ItemStack result;
-                try {
-                    result = recipe.getResultItem(registryAccess);
-                } catch (Throwable t) {
-                    continue;
-                }
-                if (result == null || result.isEmpty()) continue;
-                for (Ingredient ingredient : recipe.getIngredients()) {
-                    if (ingredient == null || ingredient.isEmpty()) continue;
-                    cookedFrom.computeIfAbsent(result.getItem(), k -> new ArrayList<>()).add(ingredient);
-                }
+                ItemStack result = safeResult(recipe, registryAccess);
+                if (result.isEmpty()) continue;
+                List<Ingredient> inputs = nonEmptyInputs(recipe);
+                if (!inputs.isEmpty()) cookedFrom.computeIfAbsent(result.getItem(), k -> new ArrayList<>()).addAll(inputs);
             }
         }
+    }
+
+    static ItemStack safeResult(Recipe<?> recipe, RegistryAccess access) {
+        try {
+            ItemStack result = recipe.getResultItem(access);
+            return result == null ? ItemStack.EMPTY : result;
+        } catch (Throwable t) {
+            return ItemStack.EMPTY;
+        }
+    }
+
+    static List<Ingredient> nonEmptyInputs(Recipe<?> recipe) {
+        return recipe.getIngredients().stream().filter(ingredient -> ingredient != null && !ingredient.isEmpty()).toList();
     }
 
     public List<Ingredient> cookingInputs(ItemStack output) {

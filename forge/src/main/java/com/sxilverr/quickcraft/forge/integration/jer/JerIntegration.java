@@ -2,21 +2,19 @@ package com.sxilverr.quickcraft.forge.integration.jer;
 
 import com.sxilverr.quickcraft.integration.jer.MobItemSource;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.fml.ModList;
+import com.sxilverr.quickcraft.platform.Services;
 
 import java.util.List;
 import java.util.Map;
 
 public final class JerIntegration {
-    private static Boolean loaded;
     private static Map<Item, List<MobItemSource>> cache;
 
     private JerIntegration() {
     }
 
     public static boolean available() {
-        if (loaded == null) loaded = ModList.get().isLoaded("jeresources");
-        return loaded;
+        return Services.PLATFORM.isModLoaded("jeresources");
     }
 
     public static List<MobItemSource> sourcesFor(Item item) {
@@ -36,9 +34,5 @@ public final class JerIntegration {
             if (!local.isEmpty()) cache = local;
         }
         return local;
-    }
-
-    public static void invalidate() {
-        cache = null;
     }
 }

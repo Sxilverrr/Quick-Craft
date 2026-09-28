@@ -10,10 +10,6 @@ public final class CraftTrees {
     private CraftTrees() {
     }
 
-    public static boolean hasStationBlock(CraftNode node) {
-        return missingStation(node) != null;
-    }
-
     public static Station missingStation(CraftNode node) {
         if (node.isBlockedByStation()) return node.requiredStation();
         for (CraftNode child : node.children) {
@@ -24,11 +20,7 @@ public final class CraftTrees {
     }
 
     public static boolean truncated(CraftNode node) {
-        if (node.truncated) return true;
-        for (CraftNode child : node.children) {
-            if (truncated(child)) return true;
-        }
-        return false;
+        return node.truncated || node.children.stream().anyMatch(CraftTrees::truncated);
     }
 
     public static Map<ItemKey, Integer> leafTotals(CraftNode root) {
@@ -50,14 +42,7 @@ public final class CraftTrees {
             return;
         }
         if (node.catalyst && !catalysts.add(ItemKey.of(node.output))) return;
-        boolean hasRealChild = false;
-        for (CraftNode child : node.children) {
-            if (!child.isMobSource()) {
-                hasRealChild = true;
-                break;
-            }
-        }
-        if (!hasRealChild) {
+        if (node.children.stream().allMatch(CraftNode::isMobSource)) {
             ItemKey key = ItemKey.of(node.output);
             totals.merge(key, required, (a, b) -> clamp((long) a + b));
             if (samples != null) samples.putIfAbsent(key, node);

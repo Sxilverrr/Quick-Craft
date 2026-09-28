@@ -161,8 +161,7 @@ public final class Ae2ItemSource implements ItemSource {
                 actionSource, simulate ? Actionable.SIMULATE : Actionable.MODULATE);
         int remaining = stack.getCount() - (int) Math.min(inserted, stack.getCount());
         if (remaining <= 0) return ItemStack.EMPTY;
-        ItemStack rem = stack.copy();
-        rem.setCount(remaining);
+        ItemStack rem = stack.copyWithCount(remaining);
         return rem;
     }
 }

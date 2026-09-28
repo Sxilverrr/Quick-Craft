@@ -10,7 +10,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DepositTargetsResponsePacket implements CustomPacketPayload {
+public record DepositTargetsResponsePacket(List<ClientDepositTargets.Target> entries) implements CustomPacketPayload {
     private static final int MAX_ENTRIES = 4096;
 
     public static final Type<DepositTargetsResponsePacket> TYPE = new Type<>(QuickCraftNetwork.id("deposit_targets_response"));
@@ -18,25 +18,16 @@ public class DepositTargetsResponsePacket implements CustomPacketPayload {
     public static final StreamCodec<RegistryFriendlyByteBuf, DepositTargetsResponsePacket> STREAM_CODEC =
             StreamCodec.of(DepositTargetsResponsePacket::write, DepositTargetsResponsePacket::read);
 
-    public record Entry(String id, String label, ItemStack icon, int freeSlots, int totalSlots) {
-    }
-
-    private final List<Entry> entries;
-
-    public DepositTargetsResponsePacket(List<Entry> entries) {
-        this.entries = entries;
-    }
-
     @Override
     public Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 
     private static void write(RegistryFriendlyByteBuf buf, DepositTargetsResponsePacket msg) {
-        int n = Math.min(MAX_ENTRIES, msg.entries.size());
+        int n = Math.min(MAX_ENTRIES, msg.entries().size());
         buf.writeVarInt(n);
         for (int i = 0; i < n; i++) {
-            Entry e = msg.entries.get(i);
+            ClientDepositTargets.Target e = msg.entries().get(i);
             buf.writeUtf(e.id());
             buf.writeUtf(e.label());
             ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, e.icon());
@@ -47,19 +38,19 @@ public class DepositTargetsResponsePacket implements CustomPacketPayload {
 
     private static DepositTargetsResponsePacket read(RegistryFriendlyByteBuf buf) {
         int n = Math.min(MAX_ENTRIES, buf.readVarInt());
-        List<Entry> entries = new ArrayList<>(n);
+        List<ClientDepositTargets.Target> entries = new ArrayList<>(n);
         for (int i = 0; i < n; i++) {
             String id = buf.readUtf();
             String label = buf.readUtf();
             ItemStack icon = ItemStack.OPTIONAL_STREAM_CODEC.decode(buf);
             int freeSlots = buf.readInt();
             int totalSlots = buf.readInt();
-            entries.add(new Entry(id, label, icon, freeSlots, totalSlots));
+            entries.add(new ClientDepositTargets.Target(id, label, icon, freeSlots, totalSlots));
         }
         return new DepositTargetsResponsePacket(entries);
     }
 
     public static void handle(DepositTargetsResponsePacket msg, IPayloadContext ctx) {
-        ClientDepositTargets.accept(msg.entries);
+        ClientDepositTargets.accept(msg.entries());
     }
 }

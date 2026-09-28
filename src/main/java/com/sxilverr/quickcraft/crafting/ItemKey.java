@@ -13,7 +13,6 @@ import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 
 import java.util.Objects;
 
@@ -70,10 +69,8 @@ public final class ItemKey {
         if (key == null || key.isEmpty()) return null;
         int brace = key.indexOf('{');
         String id = brace < 0 ? key : key.substring(0, brace);
-        ResourceLocation rl = ResourceLocation.tryParse(id);
-        if (rl == null) return null;
-        Item item = BuiltInRegistries.ITEM.getOptional(rl).orElse(null);
-        if (item == null || item == Items.AIR) return null;
+        Item item = StationRules.item(id);
+        if (item == null) return null;
         Object data = null;
         if (brace >= 0) {
             try {

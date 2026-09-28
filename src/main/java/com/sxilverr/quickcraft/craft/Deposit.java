@@ -73,11 +73,7 @@ public final class Deposit {
     }
 
     public List<CraftSummary.Placement> placements() {
-        List<CraftSummary.Placement> out = new ArrayList<>();
-        for (Map.Entry<String, Integer> entry : tally.entrySet()) {
-            out.add(new CraftSummary.Placement(entry.getKey(), entry.getValue()));
-        }
-        return out;
+        return tally.entrySet().stream().map(entry -> new CraftSummary.Placement(entry.getKey(), entry.getValue())).toList();
     }
 
     public int dropped() {

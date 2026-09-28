@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 public final class ItemOrigins {
-    public static final int MAX_HINTS = 4;
+    private static final int MAX_HINTS = 4;
 
     private record Builtin(Item icon, String label) {
     }
@@ -32,7 +32,7 @@ public final class ItemOrigins {
 
     private static final Map<ItemKey, List<OriginHint>> MEMO = new HashMap<>();
 
-    private static Map<Item, List<String>> typeIndex;
+    private static Map<Item, Set<String>> typeIndex;
     private static RecipeManager boundManager;
     private static boolean boundViewer;
 
@@ -51,12 +51,7 @@ public final class ItemOrigins {
             MEMO.clear();
             boundViewer = viewer;
         }
-        ItemKey key = ItemKey.of(stack);
-        List<OriginHint> cached = MEMO.get(key);
-        if (cached != null) return cached;
-        List<OriginHint> hints = resolve(manager, registryAccess, key.toStack(1));
-        MEMO.put(key, hints);
-        return hints;
+        return MEMO.computeIfAbsent(ItemKey.of(stack), key -> resolve(manager, registryAccess, key.toStack(1)));
     }
 
     public static void invalidate() {
@@ -69,7 +64,7 @@ public final class ItemOrigins {
         List<OriginHint> viewer = QuickCraftIntegrations.origins(stack);
         if (!viewer.isEmpty()) return trim(viewer);
         if (QuickCraftIntegrations.canFindOrigins()) return List.of();
-        List<String> types = index(manager, registryAccess).get(stack.getItem());
+        Set<String> types = index(manager, registryAccess).get(stack.getItem());
         if (types == null || types.isEmpty()) return List.of();
         List<OriginHint> out = new ArrayList<>();
         for (String type : types) {
@@ -80,8 +75,7 @@ public final class ItemOrigins {
     }
 
     private static List<OriginHint> trim(List<OriginHint> hints) {
-        if (hints.size() <= MAX_HINTS) return List.copyOf(hints);
-        return List.copyOf(hints.subList(0, MAX_HINTS));
+        return List.copyOf(hints.subList(0, Math.min(MAX_HINTS, hints.size())));
     }
 
     private static OriginHint hintFor(String typeId) {
@@ -91,35 +85,24 @@ public final class ItemOrigins {
             String name = icon.isEmpty() ? builtin.label() : icon.getHoverName().getString();
             return new OriginHint(icon, name);
         }
-        ResourceLocation rl = ResourceLocation.tryParse(typeId);
-        if (rl == null) return null;
-        Item item = BuiltInRegistries.ITEM.getOptional(rl).orElse(null);
-        if (item == null || item == Items.AIR) return null;
+        Item item = StationRules.item(typeId);
+        if (item == null) return null;
         ItemStack icon = new ItemStack(item);
         return new OriginHint(icon, icon.getHoverName().getString());
     }
 
-    private static Map<Item, List<String>> index(RecipeManager manager, RegistryAccess registryAccess) {
+    private static Map<Item, Set<String>> index(RecipeManager manager, RegistryAccess registryAccess) {
         if (typeIndex != null) return typeIndex;
         Map<Item, Set<String>> collected = new HashMap<>();
         for (RecipeEntries.Entry<Recipe<?>> entry : RecipeEntries.all(manager)) {
             Recipe<?> recipe = entry.recipe();
             ResourceLocation typeId = BuiltInRegistries.RECIPE_TYPE.getKey(recipe.getType());
             if (typeId == null || StationRules.isSupportedRecipeType(typeId)) continue;
-            ItemStack result;
-            try {
-                result = recipe.getResultItem(registryAccess);
-            } catch (Throwable t) {
-                continue;
-            }
-            if (result == null || result.isEmpty()) continue;
+            ItemStack result = RecipeResolver.safeResult(recipe, registryAccess);
+            if (result.isEmpty()) continue;
             collected.computeIfAbsent(result.getItem(), k -> new LinkedHashSet<>()).add(typeId.toString());
         }
-        Map<Item, List<String>> out = new HashMap<>();
-        for (Map.Entry<Item, Set<String>> entry : collected.entrySet()) {
-            out.put(entry.getKey(), List.copyOf(entry.getValue()));
-        }
-        typeIndex = out;
+        typeIndex = collected;
         return typeIndex;
     }
 }

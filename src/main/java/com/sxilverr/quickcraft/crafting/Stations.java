@@ -18,16 +18,6 @@ public record Stations(Map<Station, Item> sources) {
         sources = Collections.unmodifiableMap(copy);
     }
 
-    public static Stations inventoryOnly() {
-        return new Stations(Map.of());
-    }
-
-    public static Stations of(Station... stations) {
-        Map<Station, Item> map = new EnumMap<>(Station.class);
-        for (Station station : stations) map.put(station, null);
-        return new Stations(map);
-    }
-
     public int gridSize() {
         return has(Station.CRAFTING) ? 3 : 2;
     }

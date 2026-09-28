@@ -10,9 +10,12 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class AvailabilityResponsePacket implements CustomPacketPayload {
+public record AvailabilityResponsePacket(Map<ItemKey, Integer> counts, Map<ItemKey, ItemStack> sources,
+                                         Map<ItemKey, ItemStack> samples, Stations stations)
+        implements CustomPacketPayload {
     private static final int MAX_ENTRIES = 65536;
 
     public static final Type<AvailabilityResponsePacket> TYPE = new Type<>(QuickCraftNetwork.id("availability_response"));
@@ -20,32 +23,20 @@ public class AvailabilityResponsePacket implements CustomPacketPayload {
     public static final StreamCodec<RegistryFriendlyByteBuf, AvailabilityResponsePacket> STREAM_CODEC =
             StreamCodec.of(AvailabilityResponsePacket::write, AvailabilityResponsePacket::read);
 
-    private final Map<ItemKey, Integer> counts;
-    private final Map<ItemKey, ItemStack> sources;
-    private final Map<ItemKey, ItemStack> samples;
-    private final Stations stations;
-
-    public AvailabilityResponsePacket(Map<ItemKey, Integer> counts, Map<ItemKey, ItemStack> sources,
-                                      Map<ItemKey, ItemStack> samples, Stations stations) {
-        this.counts = counts;
-        this.sources = sources;
-        this.samples = samples;
-        this.stations = stations;
-    }
-
     @Override
     public Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 
     private static void write(RegistryFriendlyByteBuf buf, AvailabilityResponsePacket msg) {
-        buf.writeVarInt(msg.counts.size());
-        for (Map.Entry<ItemKey, Integer> entry : msg.counts.entrySet()) {
-            ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, msg.samples.getOrDefault(entry.getKey(), entry.getKey().toStack(1)));
+        List<Map.Entry<ItemKey, Integer>> counts = msg.counts().entrySet().stream().limit(MAX_ENTRIES).toList();
+        buf.writeVarInt(counts.size());
+        for (Map.Entry<ItemKey, Integer> entry : counts) {
+            ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, msg.samples().getOrDefault(entry.getKey(), entry.getKey().toStack(1)));
             buf.writeVarInt(entry.getValue());
-            ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, msg.sources.getOrDefault(entry.getKey(), ItemStack.EMPTY));
+            ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, msg.sources().getOrDefault(entry.getKey(), ItemStack.EMPTY));
         }
-        msg.stations.write(buf);
+        msg.stations().write(buf);
     }
 
     private static AvailabilityResponsePacket read(RegistryFriendlyByteBuf buf) {
@@ -68,6 +59,6 @@ public class AvailabilityResponsePacket implements CustomPacketPayload {
     }
 
     public static void handle(AvailabilityResponsePacket msg, IPayloadContext ctx) {
-        ClientNetworkHandler.onAvailability(msg.counts, msg.sources, msg.samples, msg.stations);
+        ClientNetworkHandler.onAvailability(msg.counts(), msg.sources(), msg.samples(), msg.stations());
     }
 }

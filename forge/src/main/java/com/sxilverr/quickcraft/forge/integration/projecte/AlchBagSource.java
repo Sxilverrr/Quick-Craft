@@ -1,5 +1,6 @@
 package com.sxilverr.quickcraft.forge.integration.projecte;
 
+import com.sxilverr.quickcraft.integration.projecte.ProjectEIntegration;
 import com.sxilverr.quickcraft.forge.storage.HandlerItemSource;
 import com.sxilverr.quickcraft.storage.LabeledSource;
 import moze_intel.projecte.api.capabilities.IAlchBagProvider;
@@ -33,8 +34,7 @@ public final class AlchBagSource {
             if (color == null || !seen.add(color)) continue;
             IItemHandler handler = bag(provider, color);
             if (handler == null) continue;
-            ItemStack icon = stack.copy();
-            icon.setCount(1);
+            ItemStack icon = stack.copyWithCount(1);
             out.add(new LabeledSource("pebag:" + color.getName(), icon.getHoverName().getString(), icon, null,
                     new BagSource(handler, icon, provider, color, player), true));
         }

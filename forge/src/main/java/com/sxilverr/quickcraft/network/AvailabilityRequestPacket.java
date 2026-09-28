@@ -17,20 +17,14 @@ import java.util.function.Supplier;
 
 import net.minecraftforge.network.NetworkEvent;
 
-public class AvailabilityRequestPacket {
+public record AvailabilityRequestPacket(List<ItemStack> keys) {
     private static final int MAX_KEYS = 4096;
 
-    private final List<ItemStack> keys;
-
-    public AvailabilityRequestPacket(List<ItemStack> keys) {
-        this.keys = keys;
-    }
-
     public static void encode(AvailabilityRequestPacket msg, FriendlyByteBuf buf) {
-        int n = Math.min(MAX_KEYS, msg.keys.size());
+        int n = Math.min(MAX_KEYS, msg.keys().size());
         buf.writeVarInt(n);
         for (int i = 0; i < n; i++) {
-            buf.writeItem(msg.keys.get(i));
+            buf.writeItem(msg.keys().get(i));
         }
     }
 
@@ -49,7 +43,7 @@ public class AvailabilityRequestPacket {
             ServerPlayer player = context.getSender();
             if (player == null) return;
             Set<ItemKey> wanted = new HashSet<>();
-            for (ItemStack stack : msg.keys) {
+            for (ItemStack stack : msg.keys()) {
                 if (!stack.isEmpty()) wanted.add(ItemKey.of(stack));
             }
             CraftService.AvailabilitySnapshot snapshot = CraftService.availability(player, wanted);

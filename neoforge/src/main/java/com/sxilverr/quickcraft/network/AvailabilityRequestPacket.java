@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class AvailabilityRequestPacket implements CustomPacketPayload {
+public record AvailabilityRequestPacket(List<ItemStack> keys) implements CustomPacketPayload {
     private static final int MAX_KEYS = 4096;
 
     public static final Type<AvailabilityRequestPacket> TYPE = new Type<>(QuickCraftNetwork.id("availability_request"));
@@ -24,22 +24,16 @@ public class AvailabilityRequestPacket implements CustomPacketPayload {
     public static final StreamCodec<RegistryFriendlyByteBuf, AvailabilityRequestPacket> STREAM_CODEC =
             StreamCodec.of(AvailabilityRequestPacket::write, AvailabilityRequestPacket::read);
 
-    private final List<ItemStack> keys;
-
-    public AvailabilityRequestPacket(List<ItemStack> keys) {
-        this.keys = keys;
-    }
-
     @Override
     public Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 
     private static void write(RegistryFriendlyByteBuf buf, AvailabilityRequestPacket msg) {
-        int n = Math.min(MAX_KEYS, msg.keys.size());
+        int n = Math.min(MAX_KEYS, msg.keys().size());
         buf.writeVarInt(n);
         for (int i = 0; i < n; i++) {
-            ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, msg.keys.get(i));
+            ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, msg.keys().get(i));
         }
     }
 
@@ -55,7 +49,7 @@ public class AvailabilityRequestPacket implements CustomPacketPayload {
     public static void handle(AvailabilityRequestPacket msg, IPayloadContext ctx) {
         if (!(ctx.player() instanceof ServerPlayer player)) return;
         Set<ItemKey> wanted = new HashSet<>();
-        for (ItemStack stack : msg.keys) {
+        for (ItemStack stack : msg.keys()) {
             if (!stack.isEmpty()) wanted.add(ItemKey.of(stack));
         }
         CraftService.AvailabilitySnapshot snapshot = CraftService.availability(player, wanted);
