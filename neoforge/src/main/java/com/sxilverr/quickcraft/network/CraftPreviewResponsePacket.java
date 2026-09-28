@@ -31,13 +31,15 @@ public record CraftPreviewResponsePacket(int craftable, int requested, List<Craf
     private static void write(RegistryFriendlyByteBuf buf, CraftPreviewResponsePacket msg) {
         buf.writeVarInt(msg.craftable());
         buf.writeVarInt(msg.requested());
-        buf.writeVarInt(msg.gained().size());
-        for (CraftPreview.Gain gain : msg.gained()) {
+        List<CraftPreview.Gain> gains = msg.gained().subList(0, Math.min(MAX_ENTRIES, msg.gained().size()));
+        buf.writeVarInt(gains.size());
+        for (CraftPreview.Gain gain : gains) {
             ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, gain.key().toStack(1));
             buf.writeVarInt(gain.count());
         }
-        buf.writeVarInt(msg.blockers().size());
-        for (CraftPlanner.Blocker blocker : msg.blockers()) {
+        List<CraftPlanner.Blocker> blockers = msg.blockers().subList(0, Math.min(MAX_ENTRIES, msg.blockers().size()));
+        buf.writeVarInt(blockers.size());
+        for (CraftPlanner.Blocker blocker : blockers) {
             ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, blocker.key().toStack(1));
             buf.writeVarInt(blocker.missing());
             buf.writeVarInt(blocker.reason().ordinal());

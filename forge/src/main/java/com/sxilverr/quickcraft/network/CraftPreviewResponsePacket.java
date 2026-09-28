@@ -21,13 +21,15 @@ public record CraftPreviewResponsePacket(int craftable, int requested, List<Craf
     public static void encode(CraftPreviewResponsePacket msg, FriendlyByteBuf buf) {
         buf.writeVarInt(msg.craftable());
         buf.writeVarInt(msg.requested());
-        buf.writeVarInt(msg.gained().size());
-        for (CraftPreview.Gain gain : msg.gained()) {
+        List<CraftPreview.Gain> gains = msg.gained().subList(0, Math.min(MAX_ENTRIES, msg.gained().size()));
+        buf.writeVarInt(gains.size());
+        for (CraftPreview.Gain gain : gains) {
             buf.writeItem(gain.key().toStack(1));
             buf.writeVarInt(gain.count());
         }
-        buf.writeVarInt(msg.blockers().size());
-        for (CraftPlanner.Blocker blocker : msg.blockers()) {
+        List<CraftPlanner.Blocker> blockers = msg.blockers().subList(0, Math.min(MAX_ENTRIES, msg.blockers().size()));
+        buf.writeVarInt(blockers.size());
+        for (CraftPlanner.Blocker blocker : blockers) {
             buf.writeItem(blocker.key().toStack(1));
             buf.writeVarInt(blocker.missing());
             buf.writeVarInt(blocker.reason().ordinal());
