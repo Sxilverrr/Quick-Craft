@@ -141,11 +141,13 @@ public final class CraftPlanner {
         }
 
         public CraftPreview.Result toResult() {
-            final ItemKey targetKey = ItemKey.of(root.output);
+            Map<ItemKey, ItemKey> made = CraftTrees.madeVariants(root);
+            ItemKey rootKey = ItemKey.of(root.output);
+            final ItemKey targetKey = made.getOrDefault(rootKey, rootKey);
             List<CraftPreview.Gain> gained = new ArrayList<CraftPreview.Gain>();
             for (ItemKey key : working.counts().keySet()) {
                 int delta = working.exact(key) - initial.exact(key);
-                if (delta > 0) gained.add(new CraftPreview.Gain(key, delta));
+                if (delta > 0) gained.add(new CraftPreview.Gain(made.getOrDefault(key, key), delta));
             }
             Collections.sort(gained, new Comparator<CraftPreview.Gain>() {
                 @Override

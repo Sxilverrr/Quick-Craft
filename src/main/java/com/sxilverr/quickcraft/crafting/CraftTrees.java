@@ -27,6 +27,22 @@ public final class CraftTrees {
         return false;
     }
 
+    public static Map<ItemKey, ItemKey> madeVariants(CraftNode root) {
+        Map<ItemKey, ItemKey> out = new HashMap<ItemKey, ItemKey>();
+        collectVariants(root, out);
+        return out;
+    }
+
+    private static void collectVariants(CraftNode node, Map<ItemKey, ItemKey> out) {
+        ItemKey key = ItemKey.of(node.output);
+        RecipeOption option = node.selected();
+        if (option != null && key.isLoose() && !out.containsKey(key)) {
+            ItemKey made = ItemKey.of(option.result());
+            if (!made.isLoose() && made.sameItem(key)) out.put(key, made);
+        }
+        for (CraftNode child : node.children) collectVariants(child, out);
+    }
+
     public static Map<ItemKey, Integer> leafTotals(CraftNode root) {
         Map<ItemKey, Integer> totals = new LinkedHashMap<ItemKey, Integer>();
         collect(root, root.requiredCount, totals, null, new HashSet<ItemKey>());

@@ -86,7 +86,8 @@ public final class CraftService {
                     Availability.Factory.of(new HashMap<ItemKey, Integer>(initial.counts())), stations,
                     QuickCraftConfig.collapseOwnedItems(), QuickCraftConfig.hideLoopingRecipes(), emc, null);
 
-            shortfall = commit(source, deposit, initial, plan.working(), targetKey, emc, plan.bank(), player, destinationId);
+            shortfall = commit(source, deposit, initial, plan.working(), CraftTrees.madeVariants(plan.root()), targetKey, emc,
+                    plan.bank(), player, destinationId);
             if (shortfall != null) {
                 initial.limit(shortfall.key, shortfall.got);
                 continue;
@@ -229,7 +230,8 @@ public final class CraftService {
     }
 
     private static Shortfall commit(CompositeItemSource source, Deposit deposit, VirtualPool initial, VirtualPool working,
-                                    ItemKey targetKey, EmcSession emc, EmcBank bank, EntityPlayerMP player,
+                                    Map<ItemKey, ItemKey> made, ItemKey targetKey, EmcSession emc, EmcBank bank,
+                                    EntityPlayerMP player,
                                     String destinationId) {
         boolean depositToEmc = emc != null && bank != null && EmcDeposit.isEmc(destinationId);
 
@@ -272,16 +274,17 @@ public final class CraftService {
 
         for (Map.Entry<ItemKey, Integer> entry : produced.entrySet()) {
             ItemKey key = entry.getKey();
+            ItemKey item = made.getOrDefault(key, key);
             int amount = entry.getValue();
             if (depositToEmc) {
-                long value = emc.sellValue(key.toStack(1));
+                long value = emc.sellValue(item.toStack(1));
                 if (value > 0L) {
                     bank.gain(BigInteger.valueOf(value).multiply(BigInteger.valueOf(amount)));
                     deposit.toEmc(amount, key.equals(targetKey));
                     continue;
                 }
             }
-            deposit.put(key, amount, key.equals(targetKey));
+            deposit.put(item, amount, key.equals(targetKey));
         }
         return null;
     }

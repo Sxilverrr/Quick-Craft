@@ -30,13 +30,17 @@ public final class Ingredients {
         List<ItemStack> out = new ArrayList<ItemStack>(raw.length);
         for (ItemStack stack : raw) {
             if (stack == null || stack.isEmpty()) continue;
-            out.add(resolveWildcard(stack));
+            out.add(normalize(stack));
         }
         return out.toArray(new ItemStack[0]);
     }
 
-    private static ItemStack resolveWildcard(ItemStack stack) {
-        if (stack.getItemDamage() != OreDictionary.WILDCARD_VALUE) return stack;
+    private static ItemStack normalize(ItemStack stack) {
+        int meta = stack.getMetadata();
+        if (stack.copy().isItemStackDamageable()) {
+            return new ItemStack(stack.getItem(), stack.getCount(), meta == OreDictionary.WILDCARD_VALUE ? 0 : meta);
+        }
+        if (meta != OreDictionary.WILDCARD_VALUE) return stack;
         ItemStack concrete = stack.copy();
         concrete.setItemDamage(0);
         return concrete;

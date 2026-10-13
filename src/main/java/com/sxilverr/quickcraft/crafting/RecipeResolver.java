@@ -183,6 +183,7 @@ public class RecipeResolver {
         for (RecipeOption option : all) {
             if (resultMatches(option.result(), output)) matched.add(option);
         }
+        if (matched.isEmpty() && ItemKey.of(output).isLoose()) return all;
         return matched;
     }
 
@@ -196,7 +197,7 @@ public class RecipeResolver {
     }
 
     private static int metaOf(ItemStack stack) {
-        int meta = stack.getItemDamage();
+        int meta = stack.getMetadata();
         if (meta == OreDictionary.WILDCARD_VALUE) return 0;
         Item item = stack.getItem();
         return item != null && item.isDamageable() ? 0 : meta;

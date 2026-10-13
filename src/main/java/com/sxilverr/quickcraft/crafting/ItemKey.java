@@ -23,7 +23,7 @@ public final class ItemKey {
         if (stack == null || stack.isEmpty()) return new ItemKey(net.minecraft.init.Items.AIR, 0, null);
         NBTTagCompound tag = stack.getTagCompound();
         NBTTagCompound copy = tag == null || tag.isEmpty() ? null : tag.copy();
-        return new ItemKey(stack.getItem(), normalizeMeta(stack.getItem(), stack.getItemDamage()), copy);
+        return new ItemKey(stack.getItem(), normalizeMeta(stack.getItem(), stack.getMetadata()), copy);
     }
 
     private static int normalizeMeta(Item item, int meta) {

@@ -201,7 +201,7 @@ public class TreeBuilder {
         for (ItemStack stack : items) {
             ResourceLocation id = Reg.idOf(stack.getItem());
             String base = id == null ? "?" : id.toString();
-            int meta = stack.getItemDamage();
+            int meta = stack.getMetadata();
             ids.add(meta == 0 ? base : base + "@" + meta);
         }
         Collections.sort(ids);

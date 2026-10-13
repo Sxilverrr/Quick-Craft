@@ -1443,7 +1443,7 @@ public class QuickCraftScreen extends GuiScreen {
         if (!QuickCraftConfig.sizeTabToFit()) return NodeView.WIDTH;
         String badge = recipeBadge(node);
         int badgeExtra = badge.isEmpty() ? 0 : this.fontRenderer.getStringWidth(badge) + 4;
-        int nameNeeded = 30 + this.fontRenderer.getStringWidth(node.output.getDisplayName()) + badgeExtra
+        int nameNeeded = 30 + this.fontRenderer.getStringWidth(node.output.copy().getDisplayName()) + badgeExtra
                 + (hasEye(node) ? EYE_W + 2 : 0);
 
         RecipeOption recipe = node.selected();
@@ -1529,13 +1529,13 @@ public class QuickCraftScreen extends GuiScreen {
     }
 
     private ItemStack displayStack(CraftNode node) {
-        if (node == root) return node.output;
+        if (node == root) return node.output.copy();
         return displayStack(ItemKey.of(node.output), node.output);
     }
 
     private ItemStack displayStack(ItemKey key, ItemStack fallback) {
         ItemStack sample = damageSamples.get(key);
-        return sample == null || sample.isEmpty() ? fallback : sample;
+        return (sample == null || sample.isEmpty() ? fallback : sample).copy();
     }
 
     private ItemStack cornerIconFor(CraftNode node) {
@@ -1705,7 +1705,7 @@ public class QuickCraftScreen extends GuiScreen {
             return;
         }
         List<String> lines = new ArrayList<String>();
-        lines.add(node.output.getDisplayName());
+        lines.add(node.output.copy().getDisplayName());
         if (node == root) {
             lines.add(TextFormatting.BLUE + "End result");
         }
@@ -1749,7 +1749,7 @@ public class QuickCraftScreen extends GuiScreen {
                     break;
                 }
                 boolean current = option.getItem() == node.output.getItem()
-                        && option.getItemDamage() == node.output.getItemDamage();
+                        && option.getMetadata() == node.output.getMetadata();
                 Integer ownedOption = haveCounts.get(ItemKey.of(option));
                 int owned = ownedOption == null ? 0 : ownedOption;
                 TextFormatting fmt = current ? TextFormatting.WHITE
@@ -1807,7 +1807,7 @@ public class QuickCraftScreen extends GuiScreen {
         MobDropInfo mob = src.mob;
         List<String> lines = new ArrayList<String>();
         lines.add(TextFormatting.WHITE + mob.mobName);
-        lines.add(TextFormatting.GRAY + "Drops " + node.output.getDisplayName() + ": " + mobDropLabel(src.drop));
+        lines.add(TextFormatting.GRAY + "Drops " + node.output.copy().getDisplayName() + ": " + mobDropLabel(src.drop));
         if (!mob.biomes.isEmpty()) {
             List<String> shownBiomes = mob.biomes.size() > 6 ? mob.biomes.subList(0, 6) : mob.biomes;
             StringBuilder biomes = new StringBuilder();
@@ -2153,7 +2153,7 @@ public class QuickCraftScreen extends GuiScreen {
         int current = 0;
         for (int i = 0; i < options.size(); i++) {
             if (options.get(i).getItem() == node.output.getItem()
-                    && options.get(i).getItemDamage() == node.output.getItemDamage()) {
+                    && options.get(i).getMetadata() == node.output.getMetadata()) {
                 current = i;
                 break;
             }

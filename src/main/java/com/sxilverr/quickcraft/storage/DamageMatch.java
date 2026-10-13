@@ -12,7 +12,7 @@ public final class DamageMatch {
     }
 
     public static boolean tolerant(ItemStack representative) {
-        return representative != null && !representative.isEmpty() && representative.isItemStackDamageable();
+        return representative != null && !representative.isEmpty() && representative.copy().isItemStackDamageable();
     }
 
     public static List<ItemStack> variants(List<ItemStack> stacks, ItemStack representative) {
