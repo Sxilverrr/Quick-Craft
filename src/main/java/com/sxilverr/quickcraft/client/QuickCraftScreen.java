@@ -1509,13 +1509,13 @@ public class QuickCraftScreen extends Screen {
     }
 
     private ItemStack displayStack(CraftNode node) {
-        if (node == root) return node.output;
+        if (node == root) return node.output.copy();
         return displayStack(ItemKey.of(node.output), node.output);
     }
 
     private ItemStack displayStack(ItemKey key, ItemStack fallback) {
         ItemStack sample = damageSamples.get(key);
-        return sample == null || sample.isEmpty() ? fallback : sample;
+        return (sample == null || sample.isEmpty() ? fallback : sample).copy();
     }
 
     private ItemStack cornerIconFor(CraftNode node) {

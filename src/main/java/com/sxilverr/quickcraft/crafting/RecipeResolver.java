@@ -20,6 +20,7 @@ import net.minecraft.world.item.crafting.SmithingTransformRecipe;
 import net.minecraft.world.item.crafting.StonecutterRecipe;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -154,7 +155,20 @@ public class RecipeResolver {
     }
 
     static List<Ingredient> nonEmptyInputs(Recipe<?> recipe) {
-        return recipe.getIngredients().stream().filter(ingredient -> ingredient != null && !ingredient.isEmpty()).toList();
+        return recipe.getIngredients().stream().filter(ingredient -> ingredient != null && !ingredient.isEmpty())
+                .map(RecipeResolver::withoutToolData).toList();
+    }
+
+    private static Ingredient withoutToolData(Ingredient ingredient) {
+        ItemStack[] items;
+        try {
+            items = ingredient.getItems();
+        } catch (Throwable t) {
+            return ingredient;
+        }
+        if (Arrays.stream(items).noneMatch(ItemStack::isDamageableItem)) return ingredient;
+        return Ingredient.of(Arrays.stream(items)
+                .map(stack -> stack.isDamageableItem() ? new ItemStack(stack.getItem(), stack.getCount()) : stack));
     }
 
     public List<Ingredient> cookingInputs(ItemStack output) {
