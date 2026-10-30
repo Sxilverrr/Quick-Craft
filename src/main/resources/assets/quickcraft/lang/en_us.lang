@@ -4,3 +4,223 @@ key.quickcraft.scroll_up=Scroll Up Pinned List
 key.quickcraft.scroll_down=Scroll Down Pinned List
 key.quickcraft.show_recipe=Show Recipe
 key.quickcraft.show_uses=Show Uses
+
+quickcraft.max=Max
+
+quickcraft.max_count=Max (%s)
+
+quickcraft.more=+%s more
+
+quickcraft.tree_limit=Tree limit reached: raise maxTreeNodes or maxTreeDepth in the config
+
+quickcraft.screen.title=Quick Craft - %s
+quickcraft.screen.qty=Qty:
+quickcraft.screen.craft_max=Craft Max
+quickcraft.screen.can_craft=can craft: %s
+quickcraft.screen.confirm=Confirm Craft
+quickcraft.screen.close=Close
+quickcraft.screen.ingredients=Ingredients
+quickcraft.screen.refresh=Refresh
+quickcraft.screen.refresh.tooltip=Scan for items available
+quickcraft.screen.show_mobs=Show Mobs
+quickcraft.screen.hide_mobs=Hide Mobs
+quickcraft.screen.controls=Controls
+quickcraft.screen.history=History
+quickcraft.screen.emc_total=EMC: %s
+quickcraft.screen.emc_uses=Uses %s
+quickcraft.screen.missing_station=Missing: 
+quickcraft.screen.station_options=Can craft this at (W/S):
+quickcraft.screen.show_tree=Show crafting tree
+quickcraft.screen.hide_tree=Hide crafting tree
+quickcraft.screen.copy_tooltip=Copy material list to clipboard.
+
+quickcraft.legend.target=End result item
+quickcraft.legend.have=Items you have
+quickcraft.legend.crafted=Items being crafted
+quickcraft.legend.missing=Missing materials
+quickcraft.legend.no_station=Can't craft (no station)
+quickcraft.legend.dimmed=Dimmed tab = branch can't be finished
+
+quickcraft.controls.pan=Drag/Scroll: pan/zoom
+quickcraft.controls.swap=Left-click: swap recipe
+quickcraft.controls.view_tree=Middle-click: view item's tree
+quickcraft.controls.switch_tag=W/S or Up/Down: switch tag item
+quickcraft.controls.toggle_recipe=Right-click: show/hide recipe
+quickcraft.controls.reset=Ctrl-click: reset preferences
+
+quickcraft.history.title=Crafting history
+quickcraft.history.empty=No history yet
+
+quickcraft.deposit.header=Deposit results into:
+quickcraft.deposit.search=Search...
+quickcraft.deposit.no_matches=No matches
+quickcraft.deposit.free_slots=%s/%s slots available
+quickcraft.deposit.title=Deposit results
+quickcraft.deposit.into=Into: %s
+quickcraft.deposit.hint=Click to choose a container
+quickcraft.deposit.your_inventory=your inventory
+quickcraft.deposit.your_emc=your EMC
+
+quickcraft.source.my_inventory=My Inventory
+quickcraft.source.double_chest=Double Chest
+quickcraft.source.me_system=ME System
+quickcraft.source.rs_system=RS System
+
+quickcraft.ingredients.title=Ingredients (%s)
+quickcraft.ingredients.pin=Pin
+quickcraft.ingredients.copy=Copy
+quickcraft.ingredients.not_learned=not learned
+
+quickcraft.copy.full=Copy full list
+quickcraft.copy.missing=Copy missing materials
+quickcraft.copy.shortages=Copy material shortages
+quickcraft.copy.header=Quick Craft - %s %s:
+quickcraft.copy.shortage=%s: %s/%s (need %s more)
+
+quickcraft.node.need=need %s
+quickcraft.node.keep=keep %s
+
+quickcraft.tooltip.end_result=End result
+quickcraft.tooltip.required=Required: %s
+quickcraft.tooltip.available=Available: %s
+quickcraft.tooltip.from_emc=(+%s from EMC)
+quickcraft.tooltip.free_after=(%s free after other uses)
+quickcraft.tooltip.catalyst=Catalyst - kept, not consumed
+quickcraft.tooltip.using=You have enough - using %s
+quickcraft.tooltip.needs_station=Needs a %s nearby
+quickcraft.tooltip.accepts=Accepts (W/S or Up/Down to switch):
+quickcraft.tooltip.bought_emc=Bought with EMC
+quickcraft.tooltip.bought_emc_each=Bought with EMC - %s each
+quickcraft.tooltip.not_enough_emc=Not enough EMC
+quickcraft.tooltip.reference=Recipe expanded at its first use in this tree
+quickcraft.tooltip.recipe=Recipe: %s
+quickcraft.tooltip.yields=Yields %s per craft (%s)
+quickcraft.tooltip.manual=Supplying yourself (not crafted)
+quickcraft.tooltip.swap=Left-click: swap recipe (%s options)
+quickcraft.tooltip.eye=Eye icon: show or hide the crafting tree
+quickcraft.tooltip.hide_recipe=Right-click: hide recipe (supply yourself)
+quickcraft.tooltip.reveal_recipe=Right-click: reveal recipe
+quickcraft.tooltip.base=Base material - no recipe
+quickcraft.tooltip.made_in=Made in: %s
+quickcraft.tooltip.view_tree=Middle-click: view this item's tree
+
+quickcraft.mob.drops=Drops %s: %s
+quickcraft.mob.biomes=Biomes: %s
+quickcraft.mob.experience=Experience: %s
+quickcraft.mob.all_drops=All drops:
+quickcraft.mob.next=Left-click: next mob (%s)
+quickcraft.mob.looting=+Loot
+
+quickcraft.pinned.top_right=TR
+quickcraft.pinned.top_left=TL
+quickcraft.pinned.bottom_left=BL
+quickcraft.pinned.bottom_right=BR
+
+quickcraft.force.button=Force Craft
+quickcraft.force.not_enough=You do not have enough items to craft this fully
+quickcraft.force.can_craft=Can craft %s of %s x %s
+quickcraft.force.explain=Force Craft makes as many items as your materials allow.
+quickcraft.force.missing=Missing %sx %s
+quickcraft.force.acquire=Acquire items:
+quickcraft.force.empty=Not enough materials to make any items
+
+quickcraft.reason.not_learned=(not learned)
+quickcraft.reason.not_enough_emc=(not enough EMC)
+quickcraft.reason.catalyst=(catalyst)
+quickcraft.reason.station=(needs a station)
+quickcraft.reason.tree_limit=(tree limit)
+quickcraft.reason.loop=(loop)
+quickcraft.reason.manual=(supplied by you)
+
+quickcraft.station.stonecutter=Stonecutter
+quickcraft.station.smithing_table=Smithing Table
+quickcraft.station.extreme_crafting_table=Extreme Crafting Table
+quickcraft.station.basic_crafting_table=Basic Crafting Table
+quickcraft.station.advanced_crafting_table=Advanced Crafting Table
+quickcraft.station.elite_crafting_table=Elite Crafting Table
+quickcraft.station.ultimate_crafting_table=Ultimate Crafting Table
+
+quickcraft.chat.crafted=Quick Craft: crafted %sx %s
+quickcraft.chat.partial=Quick Craft: crafted %s/%s %s - ran out of materials
+quickcraft.chat.not_enough=Quick Craft: not enough materials to craft %s
+quickcraft.chat.needs_station=Quick Craft: needs a %s nearby to craft %s
+quickcraft.chat.aborted=Quick Craft: could not pull %sx %s out of storage, nothing was crafted
+quickcraft.chat.tree_limit=(recipe tree hit the maxTreeNodes limit, raise it in the config)
+quickcraft.chat.missing=missing: %s
+quickcraft.chat.placed=%s to %s
+quickcraft.chat.dropped=%s dropped at your feet
+quickcraft.chat.leftover=+%s leftover item
+quickcraft.chat.leftovers=+%s leftover items
+
+quickcraft.configuration.general=General
+quickcraft.configuration.general.tooltip=Crafting, storage and menu options.
+quickcraft.configuration.client=Client
+quickcraft.configuration.client.tooltip=Colors and display options for the Quick Craft menu.
+quickcraft.configuration.preferredItems=Preferred Items
+quickcraft.configuration.preferredItems.tooltip=Item ids to prefer when an ingredient or recipe has several options. Earlier entries win; empty uses the defaults.
+quickcraft.configuration.containerScanRange=Container Scan Range
+quickcraft.configuration.containerScanRange.tooltip=Block radius to pull items from and deposit results into. 0 turns nearby containers off.
+quickcraft.configuration.depositBlacklist=Deposit Blacklist
+quickcraft.configuration.depositBlacklist.tooltip=Blocks never offered for deposits: a block id, a mod id, or an OreDictionary name starting with @ or #.
+quickcraft.configuration.extraSources=Extra Sources
+quickcraft.configuration.extraSources.tooltip=Extra block or item ids to pull from and deposit into. They must hold an item inventory.
+quickcraft.configuration.collapseOwnedItems=Collapse Owned Items
+quickcraft.configuration.collapseOwnedItems.tooltip=Items you already have enough of are not expanded into their own recipe tree.
+quickcraft.configuration.craftSoundEnabled=Craft Sound
+quickcraft.configuration.craftSoundEnabled.tooltip=Play a sound when a Quick Craft finishes.
+quickcraft.configuration.craftSound=Craft Sound Id
+quickcraft.configuration.craftSound.tooltip=The sound id played when a Quick Craft finishes.
+quickcraft.configuration.maxTreeDepth=Max Tree Depth
+quickcraft.configuration.maxTreeDepth.tooltip=How deep the crafting tree can expand.
+quickcraft.configuration.maxTreeNodes=Max Tree Nodes
+quickcraft.configuration.maxTreeNodes.tooltip=Safety cap on the number of steps in a crafting tree.
+quickcraft.configuration.animationsEnabled=Animations
+quickcraft.configuration.animationsEnabled.tooltip=Animate the crafting tree and panels in the Quick Craft menu.
+quickcraft.configuration.creativeBypass=Creative Bypass
+quickcraft.configuration.creativeBypass.tooltip=In creative mode, the requested item is given right away without using any ingredients.
+quickcraft.configuration.pinnedListAnimation=Pinned List Animation
+quickcraft.configuration.pinnedListAnimation.tooltip=The pinned ingredients list eases its rows in when it appears.
+quickcraft.configuration.hideLoopingRecipes=Hide Looping Recipes
+quickcraft.configuration.hideLoopingRecipes.tooltip=Hide recipes that loop back on themselves unless you already have the looping item.
+quickcraft.configuration.openOnlyWithRecipe=Open Only With Recipe
+quickcraft.configuration.openOnlyWithRecipe.tooltip=The Quick Craft key does nothing on items with no supported recipe.
+quickcraft.configuration.hoverBulge=Hover Bulge
+quickcraft.configuration.hoverBulge.tooltip=Tabs grow slightly while you hover over them.
+quickcraft.configuration.sizeTabToFit=Size Tabs to Fit
+quickcraft.configuration.sizeTabToFit.tooltip=Tabs widen to fit the full item name.
+quickcraft.configuration.shiftCraftAmount=Shift Craft Amount
+quickcraft.configuration.shiftCraftAmount.tooltip=How many items to craft while holding Shift: a number from 1 to 1000000, or Max.
+quickcraft.configuration.useProjectEEmc=Use ProjectE EMC
+quickcraft.configuration.useProjectEEmc.tooltip=With a transmutation table or tablet nearby, EMC buys missing learned materials and crafted items get learned.
+quickcraft.configuration.useKleinStarEmc=Use Klein Star EMC
+quickcraft.configuration.useKleinStarEmc.tooltip=Klein Stars in your inventory add their EMC to what Quick Craft can spend, after your own EMC.
+quickcraft.configuration.backpackSources=Backpack Sources
+quickcraft.configuration.backpackSources.tooltip=Pull from and deposit into any item in your inventory that holds its own inventory, like backpacks.
+quickcraft.configuration.colorAvailable=Available Color
+quickcraft.configuration.colorAvailable.tooltip=Color for items you already have. Hex like FF55FF55 or 55FF55.
+quickcraft.configuration.colorCrafted=Crafted Color
+quickcraft.configuration.colorCrafted.tooltip=Color for items that will be crafted.
+quickcraft.configuration.colorMissing=Missing Color
+quickcraft.configuration.colorMissing.tooltip=Color for missing materials.
+quickcraft.configuration.colorNoStation=No Station Color
+quickcraft.configuration.colorNoStation.tooltip=Color for steps you have no station to craft.
+quickcraft.configuration.colorTarget=Target Color
+quickcraft.configuration.colorTarget.tooltip=Color for the item you are crafting.
+quickcraft.configuration.colorNodeBackground=Tab Background Color
+quickcraft.configuration.colorNodeBackground.tooltip=Fill color behind each step.
+quickcraft.configuration.colorLines=Line Color
+quickcraft.configuration.colorLines.tooltip=Color of the lines linking steps.
+quickcraft.configuration.mobPreview=Mob Preview
+quickcraft.configuration.mobPreview.tooltip=3D mob preview, shown when Just Enough Resources is installed.
+quickcraft.configuration.entitySpin=Spin
+quickcraft.configuration.entitySpin.tooltip=Spin the mob preview.
+quickcraft.configuration.entityIdleAnimation=Idle Animation
+quickcraft.configuration.entityIdleAnimation.tooltip=Play the mob idle animation.
+quickcraft.configuration.entityWalkAnimation=Walk Animation
+quickcraft.configuration.entityWalkAnimation.tooltip=Play the mob walk animation.
+quickcraft.configuration.entitySpinSpeed=Spin Speed
+quickcraft.configuration.entitySpinSpeed.tooltip=Mob preview spin speed multiplier.
+quickcraft.configuration.projecte=ProjectE
+quickcraft.configuration.projecte.tooltip=ProjectE options, shown when ProjectE is installed.
+quickcraft.configuration.showEmc=Show EMC
+quickcraft.configuration.showEmc.tooltip=Show your total EMC in the menu header when a transmutation table or tablet is available.

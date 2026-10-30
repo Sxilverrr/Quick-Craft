@@ -2,6 +2,7 @@ package com.sxilverr.quickcraft.network;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -16,12 +17,12 @@ public class DepositTargetsResponsePacket implements IMessage {
 
     public static final class Entry {
         private final String id;
-        private final String label;
+        private final ITextComponent label;
         private final ItemStack icon;
         private final int freeSlots;
         private final int totalSlots;
 
-        public Entry(String id, String label, ItemStack icon, int freeSlots, int totalSlots) {
+        public Entry(String id, ITextComponent label, ItemStack icon, int freeSlots, int totalSlots) {
             this.id = id;
             this.label = label;
             this.icon = icon;
@@ -33,7 +34,7 @@ public class DepositTargetsResponsePacket implements IMessage {
             return id;
         }
 
-        public String label() {
+        public ITextComponent label() {
             return label;
         }
 
@@ -66,7 +67,7 @@ public class DepositTargetsResponsePacket implements IMessage {
         for (int i = 0; i < n; i++) {
             Entry e = entries.get(i);
             Buf.writeString(buf, e.id());
-            Buf.writeString(buf, e.label());
+            Buf.writeString(buf, ITextComponent.Serializer.componentToJson(e.label()));
             Buf.writeStack(buf, e.icon());
             buf.writeInt(e.freeSlots());
             buf.writeInt(e.totalSlots());
@@ -79,7 +80,7 @@ public class DepositTargetsResponsePacket implements IMessage {
         entries = new ArrayList<Entry>(Math.max(0, n));
         for (int i = 0; i < n; i++) {
             String id = Buf.readString(buf);
-            String label = Buf.readString(buf);
+            ITextComponent label = ITextComponent.Serializer.jsonToComponent(Buf.readString(buf));
             ItemStack icon = Buf.readStack(buf);
             int freeSlots = buf.readInt();
             int totalSlots = buf.readInt();

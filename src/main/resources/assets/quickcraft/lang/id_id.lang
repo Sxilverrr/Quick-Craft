@@ -1,0 +1,226 @@
+key.categories.quickcraft=Quick Craft
+key.quickcraft.open=Quick Craft
+key.quickcraft.scroll_up=Gulir Daftar Tersemat ke Atas
+key.quickcraft.scroll_down=Gulir Daftar Tersemat ke Bawah
+key.quickcraft.show_recipe=Tampilkan Resep
+key.quickcraft.show_uses=Tampilkan Kegunaan
+
+quickcraft.max=Maks.
+
+quickcraft.max_count=Maks. (%s)
+
+quickcraft.more=+%s lagi
+
+quickcraft.tree_limit=Batas pohon tercapai: naikkan maxTreeNodes atau maxTreeDepth di konfigurasi
+
+quickcraft.screen.title=Quick Craft - %s
+quickcraft.screen.qty=Jml:
+quickcraft.screen.craft_max=Buat Maks.
+quickcraft.screen.can_craft=bisa dibuat: %s
+quickcraft.screen.confirm=Buat Sekarang
+quickcraft.screen.close=Tutup
+quickcraft.screen.ingredients=Bahan
+quickcraft.screen.refresh=Segarkan
+quickcraft.screen.refresh.tooltip=Pindai benda yang tersedia
+quickcraft.screen.show_mobs=Tampilkan Mob
+quickcraft.screen.hide_mobs=Sembunyikan Mob
+quickcraft.screen.controls=Kendali
+quickcraft.screen.history=Riwayat
+quickcraft.screen.emc_total=EMC: %s
+quickcraft.screen.emc_uses=Memakai %s
+quickcraft.screen.missing_station=Kurang: 
+quickcraft.screen.station_options=Bisa dibuat di (W/S):
+quickcraft.screen.show_tree=Tampilkan pohon kerajinan
+quickcraft.screen.hide_tree=Sembunyikan pohon kerajinan
+quickcraft.screen.copy_tooltip=Salin daftar bahan ke papan klip.
+
+quickcraft.legend.target=Benda hasil akhir
+quickcraft.legend.have=Benda yang Anda punya
+quickcraft.legend.crafted=Benda yang sedang dibuat
+quickcraft.legend.missing=Bahan yang kurang
+quickcraft.legend.no_station=Tidak bisa dibuat (tanpa meja)
+quickcraft.legend.dimmed=Tab redup = cabang tidak bisa selesai
+
+quickcraft.controls.pan=Seret/gulir: geser/perbesar
+quickcraft.controls.swap=Klik kiri: ganti resep
+quickcraft.controls.view_tree=Klik tengah: lihat pohon benda
+quickcraft.controls.switch_tag=W/S atau Atas/Bawah: ganti benda tag
+quickcraft.controls.toggle_recipe=Klik kanan: tampilkan/sembunyikan resep
+quickcraft.controls.reset=Ctrl+klik: atur ulang pilihan
+
+quickcraft.history.title=Riwayat kerajinan
+quickcraft.history.empty=Belum ada riwayat
+
+quickcraft.deposit.header=Simpan hasil ke:
+quickcraft.deposit.search=Cari...
+quickcraft.deposit.no_matches=Tidak ada yang cocok
+quickcraft.deposit.free_slots=Slot kosong: %s/%s
+quickcraft.deposit.title=Simpan hasil
+quickcraft.deposit.into=Ke: %s
+quickcraft.deposit.hint=Klik untuk memilih wadah
+quickcraft.deposit.your_inventory=barang bawaan Anda
+quickcraft.deposit.your_emc=EMC Anda
+
+quickcraft.source.my_inventory=Barang Bawaan Saya
+quickcraft.source.double_chest=Peti Ganda
+quickcraft.source.me_system=Sistem ME
+quickcraft.source.rs_system=Sistem RS
+
+quickcraft.ingredients.title=Bahan (%s)
+quickcraft.ingredients.pin=Sematkan
+quickcraft.ingredients.copy=Salin
+quickcraft.ingredients.not_learned=belum dipelajari
+
+quickcraft.copy.full=Salin seluruh daftar
+quickcraft.copy.missing=Salin bahan yang kurang
+quickcraft.copy.shortages=Salin kekurangan bahan
+quickcraft.copy.header=Quick Craft - %s %s:
+quickcraft.copy.shortage=%s: %s/%s (kurang %s)
+
+quickcraft.node.need=perlu %s
+quickcraft.node.keep=tetap %s
+
+quickcraft.tooltip.end_result=Hasil akhir
+quickcraft.tooltip.required=Diperlukan: %s
+quickcraft.tooltip.available=Tersedia: %s
+quickcraft.tooltip.from_emc=(+%s dari EMC)
+quickcraft.tooltip.free_after=(%s bebas setelah kebutuhan lain)
+quickcraft.tooltip.catalyst=Katalis: tetap ada, tidak terpakai
+quickcraft.tooltip.using=Anda punya cukup (sumber: %s)
+quickcraft.tooltip.needs_station=Perlu di dekat: %s
+quickcraft.tooltip.accepts=Menerima (W/S atau Atas/Bawah untuk ganti):
+quickcraft.tooltip.bought_emc=Dibeli dengan EMC
+quickcraft.tooltip.bought_emc_each=Dibeli dengan EMC, %s per buah
+quickcraft.tooltip.not_enough_emc=EMC tidak cukup
+quickcraft.tooltip.reference=Resep dibuka di pemakaian pertamanya dalam pohon ini
+quickcraft.tooltip.recipe=Resep: %s
+quickcraft.tooltip.yields=Menghasilkan %s per pembuatan (%s)
+quickcraft.tooltip.manual=Anda sediakan sendiri (tidak dibuat)
+quickcraft.tooltip.swap=Klik kiri: ganti resep (%s pilihan)
+quickcraft.tooltip.eye=Ikon mata: tampilkan atau sembunyikan pohon kerajinan
+quickcraft.tooltip.hide_recipe=Klik kanan: sembunyikan resep (sediakan sendiri)
+quickcraft.tooltip.reveal_recipe=Klik kanan: tampilkan resep
+quickcraft.tooltip.base=Bahan dasar: tidak ada resep
+quickcraft.tooltip.made_in=Dibuat di: %s
+quickcraft.tooltip.view_tree=Klik tengah: lihat pohon benda ini
+
+quickcraft.mob.drops=Menjatuhkan %s: %s
+quickcraft.mob.biomes=Bioma: %s
+quickcraft.mob.experience=Pengalaman: %s
+quickcraft.mob.all_drops=Semua jarahan:
+quickcraft.mob.next=Klik kiri: makhluk berikutnya (%s)
+quickcraft.mob.looting=+Penjarahan
+
+quickcraft.pinned.top_right=↗
+quickcraft.pinned.top_left=↖
+quickcraft.pinned.bottom_left=↙
+quickcraft.pinned.bottom_right=↘
+
+quickcraft.force.button=Paksa Buat
+quickcraft.force.not_enough=Benda Anda tidak cukup untuk membuat semuanya
+quickcraft.force.can_craft=Bisa dibuat %s dari %s x %s
+quickcraft.force.explain=Paksa Buat membuat benda sebanyak yang dimungkinkan bahan Anda.
+quickcraft.force.missing=Kurang %sx %s
+quickcraft.force.acquire=Anda akan mendapat:
+quickcraft.force.empty=Bahan tidak cukup untuk membuat apa pun
+
+quickcraft.reason.not_learned=(belum dipelajari)
+quickcraft.reason.not_enough_emc=(EMC tidak cukup)
+quickcraft.reason.catalyst=(katalis)
+quickcraft.reason.station=(perlu meja)
+quickcraft.reason.tree_limit=(batas pohon)
+quickcraft.reason.loop=(putaran)
+quickcraft.reason.manual=(Anda sediakan)
+
+quickcraft.station.stonecutter=Pemahat Batu
+quickcraft.station.smithing_table=Meja Tempa
+quickcraft.station.extreme_crafting_table=Meja Kerajinan Ekstrem
+quickcraft.station.basic_crafting_table=Meja Kerajinan Dasar
+quickcraft.station.advanced_crafting_table=Meja Kerajinan Lanjutan
+quickcraft.station.elite_crafting_table=Meja Kerajinan Elite
+quickcraft.station.ultimate_crafting_table=Meja Kerajinan Pamungkas
+
+quickcraft.chat.crafted=Quick Craft: berhasil membuat %sx %s
+quickcraft.chat.partial=Quick Craft: berhasil membuat %s/%s %s, bahan habis
+quickcraft.chat.not_enough=Quick Craft: bahan tidak cukup untuk membuat %s
+quickcraft.chat.needs_station=Quick Craft: perlu %s di dekat untuk membuat %s
+quickcraft.chat.aborted=Quick Craft: tidak bisa mengambil %sx %s dari penyimpanan, tidak ada yang dibuat
+quickcraft.chat.tree_limit=(pohon resep mencapai batas maxTreeNodes, naikkan di konfigurasi)
+quickcraft.chat.missing=kurang: %s
+quickcraft.chat.placed=%s ke %s
+quickcraft.chat.dropped=%s jatuh di kaki Anda
+quickcraft.chat.leftover=+%s benda sisa
+quickcraft.chat.leftovers=+%s benda sisa
+
+quickcraft.configuration.general=Umum
+quickcraft.configuration.general.tooltip=Opsi kerajinan, penyimpanan, dan menu.
+quickcraft.configuration.client=Klien
+quickcraft.configuration.client.tooltip=Warna dan opsi tampilan menu Quick Craft.
+quickcraft.configuration.preferredItems=Benda Pilihan
+quickcraft.configuration.preferredItems.tooltip=ID benda yang diutamakan saat bahan atau resep punya beberapa pilihan. Entri lebih awal menang; kosong memakai bawaan.
+quickcraft.configuration.containerScanRange=Jangkauan Pindai Wadah
+quickcraft.configuration.containerScanRange.tooltip=Radius dalam balok untuk mengambil benda dan menyimpan hasil. 0 mematikan wadah di sekitar.
+quickcraft.configuration.depositBlacklist=Daftar Hitam Penyimpanan
+quickcraft.configuration.depositBlacklist.tooltip=Balok yang tidak pernah ditawarkan untuk menyimpan: ID balok, ID mod, atau nama OreDictionary yang diawali @ atau #.
+quickcraft.configuration.extraSources=Sumber Tambahan
+quickcraft.configuration.extraSources.tooltip=ID balok atau benda tambahan untuk diambil dan diisi. Harus punya persediaan benda.
+quickcraft.configuration.collapseOwnedItems=Ciutkan Benda yang Dimiliki
+quickcraft.configuration.collapseOwnedItems.tooltip=Benda yang sudah cukup Anda miliki tidak dibuka menjadi pohon resepnya sendiri.
+quickcraft.configuration.craftSoundEnabled=Suara Pembuatan
+quickcraft.configuration.craftSoundEnabled.tooltip=Putar suara saat Quick Craft selesai.
+quickcraft.configuration.craftSound=ID Suara
+quickcraft.configuration.craftSound.tooltip=ID suara yang diputar saat Quick Craft selesai.
+quickcraft.configuration.maxTreeDepth=Kedalaman Pohon Maks.
+quickcraft.configuration.maxTreeDepth.tooltip=Seberapa dalam pohon kerajinan bisa dibuka.
+quickcraft.configuration.maxTreeNodes=Simpul Pohon Maks.
+quickcraft.configuration.maxTreeNodes.tooltip=Batas aman jumlah langkah dalam satu pohon kerajinan.
+quickcraft.configuration.animationsEnabled=Animasi
+quickcraft.configuration.animationsEnabled.tooltip=Animasikan pohon kerajinan dan panel di menu Quick Craft.
+quickcraft.configuration.creativeBypass=Jalan Pintas Kreatif
+quickcraft.configuration.creativeBypass.tooltip=Di mode kreatif, benda yang diminta langsung diberikan tanpa memakai bahan.
+quickcraft.configuration.pinnedListAnimation=Animasi Daftar Tersemat
+quickcraft.configuration.pinnedListAnimation.tooltip=Baris daftar bahan yang disematkan masuk dengan halus saat muncul.
+quickcraft.configuration.hideLoopingRecipes=Sembunyikan Resep Berputar
+quickcraft.configuration.hideLoopingRecipes.tooltip=Sembunyikan resep yang kembali ke dirinya sendiri, kecuali Anda sudah punya benda putarannya.
+quickcraft.configuration.openOnlyWithRecipe=Buka Hanya Jika Ada Resep
+quickcraft.configuration.openOnlyWithRecipe.tooltip=Tombol Quick Craft tidak melakukan apa pun pada benda tanpa resep yang didukung.
+quickcraft.configuration.hoverBulge=Membesar Saat Disorot
+quickcraft.configuration.hoverBulge.tooltip=Tab sedikit membesar saat disorot tetikus.
+quickcraft.configuration.sizeTabToFit=Sesuaikan Tab dengan Nama
+quickcraft.configuration.sizeTabToFit.tooltip=Tab melebar agar nama benda terlihat utuh.
+quickcraft.configuration.shiftCraftAmount=Jumlah dengan Shift
+quickcraft.configuration.shiftCraftAmount.tooltip=Berapa benda yang dibuat sambil menahan Shift: angka 1 sampai 1000000, atau Max.
+quickcraft.configuration.useProjectEEmc=Pakai EMC ProjectE
+quickcraft.configuration.useProjectEEmc.tooltip=Dengan meja atau tablet transmutasi di dekat Anda, EMC membeli bahan yang sudah dipelajari yang kurang, dan benda yang dibuat dipelajari.
+quickcraft.configuration.useKleinStarEmc=Pakai EMC Bintang Klein
+quickcraft.configuration.useKleinStarEmc.tooltip=Bintang Klein di barang bawaan menambah EMC-nya ke yang bisa dipakai Quick Craft, setelah EMC Anda sendiri.
+quickcraft.configuration.backpackSources=Ransel sebagai Sumber
+quickcraft.configuration.backpackSources.tooltip=Ambil dari dan simpan ke benda apa pun di barang bawaan Anda yang punya penyimpanan sendiri, seperti ransel.
+quickcraft.configuration.colorAvailable=Warna Dimiliki
+quickcraft.configuration.colorAvailable.tooltip=Warna benda yang sudah Anda miliki. Hex seperti FF55FF55 atau 55FF55.
+quickcraft.configuration.colorCrafted=Warna Akan Dibuat
+quickcraft.configuration.colorCrafted.tooltip=Warna benda yang akan dibuat.
+quickcraft.configuration.colorMissing=Warna Kurang
+quickcraft.configuration.colorMissing.tooltip=Warna bahan yang kurang.
+quickcraft.configuration.colorNoStation=Warna Tanpa Meja
+quickcraft.configuration.colorNoStation.tooltip=Warna langkah yang mejanya tidak Anda punya.
+quickcraft.configuration.colorTarget=Warna Target
+quickcraft.configuration.colorTarget.tooltip=Warna benda yang sedang Anda buat.
+quickcraft.configuration.colorNodeBackground=Warna Latar Tab
+quickcraft.configuration.colorNodeBackground.tooltip=Warna isian di belakang setiap langkah.
+quickcraft.configuration.colorLines=Warna Garis
+quickcraft.configuration.colorLines.tooltip=Warna garis yang menghubungkan langkah.
+quickcraft.configuration.mobPreview=Pratinjau Makhluk
+quickcraft.configuration.mobPreview.tooltip=Pratinjau makhluk 3D, tampil saat Just Enough Resources terpasang.
+quickcraft.configuration.entitySpin=Putar
+quickcraft.configuration.entitySpin.tooltip=Putar pratinjau makhluk.
+quickcraft.configuration.entityIdleAnimation=Animasi Diam
+quickcraft.configuration.entityIdleAnimation.tooltip=Mainkan animasi diam makhluk.
+quickcraft.configuration.entityWalkAnimation=Animasi Berjalan
+quickcraft.configuration.entityWalkAnimation.tooltip=Mainkan animasi berjalan makhluk.
+quickcraft.configuration.entitySpinSpeed=Kecepatan Putar
+quickcraft.configuration.entitySpinSpeed.tooltip=Pengali kecepatan putar pratinjau.
+quickcraft.configuration.projecte=ProjectE
+quickcraft.configuration.projecte.tooltip=Opsi ProjectE, tampil saat ProjectE terpasang.
+quickcraft.configuration.showEmc=Tampilkan EMC
+quickcraft.configuration.showEmc.tooltip=Tampilkan total EMC Anda di bagian atas menu saat ada meja atau tablet transmutasi.

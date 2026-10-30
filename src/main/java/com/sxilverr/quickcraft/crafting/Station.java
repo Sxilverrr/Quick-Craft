@@ -1,25 +1,28 @@
 package com.sxilverr.quickcraft.crafting;
 
-public enum Station {
-    CRAFTING("Crafting Table", "minecraft:crafting_table"),
-    EXTREME_CRAFTING("Extreme Crafting Table", "avaritia:extreme_crafting_table"),
-    STONECUTTER("Stonecutter", "futuremc:stonecutter"),
-    SMITHING("Smithing Table", "futuremc:smithing_table"),
-    EXTENDED_BASIC("Basic Crafting Table", "extendedcrafting:table_basic"),
-    EXTENDED_ADVANCED("Advanced Crafting Table", "extendedcrafting:table_advanced"),
-    EXTENDED_ELITE("Elite Crafting Table", "extendedcrafting:table_elite"),
-    EXTENDED_ULTIMATE("Ultimate Crafting Table", "extendedcrafting:table_ultimate");
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 
-    private final String displayName;
+public enum Station {
+    CRAFTING("tile.workbench.name", "minecraft:crafting_table"),
+    EXTREME_CRAFTING("quickcraft.station.extreme_crafting_table", "avaritia:extreme_crafting_table"),
+    STONECUTTER("quickcraft.station.stonecutter", "futuremc:stonecutter"),
+    SMITHING("quickcraft.station.smithing_table", "futuremc:smithing_table"),
+    EXTENDED_BASIC("quickcraft.station.basic_crafting_table", "extendedcrafting:table_basic"),
+    EXTENDED_ADVANCED("quickcraft.station.advanced_crafting_table", "extendedcrafting:table_advanced"),
+    EXTENDED_ELITE("quickcraft.station.elite_crafting_table", "extendedcrafting:table_elite"),
+    EXTENDED_ULTIMATE("quickcraft.station.ultimate_crafting_table", "extendedcrafting:table_ultimate");
+
+    private final String translationKey;
     private final String iconId;
 
-    Station(String displayName, String iconId) {
-        this.displayName = displayName;
+    Station(String translationKey, String iconId) {
+        this.translationKey = translationKey;
         this.iconId = iconId;
     }
 
-    public String displayName() {
-        return displayName;
+    public ITextComponent displayName() {
+        return new TextComponentTranslation(translationKey);
     }
 
     public String iconId() {

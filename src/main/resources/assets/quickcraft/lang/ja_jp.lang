@@ -1,0 +1,226 @@
+key.categories.quickcraft=Quick Craft
+key.quickcraft.open=Quick Craft
+key.quickcraft.scroll_up=固定リストを上にスクロール
+key.quickcraft.scroll_down=固定リストを下にスクロール
+key.quickcraft.show_recipe=レシピを表示
+key.quickcraft.show_uses=使い道を表示
+
+quickcraft.max=最大
+
+quickcraft.max_count=最大（%s）
+
+quickcraft.more=他%s件
+
+quickcraft.tree_limit=ツリーの上限に達しました：設定で maxTreeNodes か maxTreeDepth を上げてください
+
+quickcraft.screen.title=Quick Craft - %s
+quickcraft.screen.qty=個数：
+quickcraft.screen.craft_max=最大クラフト
+quickcraft.screen.can_craft=クラフト可能：%s
+quickcraft.screen.confirm=クラフト確定
+quickcraft.screen.close=閉じる
+quickcraft.screen.ingredients=材料
+quickcraft.screen.refresh=更新
+quickcraft.screen.refresh.tooltip=使えるアイテムを探す
+quickcraft.screen.show_mobs=Mobを表示
+quickcraft.screen.hide_mobs=Mobを隠す
+quickcraft.screen.controls=操作方法
+quickcraft.screen.history=履歴
+quickcraft.screen.emc_total=EMC：%s
+quickcraft.screen.emc_uses=消費 %s
+quickcraft.screen.missing_station=不足：
+quickcraft.screen.station_options=クラフトできる場所（W/S）：
+quickcraft.screen.show_tree=クラフトツリーを表示
+quickcraft.screen.hide_tree=クラフトツリーを隠す
+quickcraft.screen.copy_tooltip=材料リストをクリップボードにコピーします。
+
+quickcraft.legend.target=最終アイテム
+quickcraft.legend.have=持っているアイテム
+quickcraft.legend.crafted=クラフトするアイテム
+quickcraft.legend.missing=足りない材料
+quickcraft.legend.no_station=クラフト不可（作業場なし）
+quickcraft.legend.dimmed=暗いタブ = 完成できない枝
+
+quickcraft.controls.pan=ドラッグ/スクロール：移動/ズーム
+quickcraft.controls.swap=左クリック：レシピを切り替え
+quickcraft.controls.view_tree=中クリック：アイテムのツリーを表示
+quickcraft.controls.switch_tag=W/S か 上/下：タグのアイテムを切り替え
+quickcraft.controls.toggle_recipe=右クリック：レシピの表示/非表示
+quickcraft.controls.reset=Ctrl+クリック：選択をリセット
+
+quickcraft.history.title=クラフト履歴
+quickcraft.history.empty=履歴はまだありません
+
+quickcraft.deposit.header=完成品の入れ先：
+quickcraft.deposit.search=検索...
+quickcraft.deposit.no_matches=見つかりません
+quickcraft.deposit.free_slots=空きスロット：%s/%s
+quickcraft.deposit.title=完成品の入れ先
+quickcraft.deposit.into=入れ先：%s
+quickcraft.deposit.hint=クリックして容器を選択
+quickcraft.deposit.your_inventory=インベントリ
+quickcraft.deposit.your_emc=所持EMC
+
+quickcraft.source.my_inventory=自分のインベントリ
+quickcraft.source.double_chest=ラージチェスト
+quickcraft.source.me_system=MEシステム
+quickcraft.source.rs_system=RSシステム
+
+quickcraft.ingredients.title=材料（%s）
+quickcraft.ingredients.pin=固定
+quickcraft.ingredients.copy=コピー
+quickcraft.ingredients.not_learned=未習得
+
+quickcraft.copy.full=全リストをコピー
+quickcraft.copy.missing=足りない材料をコピー
+quickcraft.copy.shortages=不足数をコピー
+quickcraft.copy.header=Quick Craft - %s %s：
+quickcraft.copy.shortage=%s：%s/%s（あと%s個）
+
+quickcraft.node.need=必要 %s
+quickcraft.node.keep=保持 %s
+
+quickcraft.tooltip.end_result=最終結果
+quickcraft.tooltip.required=必要数：%s
+quickcraft.tooltip.available=所持数：%s
+quickcraft.tooltip.from_emc=（EMCから+%s）
+quickcraft.tooltip.free_after=（他の用途の後に残る数：%s）
+quickcraft.tooltip.catalyst=触媒：消費されずに残ります
+quickcraft.tooltip.using=足りています（入手元：%s）
+quickcraft.tooltip.needs_station=近くに必要：%s
+quickcraft.tooltip.accepts=使えるアイテム（W/S か 上/下 で切り替え）：
+quickcraft.tooltip.bought_emc=EMCで購入
+quickcraft.tooltip.bought_emc_each=EMCで購入、1個あたり %s
+quickcraft.tooltip.not_enough_emc=EMCが足りません
+quickcraft.tooltip.reference=このツリーで最初に使われる場所でレシピを展開しています
+quickcraft.tooltip.recipe=レシピ：%s
+quickcraft.tooltip.yields=1回のクラフトで%s個（%s）
+quickcraft.tooltip.manual=自分で用意（クラフトしない）
+quickcraft.tooltip.swap=左クリック：レシピを切り替え（%s通り）
+quickcraft.tooltip.eye=目のアイコン：クラフトツリーの表示/非表示
+quickcraft.tooltip.hide_recipe=右クリック：レシピを隠す（自分で用意）
+quickcraft.tooltip.reveal_recipe=右クリック：レシピを表示
+quickcraft.tooltip.base=基本素材：レシピなし
+quickcraft.tooltip.made_in=入手方法：%s
+quickcraft.tooltip.view_tree=中クリック：このアイテムのツリーを表示
+
+quickcraft.mob.drops=%sのドロップ：%s
+quickcraft.mob.biomes=バイオーム：%s
+quickcraft.mob.experience=経験値：%s
+quickcraft.mob.all_drops=ドロップ一覧：
+quickcraft.mob.next=左クリック：次のMob（%s）
+quickcraft.mob.looting=+ドロップ増加
+
+quickcraft.pinned.top_right=右上
+quickcraft.pinned.top_left=左上
+quickcraft.pinned.bottom_left=左下
+quickcraft.pinned.bottom_right=右下
+
+quickcraft.force.button=強制クラフト
+quickcraft.force.not_enough=すべてをクラフトするにはアイテムが足りません
+quickcraft.force.can_craft=クラフト可能：%s / %s x %s
+quickcraft.force.explain=強制クラフトは、手持ちの材料で作れるだけクラフトします。
+quickcraft.force.missing=不足 %sx %s
+quickcraft.force.acquire=入手するアイテム：
+quickcraft.force.empty=材料が足りず、何もクラフトできません
+
+quickcraft.reason.not_learned=（未習得）
+quickcraft.reason.not_enough_emc=（EMC不足）
+quickcraft.reason.catalyst=（触媒）
+quickcraft.reason.station=（作業場が必要）
+quickcraft.reason.tree_limit=（ツリー上限）
+quickcraft.reason.loop=（ループ）
+quickcraft.reason.manual=（自分で用意）
+
+quickcraft.station.stonecutter=石切台
+quickcraft.station.smithing_table=鍛冶台
+quickcraft.station.extreme_crafting_table=エクストリーム作業台
+quickcraft.station.basic_crafting_table=ベーシック作業台
+quickcraft.station.advanced_crafting_table=アドバンスド作業台
+quickcraft.station.elite_crafting_table=エリート作業台
+quickcraft.station.ultimate_crafting_table=アルティメット作業台
+
+quickcraft.chat.crafted=Quick Craft：%sx %sをクラフトしました
+quickcraft.chat.partial=Quick Craft：%s/%s %sをクラフトしました（材料切れ）
+quickcraft.chat.not_enough=Quick Craft：%sをクラフトする材料が足りません
+quickcraft.chat.needs_station=Quick Craft：%2$sをクラフトするには近くに%1$sが必要です
+quickcraft.chat.aborted=Quick Craft：ストレージから%sx %sを取り出せなかったため、何もクラフトしていません
+quickcraft.chat.tree_limit=（レシピツリーが maxTreeNodes の上限に達しました。設定で上げてください）
+quickcraft.chat.missing=不足：%s
+quickcraft.chat.placed=%2$sに%1$s個
+quickcraft.chat.dropped=%s個を足元にドロップ
+quickcraft.chat.leftover=余りアイテム +%s
+quickcraft.chat.leftovers=余りアイテム +%s
+
+quickcraft.configuration.general=一般
+quickcraft.configuration.general.tooltip=クラフト、ストレージ、メニューの設定。
+quickcraft.configuration.client=クライアント
+quickcraft.configuration.client.tooltip=Quick Craftメニューの色と表示の設定。
+quickcraft.configuration.preferredItems=優先アイテム
+quickcraft.configuration.preferredItems.tooltip=材料やレシピに複数の候補があるときに優先するアイテムID。先の項目ほど優先。空なら既定値を使います。
+quickcraft.configuration.containerScanRange=容器の検索範囲
+quickcraft.configuration.containerScanRange.tooltip=アイテムを取り出し、完成品を入れる範囲（ブロック単位の半径）。0で近くの容器を使いません。
+quickcraft.configuration.depositBlacklist=入れ先ブラックリスト
+quickcraft.configuration.depositBlacklist.tooltip=入れ先として出さないブロック：ブロックID、MOD ID、または@か#で始まる鉱石辞書名。
+quickcraft.configuration.extraSources=追加の取り出し元
+quickcraft.configuration.extraSources.tooltip=取り出しと入れ先に追加するブロックやアイテムのID。アイテムのインベントリを持つ必要があります。
+quickcraft.configuration.collapseOwnedItems=所持品を折りたたむ
+quickcraft.configuration.collapseOwnedItems.tooltip=十分に持っているアイテムは、自分のレシピツリーに展開しません。
+quickcraft.configuration.craftSoundEnabled=クラフト音
+quickcraft.configuration.craftSoundEnabled.tooltip=Quick Craftが終わったときに音を鳴らします。
+quickcraft.configuration.craftSound=サウンドID
+quickcraft.configuration.craftSound.tooltip=Quick Craftが終わったときに鳴らすサウンドのID。
+quickcraft.configuration.maxTreeDepth=ツリーの最大の深さ
+quickcraft.configuration.maxTreeDepth.tooltip=クラフトツリーを展開できる深さ。
+quickcraft.configuration.maxTreeNodes=ツリーの最大ノード数
+quickcraft.configuration.maxTreeNodes.tooltip=クラフトツリーの手順数の安全上限。
+quickcraft.configuration.animationsEnabled=アニメーション
+quickcraft.configuration.animationsEnabled.tooltip=Quick Craftメニューのクラフトツリーとパネルをアニメーションさせます。
+quickcraft.configuration.creativeBypass=クリエイティブで即入手
+quickcraft.configuration.creativeBypass.tooltip=クリエイティブモードでは、材料を使わずに目的のアイテムをすぐ入手します。
+quickcraft.configuration.pinnedListAnimation=固定リストのアニメーション
+quickcraft.configuration.pinnedListAnimation.tooltip=固定した材料リストの行が表示時になめらかに入ってきます。
+quickcraft.configuration.hideLoopingRecipes=循環レシピを隠す
+quickcraft.configuration.hideLoopingRecipes.tooltip=自分自身に戻るレシピを、そのアイテムを持っていない限り隠します。
+quickcraft.configuration.openOnlyWithRecipe=レシピがあるときだけ開く
+quickcraft.configuration.openOnlyWithRecipe.tooltip=対応レシピのないアイテムではQuick Craftキーは何もしません。
+quickcraft.configuration.hoverBulge=ホバーで拡大
+quickcraft.configuration.hoverBulge.tooltip=マウスを乗せるとタブが少し大きくなります。
+quickcraft.configuration.sizeTabToFit=タブを名前に合わせる
+quickcraft.configuration.sizeTabToFit.tooltip=アイテム名が全部入るようにタブを広げます。
+quickcraft.configuration.shiftCraftAmount=Shift時のクラフト数
+quickcraft.configuration.shiftCraftAmount.tooltip=Shiftを押している間にクラフトする数：1～1000000の数字、またはMax。
+quickcraft.configuration.useProjectEEmc=ProjectEのEMCを使う
+quickcraft.configuration.useProjectEEmc.tooltip=近くに変換テーブルか変換タブレットがあると、足りない習得済み素材をEMCで買い、クラフトしたアイテムを習得します。
+quickcraft.configuration.useKleinStarEmc=クラインの星のEMCを使う
+quickcraft.configuration.useKleinStarEmc.tooltip=インベントリのクラインの星のEMCを、自分のEMCの次にQuick Craftで使えるようにします。
+quickcraft.configuration.backpackSources=バックパックを取り出し元にする
+quickcraft.configuration.backpackSources.tooltip=インベントリ内の、自分のインベントリを持つアイテム（バックパックなど）から取り出し、そこに入れます。
+quickcraft.configuration.colorAvailable=所持品の色
+quickcraft.configuration.colorAvailable.tooltip=すでに持っているアイテムの色。FF55FF55や55FF55のような16進数。
+quickcraft.configuration.colorCrafted=クラフト予定の色
+quickcraft.configuration.colorCrafted.tooltip=これからクラフトするアイテムの色。
+quickcraft.configuration.colorMissing=不足の色
+quickcraft.configuration.colorMissing.tooltip=足りない材料の色。
+quickcraft.configuration.colorNoStation=作業場なしの色
+quickcraft.configuration.colorNoStation.tooltip=作業場がなくてクラフトできない手順の色。
+quickcraft.configuration.colorTarget=目標の色
+quickcraft.configuration.colorTarget.tooltip=クラフト中のアイテムの色。
+quickcraft.configuration.colorNodeBackground=タブの背景色
+quickcraft.configuration.colorNodeBackground.tooltip=各手順の後ろの塗りつぶし色。
+quickcraft.configuration.colorLines=線の色
+quickcraft.configuration.colorLines.tooltip=手順をつなぐ線の色。
+quickcraft.configuration.mobPreview=Mobのプレビュー
+quickcraft.configuration.mobPreview.tooltip=Mobの3Dプレビュー。Just Enough Resourcesが入っているときに表示されます。
+quickcraft.configuration.entitySpin=回転
+quickcraft.configuration.entitySpin.tooltip=Mobのプレビューを回転させます。
+quickcraft.configuration.entityIdleAnimation=待機アニメーション
+quickcraft.configuration.entityIdleAnimation.tooltip=Mobの待機アニメーションを再生します。
+quickcraft.configuration.entityWalkAnimation=歩行アニメーション
+quickcraft.configuration.entityWalkAnimation.tooltip=Mobの歩行アニメーションを再生します。
+quickcraft.configuration.entitySpinSpeed=回転速度
+quickcraft.configuration.entitySpinSpeed.tooltip=プレビューの回転速度の倍率。
+quickcraft.configuration.projecte=ProjectE
+quickcraft.configuration.projecte.tooltip=ProjectEの設定。ProjectEが入っているときに表示されます。
+quickcraft.configuration.showEmc=EMCを表示
+quickcraft.configuration.showEmc.tooltip=変換テーブルかタブレットが使えるとき、メニュー上部に合計EMCを表示します。

@@ -1,0 +1,226 @@
+key.categories.quickcraft=Quick Craft
+key.quickcraft.open=Quick Craft
+key.quickcraft.scroll_up=Cuộn danh sách đã ghim lên
+key.quickcraft.scroll_down=Cuộn danh sách đã ghim xuống
+key.quickcraft.show_recipe=Xem công thức
+key.quickcraft.show_uses=Xem công dụng
+
+quickcraft.max=Tối đa
+
+quickcraft.max_count=Tối đa (%s)
+
+quickcraft.more=+%s mục nữa
+
+quickcraft.tree_limit=Đã đạt giới hạn cây: hãy tăng maxTreeNodes hoặc maxTreeDepth trong cấu hình
+
+quickcraft.screen.title=Quick Craft - %s
+quickcraft.screen.qty=SL:
+quickcraft.screen.craft_max=Chế tạo hết
+quickcraft.screen.can_craft=chế tạo được: %s
+quickcraft.screen.confirm=Xác nhận chế tạo
+quickcraft.screen.close=Đóng
+quickcraft.screen.ingredients=Nguyên liệu
+quickcraft.screen.refresh=Làm mới
+quickcraft.screen.refresh.tooltip=Quét các vật phẩm có sẵn
+quickcraft.screen.show_mobs=Hiện sinh vật
+quickcraft.screen.hide_mobs=Ẩn sinh vật
+quickcraft.screen.controls=Thao tác
+quickcraft.screen.history=Lịch sử
+quickcraft.screen.emc_total=EMC: %s
+quickcraft.screen.emc_uses=Tốn %s
+quickcraft.screen.missing_station=Thiếu: 
+quickcraft.screen.station_options=Có thể chế tạo tại (W/S):
+quickcraft.screen.show_tree=Hiện cây chế tạo
+quickcraft.screen.hide_tree=Ẩn cây chế tạo
+quickcraft.screen.copy_tooltip=Sao chép danh sách nguyên liệu vào bộ nhớ tạm.
+
+quickcraft.legend.target=Vật phẩm cuối cùng
+quickcraft.legend.have=Vật phẩm bạn có
+quickcraft.legend.crafted=Vật phẩm đang chế tạo
+quickcraft.legend.missing=Nguyên liệu còn thiếu
+quickcraft.legend.no_station=Không thể chế tạo (thiếu bàn)
+quickcraft.legend.dimmed=Thẻ mờ = nhánh không thể hoàn thành
+
+quickcraft.controls.pan=Kéo/cuộn: di chuyển/thu phóng
+quickcraft.controls.swap=Chuột trái: đổi công thức
+quickcraft.controls.view_tree=Chuột giữa: xem cây của vật phẩm
+quickcraft.controls.switch_tag=W/S hoặc Lên/Xuống: đổi vật phẩm của nhãn
+quickcraft.controls.toggle_recipe=Chuột phải: hiện/ẩn công thức
+quickcraft.controls.reset=Ctrl+nhấp: đặt lại lựa chọn
+
+quickcraft.history.title=Lịch sử chế tạo
+quickcraft.history.empty=Chưa có lịch sử
+
+quickcraft.deposit.header=Cất kết quả vào:
+quickcraft.deposit.search=Tìm kiếm...
+quickcraft.deposit.no_matches=Không có kết quả
+quickcraft.deposit.free_slots=Ô trống: %s/%s
+quickcraft.deposit.title=Cất kết quả
+quickcraft.deposit.into=Vào: %s
+quickcraft.deposit.hint=Nhấp để chọn nơi chứa
+quickcraft.deposit.your_inventory=túi đồ của bạn
+quickcraft.deposit.your_emc=EMC của bạn
+
+quickcraft.source.my_inventory=Túi đồ của tôi
+quickcraft.source.double_chest=Rương đôi
+quickcraft.source.me_system=Hệ thống ME
+quickcraft.source.rs_system=Hệ thống RS
+
+quickcraft.ingredients.title=Nguyên liệu (%s)
+quickcraft.ingredients.pin=Ghim
+quickcraft.ingredients.copy=Chép
+quickcraft.ingredients.not_learned=chưa học
+
+quickcraft.copy.full=Sao chép toàn bộ danh sách
+quickcraft.copy.missing=Sao chép nguyên liệu còn thiếu
+quickcraft.copy.shortages=Sao chép phần thiếu hụt
+quickcraft.copy.header=Quick Craft - %s %s:
+quickcraft.copy.shortage=%s: %s/%s (thiếu %s)
+
+quickcraft.node.need=cần %s
+quickcraft.node.keep=giữ %s
+
+quickcraft.tooltip.end_result=Kết quả cuối cùng
+quickcraft.tooltip.required=Cần: %s
+quickcraft.tooltip.available=Hiện có: %s
+quickcraft.tooltip.from_emc=(+%s từ EMC)
+quickcraft.tooltip.free_after=(còn trống %s sau các nhu cầu khác)
+quickcraft.tooltip.catalyst=Chất xúc tác: được giữ lại, không bị tiêu hao
+quickcraft.tooltip.using=Bạn có đủ (nguồn: %s)
+quickcraft.tooltip.needs_station=Cần ở gần: %s
+quickcraft.tooltip.accepts=Chấp nhận (W/S hoặc Lên/Xuống để đổi):
+quickcraft.tooltip.bought_emc=Mua bằng EMC
+quickcraft.tooltip.bought_emc_each=Mua bằng EMC, %s mỗi cái
+quickcraft.tooltip.not_enough_emc=Không đủ EMC
+quickcraft.tooltip.reference=Công thức được mở ở lần dùng đầu tiên trong cây này
+quickcraft.tooltip.recipe=Công thức: %s
+quickcraft.tooltip.yields=Ra %s mỗi lần chế tạo (%s)
+quickcraft.tooltip.manual=Bạn tự cung cấp (không chế tạo)
+quickcraft.tooltip.swap=Chuột trái: đổi công thức (%s lựa chọn)
+quickcraft.tooltip.eye=Biểu tượng mắt: hiện hoặc ẩn cây chế tạo
+quickcraft.tooltip.hide_recipe=Chuột phải: ẩn công thức (tự cung cấp)
+quickcraft.tooltip.reveal_recipe=Chuột phải: hiện công thức
+quickcraft.tooltip.base=Nguyên liệu cơ bản: không có công thức
+quickcraft.tooltip.made_in=Làm ở: %s
+quickcraft.tooltip.view_tree=Chuột giữa: xem cây của vật phẩm này
+
+quickcraft.mob.drops=Rơi ra %s: %s
+quickcraft.mob.biomes=Quần xã: %s
+quickcraft.mob.experience=Kinh nghiệm: %s
+quickcraft.mob.all_drops=Tất cả lợi phẩm:
+quickcraft.mob.next=Chuột trái: sinh vật tiếp theo (%s)
+quickcraft.mob.looting=+Nhặt
+
+quickcraft.pinned.top_right=TP
+quickcraft.pinned.top_left=TT
+quickcraft.pinned.bottom_left=DT
+quickcraft.pinned.bottom_right=DP
+
+quickcraft.force.button=Buộc chế tạo
+quickcraft.force.not_enough=Bạn không đủ vật phẩm để chế tạo hết
+quickcraft.force.can_craft=Chế tạo được %s trên %s x %s
+quickcraft.force.explain=Buộc chế tạo sẽ làm ra nhiều vật phẩm nhất mà nguyên liệu cho phép.
+quickcraft.force.missing=Thiếu %sx %s
+quickcraft.force.acquire=Bạn sẽ nhận:
+quickcraft.force.empty=Không đủ nguyên liệu để chế tạo gì cả
+
+quickcraft.reason.not_learned=(chưa học)
+quickcraft.reason.not_enough_emc=(không đủ EMC)
+quickcraft.reason.catalyst=(chất xúc tác)
+quickcraft.reason.station=(cần bàn chế tạo)
+quickcraft.reason.tree_limit=(giới hạn cây)
+quickcraft.reason.loop=(vòng lặp)
+quickcraft.reason.manual=(bạn tự cung cấp)
+
+quickcraft.station.stonecutter=Máy cắt đá
+quickcraft.station.smithing_table=Bàn rèn
+quickcraft.station.extreme_crafting_table=Bàn chế tạo cực hạn
+quickcraft.station.basic_crafting_table=Bàn chế tạo cơ bản
+quickcraft.station.advanced_crafting_table=Bàn chế tạo nâng cao
+quickcraft.station.elite_crafting_table=Bàn chế tạo tinh anh
+quickcraft.station.ultimate_crafting_table=Bàn chế tạo tối thượng
+
+quickcraft.chat.crafted=Quick Craft: đã chế tạo %sx %s
+quickcraft.chat.partial=Quick Craft: đã chế tạo %s/%s %s, hết nguyên liệu
+quickcraft.chat.not_enough=Quick Craft: không đủ nguyên liệu để chế tạo %s
+quickcraft.chat.needs_station=Quick Craft: cần %s ở gần để chế tạo %s
+quickcraft.chat.aborted=Quick Craft: không thể lấy %sx %s từ kho, không chế tạo gì cả
+quickcraft.chat.tree_limit=(cây công thức đã đạt giới hạn maxTreeNodes, hãy tăng nó trong cấu hình)
+quickcraft.chat.missing=thiếu: %s
+quickcraft.chat.placed=%s vào %s
+quickcraft.chat.dropped=%s rơi dưới chân bạn
+quickcraft.chat.leftover=+%s vật phẩm dư
+quickcraft.chat.leftovers=+%s vật phẩm dư
+
+quickcraft.configuration.general=Chung
+quickcraft.configuration.general.tooltip=Tùy chọn chế tạo, kho chứa và menu.
+quickcraft.configuration.client=Máy khách
+quickcraft.configuration.client.tooltip=Màu sắc và tùy chọn hiển thị của menu Quick Craft.
+quickcraft.configuration.preferredItems=Vật phẩm ưu tiên
+quickcraft.configuration.preferredItems.tooltip=ID vật phẩm được ưu tiên khi nguyên liệu hoặc công thức có nhiều lựa chọn. Mục đứng trước thắng; để trống sẽ dùng mặc định.
+quickcraft.configuration.containerScanRange=Phạm vi quét nơi chứa
+quickcraft.configuration.containerScanRange.tooltip=Bán kính tính bằng khối để lấy vật phẩm và cất kết quả. 0 tắt các nơi chứa ở gần.
+quickcraft.configuration.depositBlacklist=Danh sách chặn nơi cất
+quickcraft.configuration.depositBlacklist.tooltip=Các khối không bao giờ được đưa ra để cất: ID khối, ID mod, hoặc tên OreDictionary bắt đầu bằng @ hoặc #.
+quickcraft.configuration.extraSources=Nguồn bổ sung
+quickcraft.configuration.extraSources.tooltip=ID khối hoặc vật phẩm bổ sung để lấy ra và cất vào. Chúng phải có kho chứa vật phẩm.
+quickcraft.configuration.collapseOwnedItems=Thu gọn vật phẩm đã có
+quickcraft.configuration.collapseOwnedItems.tooltip=Vật phẩm bạn đã có đủ sẽ không mở ra thành cây công thức riêng.
+quickcraft.configuration.craftSoundEnabled=Âm thanh chế tạo
+quickcraft.configuration.craftSoundEnabled.tooltip=Phát âm thanh khi Quick Craft chế tạo xong.
+quickcraft.configuration.craftSound=ID âm thanh
+quickcraft.configuration.craftSound.tooltip=ID âm thanh phát ra khi Quick Craft chế tạo xong.
+quickcraft.configuration.maxTreeDepth=Độ sâu tối đa của cây
+quickcraft.configuration.maxTreeDepth.tooltip=Cây chế tạo có thể mở sâu đến đâu.
+quickcraft.configuration.maxTreeNodes=Số nút tối đa của cây
+quickcraft.configuration.maxTreeNodes.tooltip=Giới hạn an toàn cho số bước trong một cây chế tạo.
+quickcraft.configuration.animationsEnabled=Hiệu ứng động
+quickcraft.configuration.animationsEnabled.tooltip=Tạo hiệu ứng động cho cây chế tạo và các bảng trong menu Quick Craft.
+quickcraft.configuration.creativeBypass=Bỏ qua ở chế độ Sáng tạo
+quickcraft.configuration.creativeBypass.tooltip=Ở chế độ Sáng tạo, vật phẩm được trao ngay mà không tốn nguyên liệu.
+quickcraft.configuration.pinnedListAnimation=Hiệu ứng danh sách đã ghim
+quickcraft.configuration.pinnedListAnimation.tooltip=Các dòng của danh sách đã ghim trượt vào nhẹ nhàng khi hiện ra.
+quickcraft.configuration.hideLoopingRecipes=Ẩn công thức vòng lặp
+quickcraft.configuration.hideLoopingRecipes.tooltip=Ẩn các công thức quay về chính nó, trừ khi bạn đã có vật phẩm của vòng lặp.
+quickcraft.configuration.openOnlyWithRecipe=Chỉ mở khi có công thức
+quickcraft.configuration.openOnlyWithRecipe.tooltip=Phím Quick Craft không làm gì với vật phẩm không có công thức được hỗ trợ.
+quickcraft.configuration.hoverBulge=Phóng to khi trỏ chuột
+quickcraft.configuration.hoverBulge.tooltip=Thẻ to lên một chút khi bạn trỏ chuột vào.
+quickcraft.configuration.sizeTabToFit=Thẻ vừa với tên
+quickcraft.configuration.sizeTabToFit.tooltip=Thẻ rộng ra để hiện đủ tên vật phẩm.
+quickcraft.configuration.shiftCraftAmount=Số lượng khi giữ Shift
+quickcraft.configuration.shiftCraftAmount.tooltip=Số vật phẩm chế tạo khi giữ Shift: một số từ 1 đến 1000000, hoặc Max.
+quickcraft.configuration.useProjectEEmc=Dùng EMC của ProjectE
+quickcraft.configuration.useProjectEEmc.tooltip=Khi có bàn hoặc bảng chuyển hóa ở gần, EMC sẽ mua nguyên liệu đã học còn thiếu và vật phẩm chế tạo ra được học.
+quickcraft.configuration.useKleinStarEmc=Dùng EMC của Sao Klein
+quickcraft.configuration.useKleinStarEmc.tooltip=Sao Klein trong túi đồ cộng EMC của chúng vào số Quick Craft có thể dùng, sau EMC của bạn.
+quickcraft.configuration.backpackSources=Ba lô làm nguồn
+quickcraft.configuration.backpackSources.tooltip=Lấy ra và cất vào bất kỳ vật phẩm nào trong túi đồ có kho chứa riêng, như ba lô.
+quickcraft.configuration.colorAvailable=Màu đã có
+quickcraft.configuration.colorAvailable.tooltip=Màu của vật phẩm bạn đã có. Mã hex như FF55FF55 hoặc 55FF55.
+quickcraft.configuration.colorCrafted=Màu sẽ chế tạo
+quickcraft.configuration.colorCrafted.tooltip=Màu của vật phẩm sẽ được chế tạo.
+quickcraft.configuration.colorMissing=Màu còn thiếu
+quickcraft.configuration.colorMissing.tooltip=Màu của nguyên liệu còn thiếu.
+quickcraft.configuration.colorNoStation=Màu thiếu bàn
+quickcraft.configuration.colorNoStation.tooltip=Màu của các bước bạn không có bàn để chế tạo.
+quickcraft.configuration.colorTarget=Màu mục tiêu
+quickcraft.configuration.colorTarget.tooltip=Màu của vật phẩm bạn đang chế tạo.
+quickcraft.configuration.colorNodeBackground=Màu nền thẻ
+quickcraft.configuration.colorNodeBackground.tooltip=Màu tô phía sau mỗi bước.
+quickcraft.configuration.colorLines=Màu đường nối
+quickcraft.configuration.colorLines.tooltip=Màu của các đường nối giữa các bước.
+quickcraft.configuration.mobPreview=Xem trước sinh vật
+quickcraft.configuration.mobPreview.tooltip=Xem trước sinh vật dạng 3D, hiện khi đã cài Just Enough Resources.
+quickcraft.configuration.entitySpin=Xoay
+quickcraft.configuration.entitySpin.tooltip=Xoay bản xem trước sinh vật.
+quickcraft.configuration.entityIdleAnimation=Hoạt ảnh đứng yên
+quickcraft.configuration.entityIdleAnimation.tooltip=Phát hoạt ảnh đứng yên của sinh vật.
+quickcraft.configuration.entityWalkAnimation=Hoạt ảnh đi bộ
+quickcraft.configuration.entityWalkAnimation.tooltip=Phát hoạt ảnh đi bộ của sinh vật.
+quickcraft.configuration.entitySpinSpeed=Tốc độ xoay
+quickcraft.configuration.entitySpinSpeed.tooltip=Hệ số tốc độ xoay của bản xem trước.
+quickcraft.configuration.projecte=ProjectE
+quickcraft.configuration.projecte.tooltip=Tùy chọn ProjectE, hiện khi đã cài ProjectE.
+quickcraft.configuration.showEmc=Hiện EMC
+quickcraft.configuration.showEmc.tooltip=Hiện tổng EMC của bạn ở đầu menu khi có bàn hoặc bảng chuyển hóa.

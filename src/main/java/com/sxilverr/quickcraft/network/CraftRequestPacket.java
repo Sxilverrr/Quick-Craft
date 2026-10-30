@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -127,77 +128,80 @@ public class CraftRequestPacket implements IMessage {
     private static ITextComponent feedback(CraftSummary summary, ItemStack target) {
         String name = target.getDisplayName();
         if (summary.aborted()) {
-            return colored("Quick Craft: could not pull " + summary.blockedCount() + "x "
-                    + summary.blocked().getDisplayName() + " out of storage, nothing was crafted", TextFormatting.RED);
+            return colored(new TextComponentTranslation("quickcraft.chat.aborted", summary.blockedCount(),
+                    summary.blocked().getDisplayName()), TextFormatting.RED);
         }
         if (summary.full() || (summary.partial() && summary.requested() >= CraftPlanner.MAX_QUANTITY)) {
-            return withPlacements(colored("Quick Craft: crafted " + summary.crafted() + "x " + name,
+            return withPlacements(colored(new TextComponentTranslation("quickcraft.chat.crafted", summary.crafted(), name),
                     TextFormatting.GREEN), summary);
         }
         if (summary.partial()) {
-            return withPlacements(colored("Quick Craft: crafted " + summary.crafted() + "/"
-                    + requestedLabel(summary.requested()) + " " + name + " - ran out of materials" + limitHint(summary)
-                    + blockerText(summary),
+            ITextComponent msg = new TextComponentTranslation("quickcraft.chat.partial", summary.crafted(),
+                    requestedLabel(summary.requested()), name);
+            return withPlacements(colored(msg.appendSibling(limitHint(summary)).appendSibling(blockerText(summary)),
                     TextFormatting.YELLOW), summary);
         }
         if (summary.missingStation() != null) {
-            return colored("Quick Craft: needs a " + summary.missingStation() + " nearby to craft " + name,
+            return colored(new TextComponentTranslation("quickcraft.chat.needs_station", summary.missingStation(), name),
                     TextFormatting.RED);
         }
-        return colored("Quick Craft: not enough materials to craft " + name + limitHint(summary) + blockerText(summary),
-                TextFormatting.RED);
+        ITextComponent msg = new TextComponentTranslation("quickcraft.chat.not_enough", name);
+        return colored(msg.appendSibling(limitHint(summary)).appendSibling(blockerText(summary)), TextFormatting.RED);
     }
 
-    private static ITextComponent colored(String text, TextFormatting color) {
-        TextComponentString component = new TextComponentString(text);
+    private static ITextComponent colored(ITextComponent component, TextFormatting color) {
         component.getStyle().setColor(color);
         return component;
     }
 
-    private static String blockerText(CraftSummary summary) {
+    private static ITextComponent blockerText(CraftSummary summary) {
         List<CraftPlanner.Blocker> blockers = summary.blockers();
-        if (blockers.isEmpty()) return "";
-        StringBuilder sb = new StringBuilder(" - missing: ");
+        if (blockers.isEmpty()) return new TextComponentString("");
+        ITextComponent list = new TextComponentString("");
         int shown = Math.min(3, blockers.size());
         for (int i = 0; i < shown; i++) {
             CraftPlanner.Blocker blocker = blockers.get(i);
-            if (i > 0) sb.append(", ");
-            sb.append(blocker.missing()).append("x ").append(blocker.key().toStack(1).getDisplayName())
-                    .append(blocker.reason().label);
+            if (i > 0) list.appendText(", ");
+            list.appendText(blocker.missing() + "x " + blocker.key().toStack(1).getDisplayName())
+                    .appendSibling(blocker.reason().suffix());
         }
-        if (blockers.size() > shown) sb.append(", +").append(blockers.size() - shown).append(" more");
-        return sb.toString();
+        if (blockers.size() > shown) {
+            list.appendText(", ").appendSibling(new TextComponentTranslation("quickcraft.more", blockers.size() - shown));
+        }
+        return new TextComponentString(" - ").appendSibling(new TextComponentTranslation("quickcraft.chat.missing", list));
     }
 
-    private static String limitHint(CraftSummary summary) {
-        return summary.treeLimited() ? " (recipe tree hit the maxTreeNodes limit, raise it in the config)" : "";
+    private static ITextComponent limitHint(CraftSummary summary) {
+        if (!summary.treeLimited()) return new TextComponentString("");
+        return new TextComponentString(" ").appendSibling(new TextComponentTranslation("quickcraft.chat.tree_limit"));
     }
 
     private static ITextComponent withPlacements(ITextComponent message, CraftSummary summary) {
         List<CraftSummary.Placement> placements = summary.placements();
         if (placements.isEmpty() && summary.dropped() <= 0 && summary.byproducts() <= 0) return message;
 
-        StringBuilder sb = new StringBuilder(" -> ");
+        ITextComponent parts = new TextComponentString(" -> ");
         boolean first = true;
         for (CraftSummary.Placement placement : placements) {
-            if (!first) sb.append(", ");
-            sb.append(placement.count()).append(" to ").append(placement.where());
+            if (!first) parts.appendText(", ");
+            parts.appendSibling(new TextComponentTranslation("quickcraft.chat.placed", placement.count(), placement.where()));
             first = false;
         }
         if (summary.dropped() > 0) {
-            if (!first) sb.append(", ");
-            sb.append(summary.dropped()).append(" dropped at your feet");
+            if (!first) parts.appendText(", ");
+            parts.appendSibling(new TextComponentTranslation("quickcraft.chat.dropped", summary.dropped()));
             first = false;
         }
         if (summary.byproducts() > 0) {
-            if (!first) sb.append(", ");
-            sb.append("+").append(summary.byproducts())
-                    .append(summary.byproducts() == 1 ? " leftover item" : " leftover items");
+            if (!first) parts.appendText(", ");
+            String key = summary.byproducts() == 1 ? "quickcraft.chat.leftover" : "quickcraft.chat.leftovers";
+            parts.appendSibling(new TextComponentTranslation(key, summary.byproducts()));
         }
-        return message.appendSibling(colored(sb.toString(), TextFormatting.GRAY));
+        return message.appendSibling(colored(parts, TextFormatting.GRAY));
     }
 
-    private static String requestedLabel(int requested) {
-        return requested >= CraftPlanner.MAX_QUANTITY ? "Max" : requested + "x";
+    private static ITextComponent requestedLabel(int requested) {
+        return requested >= CraftPlanner.MAX_QUANTITY
+                ? new TextComponentTranslation("quickcraft.max") : new TextComponentString(requested + "x");
     }
 }

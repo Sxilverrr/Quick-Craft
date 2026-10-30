@@ -4,6 +4,8 @@ import com.sxilverr.quickcraft.crafting.ItemKey;
 import com.sxilverr.quickcraft.storage.LabeledSource;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -13,10 +15,10 @@ import java.util.Map;
 public final class Deposit {
     private final List<LabeledSource> sinks;
     private final EntityPlayerMP player;
-    private final Map<String, Integer> tally = new LinkedHashMap<String, Integer>();
+    private final Map<ITextComponent, Integer> tally = new LinkedHashMap<ITextComponent, Integer>();
     private int dropped;
     private int byproducts;
-    private String emcLabel = "your EMC";
+    private ITextComponent emcLabel = new TextComponentTranslation("quickcraft.deposit.your_emc");
 
     private Deposit(List<LabeledSource> sinks, EntityPlayerMP player) {
         this.sinks = sinks;
@@ -72,8 +74,8 @@ public final class Deposit {
         }
     }
 
-    public void setEmcLabel(String label) {
-        if (label != null && !label.isEmpty()) this.emcLabel = label;
+    public void setEmcLabel(ITextComponent label) {
+        if (label != null) this.emcLabel = label;
     }
 
     public void toEmc(int amount, boolean target) {
@@ -82,18 +84,18 @@ public final class Deposit {
         else byproducts += amount;
     }
 
-    private void merge(String where, int amount) {
+    private void merge(ITextComponent where, int amount) {
         Integer existing = tally.get(where);
         tally.put(where, existing == null ? amount : existing + amount);
     }
 
-    private static String feedbackName(LabeledSource sink) {
-        return sink.isSelf() ? "your inventory" : sink.name();
+    private static ITextComponent feedbackName(LabeledSource sink) {
+        return sink.isSelf() ? new TextComponentTranslation("quickcraft.deposit.your_inventory") : sink.name();
     }
 
     public List<CraftSummary.Placement> placements() {
         List<CraftSummary.Placement> out = new ArrayList<CraftSummary.Placement>();
-        for (Map.Entry<String, Integer> entry : tally.entrySet()) {
+        for (Map.Entry<ITextComponent, Integer> entry : tally.entrySet()) {
             out.add(new CraftSummary.Placement(entry.getKey(), entry.getValue()));
         }
         return out;

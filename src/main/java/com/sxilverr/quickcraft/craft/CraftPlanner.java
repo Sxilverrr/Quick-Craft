@@ -10,6 +10,9 @@ import com.sxilverr.quickcraft.crafting.TreeBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -28,19 +31,24 @@ public final class CraftPlanner {
     }
 
     public enum Reason {
-        NO_RECIPE(""),
-        NOT_LEARNED(" (not learned)"),
-        NOT_ENOUGH_EMC(" (not enough EMC)"),
-        CATALYST(" (catalyst)"),
-        STATION(" (needs a station)"),
-        TREE_LIMIT(" (tree limit)"),
-        LOOP(" (loop)"),
-        MANUAL(" (supplied by you)");
+        NO_RECIPE(null),
+        NOT_LEARNED("quickcraft.reason.not_learned"),
+        NOT_ENOUGH_EMC("quickcraft.reason.not_enough_emc"),
+        CATALYST("quickcraft.reason.catalyst"),
+        STATION("quickcraft.reason.station"),
+        TREE_LIMIT("quickcraft.reason.tree_limit"),
+        LOOP("quickcraft.reason.loop"),
+        MANUAL("quickcraft.reason.manual");
 
-        public final String label;
+        private final String key;
 
-        Reason(String label) {
-            this.label = label;
+        Reason(String key) {
+            this.key = key;
+        }
+
+        public ITextComponent suffix() {
+            if (key == null) return new TextComponentString("");
+            return new TextComponentString(" ").appendSibling(new TextComponentTranslation(key));
         }
     }
 

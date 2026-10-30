@@ -7,6 +7,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ public final class Ae2ItemSource implements ItemSource {
         if (source == null) return null;
         BlockPos pos = tile.getPos();
         return new LabeledSource("ae2:" + pos.getX() + "," + pos.getY() + "," + pos.getZ(),
-                "ME System", icon, pos, source, true);
+                new TextComponentTranslation("quickcraft.source.me_system"), icon, pos, source, true);
     }
 
     private static ItemSource fromGrid(Object grid, Set<Object> seenNetworks, EntityPlayerMP player, ItemStack icon) {

@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.EnumSet;
@@ -30,7 +31,7 @@ public final class AlchBagSource {
             if (handler == null) continue;
             ItemStack icon = stack.copy();
             icon.setCount(1);
-            out.add(new LabeledSource("pebag:" + color.getName(), stack.getDisplayName(), icon, null,
+            out.add(new LabeledSource("pebag:" + color.getName(), new TextComponentString(stack.getDisplayName()), icon, null,
                     new BagSource(handler, icon, provider, color, player), true));
         }
     }

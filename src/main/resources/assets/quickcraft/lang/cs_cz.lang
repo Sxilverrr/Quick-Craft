@@ -1,0 +1,226 @@
+key.categories.quickcraft=Quick Craft
+key.quickcraft.open=Quick Craft
+key.quickcraft.scroll_up=Posunout připnutý seznam nahoru
+key.quickcraft.scroll_down=Posunout připnutý seznam dolů
+key.quickcraft.show_recipe=Zobrazit recept
+key.quickcraft.show_uses=Zobrazit použití
+
+quickcraft.max=Max.
+
+quickcraft.max_count=Max. (%s)
+
+quickcraft.more=další: +%s
+
+quickcraft.tree_limit=Dosažen limit stromu: zvyš maxTreeNodes nebo maxTreeDepth v konfiguraci
+
+quickcraft.screen.title=Quick Craft - %s
+quickcraft.screen.qty=Počet:
+quickcraft.screen.craft_max=Vyrobit max.
+quickcraft.screen.can_craft=lze vyrobit: %s
+quickcraft.screen.confirm=Vyrobit
+quickcraft.screen.close=Zavřít
+quickcraft.screen.ingredients=Suroviny
+quickcraft.screen.refresh=Obnovit
+quickcraft.screen.refresh.tooltip=Vyhledat dostupné předměty
+quickcraft.screen.show_mobs=Ukázat stvoření
+quickcraft.screen.hide_mobs=Skrýt stvoření
+quickcraft.screen.controls=Ovládání
+quickcraft.screen.history=Historie
+quickcraft.screen.emc_total=EMC: %s
+quickcraft.screen.emc_uses=Stojí %s
+quickcraft.screen.missing_station=Chybí: 
+quickcraft.screen.station_options=Lze vyrobit na (W/S):
+quickcraft.screen.show_tree=Zobrazit strom výroby
+quickcraft.screen.hide_tree=Skrýt strom výroby
+quickcraft.screen.copy_tooltip=Zkopírovat seznam materiálů do schránky.
+
+quickcraft.legend.target=Výsledný předmět
+quickcraft.legend.have=Předměty, které máš
+quickcraft.legend.crafted=Předměty, které se vyrábí
+quickcraft.legend.missing=Chybějící materiály
+quickcraft.legend.no_station=Nelze vyrobit (chybí stanice)
+quickcraft.legend.dimmed=Ztlumená karta = větev nelze dokončit
+
+quickcraft.controls.pan=Tažení/kolečko: posun/přiblížení
+quickcraft.controls.swap=Levé tlačítko: změnit recept
+quickcraft.controls.view_tree=Stisk kolečka: strom předmětu
+quickcraft.controls.switch_tag=W/S nebo nahoru/dolů: změnit předmět tagu
+quickcraft.controls.toggle_recipe=Pravé tlačítko: zobrazit/skrýt recept
+quickcraft.controls.reset=Ctrl+klik: obnovit předvolby
+
+quickcraft.history.title=Historie výroby
+quickcraft.history.empty=Zatím žádná historie
+
+quickcraft.deposit.header=Uložit výsledky do:
+quickcraft.deposit.search=Hledat...
+quickcraft.deposit.no_matches=Žádné výsledky
+quickcraft.deposit.free_slots=Volná místa: %s/%s
+quickcraft.deposit.title=Uložit výsledky
+quickcraft.deposit.into=Cíl: %s
+quickcraft.deposit.hint=Klikni pro výběr úložiště
+quickcraft.deposit.your_inventory=tvůj inventář
+quickcraft.deposit.your_emc=tvoje EMC
+
+quickcraft.source.my_inventory=Můj inventář
+quickcraft.source.double_chest=Dvojitá truhla
+quickcraft.source.me_system=Systém ME
+quickcraft.source.rs_system=Systém RS
+
+quickcraft.ingredients.title=Suroviny (%s)
+quickcraft.ingredients.pin=Připnout
+quickcraft.ingredients.copy=Kopie
+quickcraft.ingredients.not_learned=nenaučeno
+
+quickcraft.copy.full=Kopírovat celý seznam
+quickcraft.copy.missing=Kopírovat chybějící materiály
+quickcraft.copy.shortages=Kopírovat nedostatky
+quickcraft.copy.header=Quick Craft - %s %s:
+quickcraft.copy.shortage=%s: %s/%s (chybí %s)
+
+quickcraft.node.need=potřeba %s
+quickcraft.node.keep=ponechá %s
+
+quickcraft.tooltip.end_result=Konečný výsledek
+quickcraft.tooltip.required=Potřeba: %s
+quickcraft.tooltip.available=K dispozici: %s
+quickcraft.tooltip.from_emc=(+%s z EMC)
+quickcraft.tooltip.free_after=(volné po jiném použití: %s)
+quickcraft.tooltip.catalyst=Katalyzátor: zůstane, nespotřebuje se
+quickcraft.tooltip.using=Máš dost (zdroj: %s)
+quickcraft.tooltip.needs_station=Potřebuje poblíž: %s
+quickcraft.tooltip.accepts=Přijímá (W/S nebo nahoru/dolů pro změnu):
+quickcraft.tooltip.bought_emc=Koupeno za EMC
+quickcraft.tooltip.bought_emc_each=Koupeno za EMC, %s za kus
+quickcraft.tooltip.not_enough_emc=Nedostatek EMC
+quickcraft.tooltip.reference=Recept je rozbalen při prvním použití v tomto stromu
+quickcraft.tooltip.recipe=Recept: %s
+quickcraft.tooltip.yields=Za jednu výrobu: %s (%s)
+quickcraft.tooltip.manual=Dodáš sám (nevyrábí se)
+quickcraft.tooltip.swap=Levé tlačítko: změnit recept (možnosti: %s)
+quickcraft.tooltip.eye=Ikona oka: zobrazit nebo skrýt strom výroby
+quickcraft.tooltip.hide_recipe=Pravé tlačítko: skrýt recept (dodáš sám)
+quickcraft.tooltip.reveal_recipe=Pravé tlačítko: zobrazit recept
+quickcraft.tooltip.base=Základní materiál: bez receptu
+quickcraft.tooltip.made_in=Vyrábí se v: %s
+quickcraft.tooltip.view_tree=Stisk kolečka: strom tohoto předmětu
+
+quickcraft.mob.drops=Kořist: %s, %s
+quickcraft.mob.biomes=Biomy: %s
+quickcraft.mob.experience=Zkušenosti: %s
+quickcraft.mob.all_drops=Veškerá kořist:
+quickcraft.mob.next=Levé tlačítko: další stvoření (%s)
+quickcraft.mob.looting=+Kořist
+
+quickcraft.pinned.top_right=PN
+quickcraft.pinned.top_left=LN
+quickcraft.pinned.bottom_left=LD
+quickcraft.pinned.bottom_right=PD
+
+quickcraft.force.button=Vynutit výrobu
+quickcraft.force.not_enough=Nemáš dost předmětů na celou výrobu
+quickcraft.force.can_craft=Lze vyrobit %s z %s x %s
+quickcraft.force.explain=Vynucená výroba vyrobí tolik předmětů, kolik dovolí tvé materiály.
+quickcraft.force.missing=Chybí %sx %s
+quickcraft.force.acquire=Získáš:
+quickcraft.force.empty=Nedostatek materiálů k výrobě čehokoli
+
+quickcraft.reason.not_learned=(nenaučeno)
+quickcraft.reason.not_enough_emc=(málo EMC)
+quickcraft.reason.catalyst=(katalyzátor)
+quickcraft.reason.station=(potřebuje stanici)
+quickcraft.reason.tree_limit=(limit stromu)
+quickcraft.reason.loop=(smyčka)
+quickcraft.reason.manual=(dodáš sám)
+
+quickcraft.station.stonecutter=Řezačka kamene
+quickcraft.station.smithing_table=Kovářský stůl
+quickcraft.station.extreme_crafting_table=Extrémní pracovní stůl
+quickcraft.station.basic_crafting_table=Základní pracovní stůl
+quickcraft.station.advanced_crafting_table=Pokročilý pracovní stůl
+quickcraft.station.elite_crafting_table=Elitní pracovní stůl
+quickcraft.station.ultimate_crafting_table=Ultimátní pracovní stůl
+
+quickcraft.chat.crafted=Quick Craft: vyrobeno %sx %s
+quickcraft.chat.partial=Quick Craft: vyrobeno %s/%s %s, došly materiály
+quickcraft.chat.not_enough=Quick Craft: nedostatek materiálů pro výrobu: %s
+quickcraft.chat.needs_station=Quick Craft: chybí poblíž %s pro výrobu: %s
+quickcraft.chat.aborted=Quick Craft: z úložiště nelze vybrat %sx %s, nic se nevyrobilo
+quickcraft.chat.tree_limit=(strom receptů dosáhl limitu maxTreeNodes, zvyš ho v konfiguraci)
+quickcraft.chat.missing=chybí: %s
+quickcraft.chat.placed=%2$s: %1$s
+quickcraft.chat.dropped=upuštěno k nohám: %s
+quickcraft.chat.leftover=zbylé předměty: +%s
+quickcraft.chat.leftovers=zbylé předměty: +%s
+
+quickcraft.configuration.general=Obecné
+quickcraft.configuration.general.tooltip=Možnosti výroby, úložišť a nabídky.
+quickcraft.configuration.client=Klient
+quickcraft.configuration.client.tooltip=Barvy a možnosti zobrazení nabídky Quick Craftu.
+quickcraft.configuration.preferredItems=Preferované předměty
+quickcraft.configuration.preferredItems.tooltip=ID předmětů, které mají přednost, když má surovina nebo recept víc možností. Vyhrávají dřívější položky; prázdné použije výchozí.
+quickcraft.configuration.containerScanRange=Dosah úložišť
+quickcraft.configuration.containerScanRange.tooltip=Poloměr v blocích, odkud se berou předměty a kam se ukládají výsledky. 0 vypne úložiště poblíž.
+quickcraft.configuration.depositBlacklist=Zakázaná úložiště
+quickcraft.configuration.depositBlacklist.tooltip=Bloky, které se nikdy nenabízí k uložení: ID bloku, ID modu nebo název z OreDictionary začínající @ nebo #.
+quickcraft.configuration.extraSources=Další zdroje
+quickcraft.configuration.extraSources.tooltip=Další ID bloků nebo předmětů, odkud brát a kam ukládat. Musí mít inventář předmětů.
+quickcraft.configuration.collapseOwnedItems=Sbalit vlastněné předměty
+quickcraft.configuration.collapseOwnedItems.tooltip=Předměty, kterých už máš dost, se nerozbalí do vlastního stromu receptů.
+quickcraft.configuration.craftSoundEnabled=Zvuk výroby
+quickcraft.configuration.craftSoundEnabled.tooltip=Přehrát zvuk, když Quick Craft dokončí výrobu.
+quickcraft.configuration.craftSound=ID zvuku
+quickcraft.configuration.craftSound.tooltip=ID zvuku, který zazní po dokončení Quick Craftu.
+quickcraft.configuration.maxTreeDepth=Max. hloubka stromu
+quickcraft.configuration.maxTreeDepth.tooltip=Jak hluboko se může strom výroby rozbalit.
+quickcraft.configuration.maxTreeNodes=Max. uzlů stromu
+quickcraft.configuration.maxTreeNodes.tooltip=Bezpečnostní limit počtu kroků ve stromu výroby.
+quickcraft.configuration.animationsEnabled=Animace
+quickcraft.configuration.animationsEnabled.tooltip=Animovat strom výroby a panely v nabídce Quick Craftu.
+quickcraft.configuration.creativeBypass=Zkratka v kreativním režimu
+quickcraft.configuration.creativeBypass.tooltip=V kreativním režimu dostaneš požadovaný předmět hned, bez spotřeby surovin.
+quickcraft.configuration.pinnedListAnimation=Animace připnutého seznamu
+quickcraft.configuration.pinnedListAnimation.tooltip=Řádky připnutého seznamu se při zobrazení plynule vysunou.
+quickcraft.configuration.hideLoopingRecipes=Skrýt cyklické recepty
+quickcraft.configuration.hideLoopingRecipes.tooltip=Skrýt recepty, které se vrací samy na sebe, pokud už nemáš předmět z cyklu.
+quickcraft.configuration.openOnlyWithRecipe=Otevřít jen s receptem
+quickcraft.configuration.openOnlyWithRecipe.tooltip=Klávesa Quick Craftu nic neudělá u předmětů bez podporovaného receptu.
+quickcraft.configuration.hoverBulge=Zvětšení po najetí
+quickcraft.configuration.hoverBulge.tooltip=Karty se trochu zvětší, když na ně najedeš myší.
+quickcraft.configuration.sizeTabToFit=Přizpůsobit karty názvu
+quickcraft.configuration.sizeTabToFit.tooltip=Karty se rozšíří, aby se vešel celý název předmětu.
+quickcraft.configuration.shiftCraftAmount=Množství se Shiftem
+quickcraft.configuration.shiftCraftAmount.tooltip=Kolik předmětů vyrobit při držení Shiftu: číslo od 1 do 1000000, nebo Max.
+quickcraft.configuration.useProjectEEmc=Používat EMC z ProjectE
+quickcraft.configuration.useProjectEEmc.tooltip=S transmutačním stolem nebo tabletem poblíž EMC koupí chybějící naučené materiály a vyrobené předměty se naučí.
+quickcraft.configuration.useKleinStarEmc=Používat EMC z Kleinových hvězd
+quickcraft.configuration.useKleinStarEmc.tooltip=Kleinovy hvězdy v inventáři přidají své EMC k tomu, co Quick Craft může utratit, až po tvém vlastním EMC.
+quickcraft.configuration.backpackSources=Batohy jako zdroj
+quickcraft.configuration.backpackSources.tooltip=Brát z každého předmětu v inventáři, který má vlastní inventář, třeba z batohů, a ukládat do něj.
+quickcraft.configuration.colorAvailable=Barva vlastněného
+quickcraft.configuration.colorAvailable.tooltip=Barva předmětů, které už máš. Hex jako FF55FF55 nebo 55FF55.
+quickcraft.configuration.colorCrafted=Barva vyráběného
+quickcraft.configuration.colorCrafted.tooltip=Barva předmětů, které se vyrobí.
+quickcraft.configuration.colorMissing=Barva chybějícího
+quickcraft.configuration.colorMissing.tooltip=Barva chybějících materiálů.
+quickcraft.configuration.colorNoStation=Barva bez stanice
+quickcraft.configuration.colorNoStation.tooltip=Barva kroků, pro které ti chybí stanice.
+quickcraft.configuration.colorTarget=Barva cíle
+quickcraft.configuration.colorTarget.tooltip=Barva předmětu, který vyrábíš.
+quickcraft.configuration.colorNodeBackground=Barva pozadí karty
+quickcraft.configuration.colorNodeBackground.tooltip=Barva výplně za každým krokem.
+quickcraft.configuration.colorLines=Barva čar
+quickcraft.configuration.colorLines.tooltip=Barva čar spojujících kroky.
+quickcraft.configuration.mobPreview=Náhled stvoření
+quickcraft.configuration.mobPreview.tooltip=3D náhled stvoření, zobrazený s nainstalovaným Just Enough Resources.
+quickcraft.configuration.entitySpin=Otáčení
+quickcraft.configuration.entitySpin.tooltip=Otáčet náhledem stvoření.
+quickcraft.configuration.entityIdleAnimation=Animace v klidu
+quickcraft.configuration.entityIdleAnimation.tooltip=Přehrávat animaci stvoření v klidu.
+quickcraft.configuration.entityWalkAnimation=Animace chůze
+quickcraft.configuration.entityWalkAnimation.tooltip=Přehrávat animaci chůze stvoření.
+quickcraft.configuration.entitySpinSpeed=Rychlost otáčení
+quickcraft.configuration.entitySpinSpeed.tooltip=Násobitel rychlosti otáčení náhledu.
+quickcraft.configuration.projecte=ProjectE
+quickcraft.configuration.projecte.tooltip=Možnosti ProjectE, zobrazené s nainstalovaným ProjectE.
+quickcraft.configuration.showEmc=Zobrazit EMC
+quickcraft.configuration.showEmc.tooltip=Zobrazit celkové EMC v záhlaví nabídky, když je dostupný transmutační stůl nebo tablet.

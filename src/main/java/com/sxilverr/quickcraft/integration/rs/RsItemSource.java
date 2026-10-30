@@ -6,6 +6,7 @@ import com.sxilverr.quickcraft.util.Reg;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ public final class RsItemSource implements ItemSource {
         ItemStack icon = Reg.stack("refinedstorage:disk_drive");
         BlockPos pos = tile.getPos();
         return new LabeledSource("rs:" + pos.getX() + "," + pos.getY() + "," + pos.getZ(),
-                "RS System", icon, pos, new RsItemSource(network, icon), true);
+                new TextComponentTranslation("quickcraft.source.rs_system"), icon, pos, new RsItemSource(network, icon), true);
     }
 
     @Override

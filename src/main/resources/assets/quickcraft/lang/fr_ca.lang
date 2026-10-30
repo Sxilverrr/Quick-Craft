@@ -1,0 +1,226 @@
+key.categories.quickcraft=Quick Craft
+key.quickcraft.open=Quick Craft
+key.quickcraft.scroll_up=Défiler la liste fixée vers le haut
+key.quickcraft.scroll_down=Défiler la liste fixée vers le bas
+key.quickcraft.show_recipe=Voir la recette
+key.quickcraft.show_uses=Voir les utilisations
+
+quickcraft.max=Max
+
+quickcraft.max_count=Max (%s)
+
+quickcraft.more=+%s de plus
+
+quickcraft.tree_limit=Limite de l'arbre atteinte : augmentez maxTreeNodes ou maxTreeDepth dans la configuration
+
+quickcraft.screen.title=Quick Craft - %s
+quickcraft.screen.qty=Qté :
+quickcraft.screen.craft_max=Crafter max
+quickcraft.screen.can_craft=craftable : %s
+quickcraft.screen.confirm=Confirmer le craft
+quickcraft.screen.close=Fermer
+quickcraft.screen.ingredients=Ingrédients
+quickcraft.screen.refresh=Rafraîchir
+quickcraft.screen.refresh.tooltip=Chercher les objets disponibles
+quickcraft.screen.show_mobs=Voir les mobs
+quickcraft.screen.hide_mobs=Cacher les mobs
+quickcraft.screen.controls=Contrôles
+quickcraft.screen.history=Historique
+quickcraft.screen.emc_total=EMC : %s
+quickcraft.screen.emc_uses=Coûte %s
+quickcraft.screen.missing_station=Manquant : 
+quickcraft.screen.station_options=Craftable sur (W/S) :
+quickcraft.screen.show_tree=Afficher l'arbre de craft
+quickcraft.screen.hide_tree=Masquer l'arbre de craft
+quickcraft.screen.copy_tooltip=Copier la liste des matériaux dans le presse-papiers.
+
+quickcraft.legend.target=Objet final
+quickcraft.legend.have=Objets que vous avez
+quickcraft.legend.crafted=Objets à crafter
+quickcraft.legend.missing=Matériaux manquants
+quickcraft.legend.no_station=Craft impossible (pas de station)
+quickcraft.legend.dimmed=Onglet grisé = branche impossible à terminer
+
+quickcraft.controls.pan=Glisser/molette : déplacer/zoomer
+quickcraft.controls.swap=Clic gauche : changer de recette
+quickcraft.controls.view_tree=Clic milieu : voir l'arbre de l'objet
+quickcraft.controls.switch_tag=W/S ou haut/bas : changer l'objet du tag
+quickcraft.controls.toggle_recipe=Clic droit : afficher/masquer la recette
+quickcraft.controls.reset=Ctrl+clic : réinitialiser les préférences
+
+quickcraft.history.title=Historique de craft
+quickcraft.history.empty=Aucun historique pour l'instant
+
+quickcraft.deposit.header=Déposer les résultats dans :
+quickcraft.deposit.search=Rechercher...
+quickcraft.deposit.no_matches=Aucun résultat
+quickcraft.deposit.free_slots=%s/%s cases libres
+quickcraft.deposit.title=Déposer les résultats
+quickcraft.deposit.into=Dans : %s
+quickcraft.deposit.hint=Cliquez pour choisir un contenant
+quickcraft.deposit.your_inventory=votre inventaire
+quickcraft.deposit.your_emc=votre EMC
+
+quickcraft.source.my_inventory=Mon inventaire
+quickcraft.source.double_chest=Coffre double
+quickcraft.source.me_system=Système ME
+quickcraft.source.rs_system=Système RS
+
+quickcraft.ingredients.title=Ingrédients (%s)
+quickcraft.ingredients.pin=Fixer
+quickcraft.ingredients.copy=Copier
+quickcraft.ingredients.not_learned=non appris
+
+quickcraft.copy.full=Copier la liste complète
+quickcraft.copy.missing=Copier les matériaux manquants
+quickcraft.copy.shortages=Copier les matériaux insuffisants
+quickcraft.copy.header=Quick Craft - %s %s :
+quickcraft.copy.shortage=%s : %s/%s (il en manque %s)
+
+quickcraft.node.need=requis : %s
+quickcraft.node.keep=conservé : %s
+
+quickcraft.tooltip.end_result=Résultat final
+quickcraft.tooltip.required=Requis : %s
+quickcraft.tooltip.available=Disponible : %s
+quickcraft.tooltip.from_emc=(+%s par EMC)
+quickcraft.tooltip.free_after=(%s libres après les autres usages)
+quickcraft.tooltip.catalyst=Catalyseur : conservé, pas consommé
+quickcraft.tooltip.using=Vous en avez assez (source : %s)
+quickcraft.tooltip.needs_station=Nécessite à proximité : %s
+quickcraft.tooltip.accepts=Accepte (W/S ou haut/bas pour changer) :
+quickcraft.tooltip.bought_emc=Acheté avec de l'EMC
+quickcraft.tooltip.bought_emc_each=Acheté avec de l'EMC, %s chacun
+quickcraft.tooltip.not_enough_emc=Pas assez d'EMC
+quickcraft.tooltip.reference=Recette développée à sa première utilisation dans cet arbre
+quickcraft.tooltip.recipe=Recette : %s
+quickcraft.tooltip.yields=Donne %s par craft (%s)
+quickcraft.tooltip.manual=Fourni par vous (pas crafté)
+quickcraft.tooltip.swap=Clic gauche : changer de recette (%s options)
+quickcraft.tooltip.eye=Icône d'œil : afficher ou masquer l'arbre de craft
+quickcraft.tooltip.hide_recipe=Clic droit : masquer la recette (fournie par vous)
+quickcraft.tooltip.reveal_recipe=Clic droit : afficher la recette
+quickcraft.tooltip.base=Matériau de base : aucune recette
+quickcraft.tooltip.made_in=Obtenu via : %s
+quickcraft.tooltip.view_tree=Clic milieu : voir l'arbre de cet objet
+
+quickcraft.mob.drops=Lâche %s : %s
+quickcraft.mob.biomes=Biomes : %s
+quickcraft.mob.experience=Expérience : %s
+quickcraft.mob.all_drops=Tout ce qu'il lâche :
+quickcraft.mob.next=Clic gauche : mob suivant (%s)
+quickcraft.mob.looting=+Dépouillage
+
+quickcraft.pinned.top_right=HD
+quickcraft.pinned.top_left=HG
+quickcraft.pinned.bottom_left=BG
+quickcraft.pinned.bottom_right=BD
+
+quickcraft.force.button=Forcer le craft
+quickcraft.force.not_enough=Vous n'avez pas assez d'objets pour tout crafter
+quickcraft.force.can_craft=Craftable : %s sur %s x %s
+quickcraft.force.explain=Forcer le craft fabrique autant d'objets que vos matériaux le permettent.
+quickcraft.force.missing=Manque %sx %s
+quickcraft.force.acquire=Objets obtenus :
+quickcraft.force.empty=Pas assez de matériaux pour crafter quoi que ce soit
+
+quickcraft.reason.not_learned=(non appris)
+quickcraft.reason.not_enough_emc=(pas assez d'EMC)
+quickcraft.reason.catalyst=(catalyseur)
+quickcraft.reason.station=(nécessite une station)
+quickcraft.reason.tree_limit=(limite de l'arbre)
+quickcraft.reason.loop=(boucle)
+quickcraft.reason.manual=(fourni par vous)
+
+quickcraft.station.stonecutter=Tailleur de pierre
+quickcraft.station.smithing_table=Table de forge
+quickcraft.station.extreme_crafting_table=Établi extrême
+quickcraft.station.basic_crafting_table=Établi de base
+quickcraft.station.advanced_crafting_table=Établi avancé
+quickcraft.station.elite_crafting_table=Établi d'élite
+quickcraft.station.ultimate_crafting_table=Établi ultime
+
+quickcraft.chat.crafted=Quick Craft : %sx %s crafté(s)
+quickcraft.chat.partial=Quick Craft : %s/%s %s crafté(s), plus de matériaux
+quickcraft.chat.not_enough=Quick Craft : pas assez de matériaux pour crafter %s
+quickcraft.chat.needs_station=Quick Craft : %s requis à proximité pour crafter %s
+quickcraft.chat.aborted=Quick Craft : impossible de retirer %sx %s du stockage, rien n'a été crafté
+quickcraft.chat.tree_limit=(l'arbre de recettes a atteint la limite maxTreeNodes, augmentez-la dans la configuration)
+quickcraft.chat.missing=manquant : %s
+quickcraft.chat.placed=%s dans %s
+quickcraft.chat.dropped=%s lâché(s) à vos pieds
+quickcraft.chat.leftover=+%s objet restant
+quickcraft.chat.leftovers=+%s objets restants
+
+quickcraft.configuration.general=Général
+quickcraft.configuration.general.tooltip=Options de craft, de stockage et du menu.
+quickcraft.configuration.client=Client
+quickcraft.configuration.client.tooltip=Couleurs et options d'affichage du menu Quick Craft.
+quickcraft.configuration.preferredItems=Objets préférés
+quickcraft.configuration.preferredItems.tooltip=Ids d'objets à privilégier quand un ingrédient ou une recette a plusieurs choix. Les premiers gagnent; vide utilise les valeurs par défaut.
+quickcraft.configuration.containerScanRange=Portée des contenants
+quickcraft.configuration.containerScanRange.tooltip=Rayon en blocs pour prendre des objets et déposer les résultats. 0 désactive les contenants proches.
+quickcraft.configuration.depositBlacklist=Liste noire de dépôt
+quickcraft.configuration.depositBlacklist.tooltip=Blocs jamais proposés pour déposer : un id de bloc, un id de mod ou un nom OreDictionary commençant par @ ou #.
+quickcraft.configuration.extraSources=Sources supplémentaires
+quickcraft.configuration.extraSources.tooltip=Ids de blocs ou d'objets supplémentaires où prendre et déposer. Ils doivent avoir un inventaire d'objets.
+quickcraft.configuration.collapseOwnedItems=Replier les objets possédés
+quickcraft.configuration.collapseOwnedItems.tooltip=Les objets que vous avez déjà en quantité suffisante ne sont pas développés en arbre de recettes.
+quickcraft.configuration.craftSoundEnabled=Son de craft
+quickcraft.configuration.craftSoundEnabled.tooltip=Jouer un son quand Quick Craft termine.
+quickcraft.configuration.craftSound=Id du son
+quickcraft.configuration.craftSound.tooltip=L'id du son joué quand Quick Craft termine.
+quickcraft.configuration.maxTreeDepth=Profondeur max. de l'arbre
+quickcraft.configuration.maxTreeDepth.tooltip=Jusqu'où l'arbre de craft peut se développer.
+quickcraft.configuration.maxTreeNodes=Nœuds max. de l'arbre
+quickcraft.configuration.maxTreeNodes.tooltip=Limite de sécurité du nombre d'étapes dans un arbre de craft.
+quickcraft.configuration.animationsEnabled=Animations
+quickcraft.configuration.animationsEnabled.tooltip=Animer l'arbre de craft et les panneaux du menu Quick Craft.
+quickcraft.configuration.creativeBypass=Contournement en créatif
+quickcraft.configuration.creativeBypass.tooltip=En mode créatif, l'objet demandé est donné tout de suite sans utiliser d'ingrédients.
+quickcraft.configuration.pinnedListAnimation=Animation de la liste fixée
+quickcraft.configuration.pinnedListAnimation.tooltip=Les lignes de la liste fixée apparaissent en douceur.
+quickcraft.configuration.hideLoopingRecipes=Cacher les recettes en boucle
+quickcraft.configuration.hideLoopingRecipes.tooltip=Cacher les recettes qui reviennent sur elles-mêmes, sauf si vous avez déjà l'objet de la boucle.
+quickcraft.configuration.openOnlyWithRecipe=Ouvrir seulement avec recette
+quickcraft.configuration.openOnlyWithRecipe.tooltip=La touche Quick Craft ne fait rien sur les objets sans recette prise en charge.
+quickcraft.configuration.hoverBulge=Grossir au survol
+quickcraft.configuration.hoverBulge.tooltip=Les onglets grossissent un peu quand la souris passe dessus.
+quickcraft.configuration.sizeTabToFit=Ajuster les onglets au nom
+quickcraft.configuration.sizeTabToFit.tooltip=Les onglets s'élargissent pour afficher le nom complet de l'objet.
+quickcraft.configuration.shiftCraftAmount=Quantité avec Maj
+quickcraft.configuration.shiftCraftAmount.tooltip=Combien d'objets crafter en maintenant Maj : un nombre de 1 à 1000000, ou Max.
+quickcraft.configuration.useProjectEEmc=Utiliser l'EMC de ProjectE
+quickcraft.configuration.useProjectEEmc.tooltip=Avec une table ou une tablette de transmutation à proximité, l'EMC achète les matériaux appris manquants et les objets craftés sont appris.
+quickcraft.configuration.useKleinStarEmc=Utiliser l'EMC des étoiles de Klein
+quickcraft.configuration.useKleinStarEmc.tooltip=Les étoiles de Klein de votre inventaire ajoutent leur EMC à ce que Quick Craft peut dépenser, après votre propre EMC.
+quickcraft.configuration.backpackSources=Sacs à dos comme sources
+quickcraft.configuration.backpackSources.tooltip=Prendre et déposer dans tout objet de votre inventaire qui a son propre inventaire, comme les sacs à dos.
+quickcraft.configuration.colorAvailable=Couleur des objets possédés
+quickcraft.configuration.colorAvailable.tooltip=Couleur des objets que vous avez déjà. Hex comme FF55FF55 ou 55FF55.
+quickcraft.configuration.colorCrafted=Couleur des objets à crafter
+quickcraft.configuration.colorCrafted.tooltip=Couleur des objets qui seront craftés.
+quickcraft.configuration.colorMissing=Couleur des manquants
+quickcraft.configuration.colorMissing.tooltip=Couleur des matériaux manquants.
+quickcraft.configuration.colorNoStation=Couleur sans station
+quickcraft.configuration.colorNoStation.tooltip=Couleur des étapes sans station pour les crafter.
+quickcraft.configuration.colorTarget=Couleur de la cible
+quickcraft.configuration.colorTarget.tooltip=Couleur de l'objet que vous craftez.
+quickcraft.configuration.colorNodeBackground=Couleur de fond des onglets
+quickcraft.configuration.colorNodeBackground.tooltip=Couleur de remplissage derrière chaque étape.
+quickcraft.configuration.colorLines=Couleur des lignes
+quickcraft.configuration.colorLines.tooltip=Couleur des lignes qui relient les étapes.
+quickcraft.configuration.mobPreview=Aperçu des mobs
+quickcraft.configuration.mobPreview.tooltip=Aperçu 3D des mobs, affiché quand Just Enough Resources est installé.
+quickcraft.configuration.entitySpin=Rotation
+quickcraft.configuration.entitySpin.tooltip=Faire tourner l'aperçu du mob.
+quickcraft.configuration.entityIdleAnimation=Animation au repos
+quickcraft.configuration.entityIdleAnimation.tooltip=Jouer l'animation au repos du mob.
+quickcraft.configuration.entityWalkAnimation=Animation de marche
+quickcraft.configuration.entityWalkAnimation.tooltip=Jouer l'animation de marche du mob.
+quickcraft.configuration.entitySpinSpeed=Vitesse de rotation
+quickcraft.configuration.entitySpinSpeed.tooltip=Multiplicateur de la vitesse de rotation de l'aperçu.
+quickcraft.configuration.projecte=ProjectE
+quickcraft.configuration.projecte.tooltip=Options de ProjectE, affichées quand ProjectE est installé.
+quickcraft.configuration.showEmc=Afficher l'EMC
+quickcraft.configuration.showEmc.tooltip=Afficher votre EMC total dans l'en-tête du menu quand une table ou une tablette de transmutation est disponible.

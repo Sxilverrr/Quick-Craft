@@ -4,7 +4,9 @@ import com.sxilverr.quickcraft.craft.CraftPlanner;
 import com.sxilverr.quickcraft.util.Reg;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ public final class QuickCraftConfig {
     private static final String CLIENT = "client";
     private static final String MOB_PREVIEW = "client.mobPreview";
     private static final String PROJECTE = "client.projecte";
+    private static final String LANG = QuickCraft.MODID + ".configuration.";
 
     private static final String[] DEFAULT_PREFERRED = {"minecraft:planks", "minecraft:log"};
     private static final String[] DEFAULT_BLACKLIST = {
@@ -73,6 +76,7 @@ public final class QuickCraftConfig {
 
     public static void load(File file) {
         config = new Configuration(file);
+        config.load();
         sync();
     }
 
@@ -80,9 +84,16 @@ public final class QuickCraftConfig {
         sync();
     }
 
+    public static List<ConfigCategory> guiCategories() {
+        return Arrays.asList(config.getCategory(GENERAL), config.getCategory(CLIENT));
+    }
+
+    public static String fileName() {
+        return config.toString();
+    }
+
     private static void sync() {
         if (config == null) return;
-        config.load();
 
         preferredItemIds = config.getStringList("preferredItems", GENERAL, DEFAULT_PREFERRED,
                 "Priority list of item ids to prefer when a recipe ingredient or recipe is ambiguous. "
@@ -164,6 +175,12 @@ public final class QuickCraftConfig {
 
         showEmc = config.getBoolean("showEmc", PROJECTE, true,
                 "Show your total EMC in the Quick Craft header when a transmutation table or tablet is available.");
+
+        for (String name : config.getCategoryNames()) {
+            ConfigCategory category = config.getCategory(name);
+            category.setLanguageKey(LANG + name.substring(name.lastIndexOf('.') + 1));
+            for (Property property : category.getOrderedValues()) property.setLanguageKey(LANG + property.getName());
+        }
 
         if (config.hasChanged()) config.save();
     }

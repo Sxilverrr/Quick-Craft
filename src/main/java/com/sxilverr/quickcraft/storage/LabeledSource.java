@@ -2,18 +2,19 @@ package com.sxilverr.quickcraft.storage;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 
 public final class LabeledSource {
     public static final String SELF_ID = "self";
 
     private final String id;
-    private final String name;
+    private final ITextComponent name;
     private final ItemStack icon;
     private final BlockPos pos;
     private final ItemSource source;
     private final boolean depositable;
 
-    public LabeledSource(String id, String name, ItemStack icon, BlockPos pos, ItemSource source, boolean depositable) {
+    public LabeledSource(String id, ITextComponent name, ItemStack icon, BlockPos pos, ItemSource source, boolean depositable) {
         this.id = id;
         this.name = name;
         this.icon = icon;
@@ -26,7 +27,7 @@ public final class LabeledSource {
         return id;
     }
 
-    public String name() {
+    public ITextComponent name() {
         return name;
     }
 
@@ -50,8 +51,8 @@ public final class LabeledSource {
         return SELF_ID.equals(id);
     }
 
-    public String pickerLabel() {
+    public ITextComponent pickerLabel() {
         if (pos == null) return name;
-        return name + " (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")";
+        return name.createCopy().appendText(" (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")");
     }
 }

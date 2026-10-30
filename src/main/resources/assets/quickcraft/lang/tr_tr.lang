@@ -1,0 +1,226 @@
+key.categories.quickcraft=Quick Craft
+key.quickcraft.open=Quick Craft
+key.quickcraft.scroll_up=Sabitlenmiş Listeyi Yukarı Kaydır
+key.quickcraft.scroll_down=Sabitlenmiş Listeyi Aşağı Kaydır
+key.quickcraft.show_recipe=Tarifi Göster
+key.quickcraft.show_uses=Kullanımları Göster
+
+quickcraft.max=Maks.
+
+quickcraft.max_count=Maks. (%s)
+
+quickcraft.more=+%s tane daha
+
+quickcraft.tree_limit=Ağaç sınırına ulaşıldı: yapılandırmada maxTreeNodes veya maxTreeDepth değerini artırın
+
+quickcraft.screen.title=Quick Craft - %s
+quickcraft.screen.qty=Adet:
+quickcraft.screen.craft_max=Maks. Üret
+quickcraft.screen.can_craft=üretilebilir: %s
+quickcraft.screen.confirm=Üretimi Onayla
+quickcraft.screen.close=Kapat
+quickcraft.screen.ingredients=Malzemeler
+quickcraft.screen.refresh=Yenile
+quickcraft.screen.refresh.tooltip=Mevcut eşyaları tara
+quickcraft.screen.show_mobs=Canlıları Göster
+quickcraft.screen.hide_mobs=Canlıları Gizle
+quickcraft.screen.controls=Kontroller
+quickcraft.screen.history=Geçmiş
+quickcraft.screen.emc_total=EMC: %s
+quickcraft.screen.emc_uses=Harcar: %s
+quickcraft.screen.missing_station=Eksik: 
+quickcraft.screen.station_options=Üretilebileceği yerler (W/S):
+quickcraft.screen.show_tree=Üretim ağacını göster
+quickcraft.screen.hide_tree=Üretim ağacını gizle
+quickcraft.screen.copy_tooltip=Malzeme listesini panoya kopyala.
+
+quickcraft.legend.target=Son ürün
+quickcraft.legend.have=Sahip olduğunuz eşyalar
+quickcraft.legend.crafted=Üretilecek eşyalar
+quickcraft.legend.missing=Eksik malzemeler
+quickcraft.legend.no_station=Üretilemez (istasyon yok)
+quickcraft.legend.dimmed=Soluk sekme = dal tamamlanamaz
+
+quickcraft.controls.pan=Sürükle/kaydır: taşı/yakınlaştır
+quickcraft.controls.swap=Sol tık: tarifi değiştir
+quickcraft.controls.view_tree=Orta tık: eşyanın ağacını gör
+quickcraft.controls.switch_tag=W/S veya Yukarı/Aşağı: etiket eşyasını değiştir
+quickcraft.controls.toggle_recipe=Sağ tık: tarifi göster/gizle
+quickcraft.controls.reset=Ctrl+tık: tercihleri sıfırla
+
+quickcraft.history.title=Üretim geçmişi
+quickcraft.history.empty=Henüz geçmiş yok
+
+quickcraft.deposit.header=Sonuçları şuraya koy:
+quickcraft.deposit.search=Ara...
+quickcraft.deposit.no_matches=Eşleşme yok
+quickcraft.deposit.free_slots=Boş yuva: %s/%s
+quickcraft.deposit.title=Sonuçları yerleştir
+quickcraft.deposit.into=Hedef: %s
+quickcraft.deposit.hint=Bir depo seçmek için tıklayın
+quickcraft.deposit.your_inventory=envanteriniz
+quickcraft.deposit.your_emc=EMC'niz
+
+quickcraft.source.my_inventory=Envanterim
+quickcraft.source.double_chest=Çift Sandık
+quickcraft.source.me_system=ME Sistemi
+quickcraft.source.rs_system=RS Sistemi
+
+quickcraft.ingredients.title=Malzeme (%s)
+quickcraft.ingredients.pin=Sabitle
+quickcraft.ingredients.copy=Kopyala
+quickcraft.ingredients.not_learned=öğrenilmedi
+
+quickcraft.copy.full=Tüm listeyi kopyala
+quickcraft.copy.missing=Eksik malzemeleri kopyala
+quickcraft.copy.shortages=Malzeme açığını kopyala
+quickcraft.copy.header=Quick Craft - %s %s:
+quickcraft.copy.shortage=%s: %s/%s (%s eksik)
+
+quickcraft.node.need=gerekli %s
+quickcraft.node.keep=kalır %s
+
+quickcraft.tooltip.end_result=Son ürün
+quickcraft.tooltip.required=Gerekli: %s
+quickcraft.tooltip.available=Mevcut: %s
+quickcraft.tooltip.from_emc=(EMC'den +%s)
+quickcraft.tooltip.free_after=(diğer kullanımlardan sonra boşta: %s)
+quickcraft.tooltip.catalyst=Katalizör: korunur, harcanmaz
+quickcraft.tooltip.using=Yeterince var (kaynak: %s)
+quickcraft.tooltip.needs_station=Yakında gerekli: %s
+quickcraft.tooltip.accepts=Kabul eder (değiştirmek için W/S veya Yukarı/Aşağı):
+quickcraft.tooltip.bought_emc=EMC ile alındı
+quickcraft.tooltip.bought_emc_each=EMC ile alındı, tanesi %s
+quickcraft.tooltip.not_enough_emc=Yetersiz EMC
+quickcraft.tooltip.reference=Tarif, bu ağaçtaki ilk kullanımında açılır
+quickcraft.tooltip.recipe=Tarif: %s
+quickcraft.tooltip.yields=Üretim başına %s verir (%s)
+quickcraft.tooltip.manual=Kendiniz sağlıyorsunuz (üretilmez)
+quickcraft.tooltip.swap=Sol tık: tarifi değiştir (%s seçenek)
+quickcraft.tooltip.eye=Göz simgesi: üretim ağacını göster veya gizle
+quickcraft.tooltip.hide_recipe=Sağ tık: tarifi gizle (kendiniz sağlayın)
+quickcraft.tooltip.reveal_recipe=Sağ tık: tarifi göster
+quickcraft.tooltip.base=Temel malzeme: tarifi yok
+quickcraft.tooltip.made_in=Yapıldığı yer: %s
+quickcraft.tooltip.view_tree=Orta tık: bu eşyanın ağacını gör
+
+quickcraft.mob.drops=Düşürür: %s, %s
+quickcraft.mob.biomes=Biyomlar: %s
+quickcraft.mob.experience=Tecrübe: %s
+quickcraft.mob.all_drops=Tüm ganimetler:
+quickcraft.mob.next=Sol tık: sonraki canlı (%s)
+quickcraft.mob.looting=+Ganimet
+
+quickcraft.pinned.top_right=↗
+quickcraft.pinned.top_left=↖
+quickcraft.pinned.bottom_left=↙
+quickcraft.pinned.bottom_right=↘
+
+quickcraft.force.button=Üretimi Zorla
+quickcraft.force.not_enough=Bunu tamamen üretmek için yeterli eşyanız yok
+quickcraft.force.can_craft=Üretilebilir: %s / %s x %s
+quickcraft.force.explain=Üretimi Zorla, malzemelerinizin yettiği kadar eşya üretir.
+quickcraft.force.missing=Eksik: %sx %s
+quickcraft.force.acquire=Alacağınız eşyalar:
+quickcraft.force.empty=Hiçbir şey üretmek için yeterli malzeme yok
+
+quickcraft.reason.not_learned=(öğrenilmedi)
+quickcraft.reason.not_enough_emc=(yetersiz EMC)
+quickcraft.reason.catalyst=(katalizör)
+quickcraft.reason.station=(istasyon gerekli)
+quickcraft.reason.tree_limit=(ağaç sınırı)
+quickcraft.reason.loop=(döngü)
+quickcraft.reason.manual=(sizin sağladığınız)
+
+quickcraft.station.stonecutter=Taş Yontma Makinesi
+quickcraft.station.smithing_table=Demirci Masası
+quickcraft.station.extreme_crafting_table=Ekstrem Çalışma Masası
+quickcraft.station.basic_crafting_table=Temel Çalışma Masası
+quickcraft.station.advanced_crafting_table=Gelişmiş Çalışma Masası
+quickcraft.station.elite_crafting_table=Elit Çalışma Masası
+quickcraft.station.ultimate_crafting_table=Nihai Çalışma Masası
+
+quickcraft.chat.crafted=Quick Craft: %sx %s üretildi
+quickcraft.chat.partial=Quick Craft: %s/%s %s üretildi, malzeme bitti
+quickcraft.chat.not_enough=Quick Craft: üretmek için yeterli malzeme yok: %s
+quickcraft.chat.needs_station=Quick Craft: yakında %s gerekli, üretilecek: %s
+quickcraft.chat.aborted=Quick Craft: depodan %sx %s alınamadı, hiçbir şey üretilmedi
+quickcraft.chat.tree_limit=(tarif ağacı maxTreeNodes sınırına ulaştı, yapılandırmada artırın)
+quickcraft.chat.missing=eksik: %s
+quickcraft.chat.placed=%2$s: %1$s
+quickcraft.chat.dropped=ayağınıza düşen: %s
+quickcraft.chat.leftover=artan eşya: +%s
+quickcraft.chat.leftovers=artan eşya: +%s
+
+quickcraft.configuration.general=Genel
+quickcraft.configuration.general.tooltip=Üretim, depo ve menü seçenekleri.
+quickcraft.configuration.client=İstemci
+quickcraft.configuration.client.tooltip=Quick Craft menüsünün renkleri ve görünüm seçenekleri.
+quickcraft.configuration.preferredItems=Tercih Edilen Eşyalar
+quickcraft.configuration.preferredItems.tooltip=Bir malzeme veya tarifin birden çok seçeneği olduğunda tercih edilecek eşya kimlikleri. Öncekiler kazanır; boş bırakılırsa varsayılanlar kullanılır.
+quickcraft.configuration.containerScanRange=Depo Tarama Mesafesi
+quickcraft.configuration.containerScanRange.tooltip=Eşya alınacak ve sonuçların konacağı blok yarıçapı. 0 yakındaki depoları kapatır.
+quickcraft.configuration.depositBlacklist=Yerleştirme Kara Listesi
+quickcraft.configuration.depositBlacklist.tooltip=Sonuç koymak için hiç sunulmayan bloklar: bir blok kimliği, bir mod kimliği veya @ ya da # ile başlayan bir OreDictionary adı.
+quickcraft.configuration.extraSources=Ek Kaynaklar
+quickcraft.configuration.extraSources.tooltip=Eşya alınacak ve konacak ek blok veya eşya kimlikleri. Bir eşya envanterleri olmalı.
+quickcraft.configuration.collapseOwnedItems=Sahip Olunanları Daralt
+quickcraft.configuration.collapseOwnedItems.tooltip=Yeterince sahip olduğunuz eşyalar kendi tarif ağaçlarına açılmaz.
+quickcraft.configuration.craftSoundEnabled=Üretim Sesi
+quickcraft.configuration.craftSoundEnabled.tooltip=Quick Craft bitince bir ses çalar.
+quickcraft.configuration.craftSound=Ses Kimliği
+quickcraft.configuration.craftSound.tooltip=Quick Craft bitince çalınan sesin kimliği.
+quickcraft.configuration.maxTreeDepth=Maks. Ağaç Derinliği
+quickcraft.configuration.maxTreeDepth.tooltip=Üretim ağacının ne kadar derine açılabileceği.
+quickcraft.configuration.maxTreeNodes=Maks. Ağaç Düğümü
+quickcraft.configuration.maxTreeNodes.tooltip=Bir üretim ağacındaki adım sayısı için güvenlik sınırı.
+quickcraft.configuration.animationsEnabled=Animasyonlar
+quickcraft.configuration.animationsEnabled.tooltip=Quick Craft menüsündeki üretim ağacını ve panelleri canlandırır.
+quickcraft.configuration.creativeBypass=Yaratıcı Kısayolu
+quickcraft.configuration.creativeBypass.tooltip=Yaratıcı modda istenen eşya hiç malzeme harcamadan hemen verilir.
+quickcraft.configuration.pinnedListAnimation=Sabit Liste Animasyonu
+quickcraft.configuration.pinnedListAnimation.tooltip=Sabitlenmiş listenin satırları göründüğünde yumuşakça kayar.
+quickcraft.configuration.hideLoopingRecipes=Döngülü Tarifleri Gizle
+quickcraft.configuration.hideLoopingRecipes.tooltip=Döngüdeki eşyaya zaten sahip değilseniz kendine dönen tarifleri gizler.
+quickcraft.configuration.openOnlyWithRecipe=Sadece Tarifle Aç
+quickcraft.configuration.openOnlyWithRecipe.tooltip=Quick Craft tuşu desteklenen tarifi olmayan eşyalarda bir şey yapmaz.
+quickcraft.configuration.hoverBulge=Üzerine Gelince Büyüt
+quickcraft.configuration.hoverBulge.tooltip=Sekmeler fareyle üzerine gelindiğinde biraz büyür.
+quickcraft.configuration.sizeTabToFit=Sekmeleri Ada Göre Boyutlandır
+quickcraft.configuration.sizeTabToFit.tooltip=Sekmeler eşyanın tam adı sığacak kadar genişler.
+quickcraft.configuration.shiftCraftAmount=Shift ile Üretim Miktarı
+quickcraft.configuration.shiftCraftAmount.tooltip=Shift basılıyken kaç eşya üretileceği: 1 ile 1000000 arasında bir sayı veya Max.
+quickcraft.configuration.useProjectEEmc=ProjectE EMC Kullan
+quickcraft.configuration.useProjectEEmc.tooltip=Yakında bir dönüşüm masası veya tableti varsa EMC eksik öğrenilmiş malzemeleri alır ve üretilen eşyalar öğrenilir.
+quickcraft.configuration.useKleinStarEmc=Klein Yıldızı EMC Kullan
+quickcraft.configuration.useKleinStarEmc.tooltip=Envanterinizdeki Klein Yıldızları, kendi EMC'nizden sonra, Quick Craft'ın harcayabileceği EMC'ye eklenir.
+quickcraft.configuration.backpackSources=Sırt Çantası Kaynakları
+quickcraft.configuration.backpackSources.tooltip=Envanterinizde kendi envanteri olan her eşyadan, örneğin sırt çantalarından, eşya alır ve oraya koyar.
+quickcraft.configuration.colorAvailable=Mevcut Rengi
+quickcraft.configuration.colorAvailable.tooltip=Zaten sahip olduğunuz eşyaların rengi. FF55FF55 veya 55FF55 gibi hex.
+quickcraft.configuration.colorCrafted=Üretilecek Rengi
+quickcraft.configuration.colorCrafted.tooltip=Üretilecek eşyaların rengi.
+quickcraft.configuration.colorMissing=Eksik Rengi
+quickcraft.configuration.colorMissing.tooltip=Eksik malzemelerin rengi.
+quickcraft.configuration.colorNoStation=İstasyonsuz Rengi
+quickcraft.configuration.colorNoStation.tooltip=Üretmek için istasyonunuz olmayan adımların rengi.
+quickcraft.configuration.colorTarget=Hedef Rengi
+quickcraft.configuration.colorTarget.tooltip=Ürettiğiniz eşyanın rengi.
+quickcraft.configuration.colorNodeBackground=Sekme Arka Plan Rengi
+quickcraft.configuration.colorNodeBackground.tooltip=Her adımın arkasındaki dolgu rengi.
+quickcraft.configuration.colorLines=Çizgi Rengi
+quickcraft.configuration.colorLines.tooltip=Adımları birbirine bağlayan çizgilerin rengi.
+quickcraft.configuration.mobPreview=Canlı Önizlemesi
+quickcraft.configuration.mobPreview.tooltip=Just Enough Resources yüklüyken görünen 3B canlı önizlemesi.
+quickcraft.configuration.entitySpin=Döndür
+quickcraft.configuration.entitySpin.tooltip=Canlı önizlemesini döndürür.
+quickcraft.configuration.entityIdleAnimation=Bekleme Animasyonu
+quickcraft.configuration.entityIdleAnimation.tooltip=Canlının bekleme animasyonunu oynatır.
+quickcraft.configuration.entityWalkAnimation=Yürüme Animasyonu
+quickcraft.configuration.entityWalkAnimation.tooltip=Canlının yürüme animasyonunu oynatır.
+quickcraft.configuration.entitySpinSpeed=Dönme Hızı
+quickcraft.configuration.entitySpinSpeed.tooltip=Önizlemenin dönme hızı çarpanı.
+quickcraft.configuration.projecte=ProjectE
+quickcraft.configuration.projecte.tooltip=ProjectE yüklüyken görünen ProjectE seçenekleri.
+quickcraft.configuration.showEmc=EMC'yi Göster
+quickcraft.configuration.showEmc.tooltip=Bir dönüşüm masası veya tableti varken toplam EMC'nizi menü başlığında gösterir.

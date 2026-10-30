@@ -1,0 +1,226 @@
+key.categories.quickcraft=Quick Craft
+key.quickcraft.open=Quick Craft
+key.quickcraft.scroll_up=Vastgezette lijst omhoog scrollen
+key.quickcraft.scroll_down=Vastgezette lijst omlaag scrollen
+key.quickcraft.show_recipe=Recept tonen
+key.quickcraft.show_uses=Toepassingen tonen
+
+quickcraft.max=Max.
+
+quickcraft.max_count=Max. (%s)
+
+quickcraft.more=+%s meer
+
+quickcraft.tree_limit=Boomlimiet bereikt: verhoog maxTreeNodes of maxTreeDepth in de configuratie
+
+quickcraft.screen.title=Quick Craft - %s
+quickcraft.screen.qty=Aantal:
+quickcraft.screen.craft_max=Max. maken
+quickcraft.screen.can_craft=kan maken: %s
+quickcraft.screen.confirm=Vervaardigen
+quickcraft.screen.close=Sluiten
+quickcraft.screen.ingredients=Ingrediënten
+quickcraft.screen.refresh=Vernieuwen
+quickcraft.screen.refresh.tooltip=Zoeken naar beschikbare voorwerpen
+quickcraft.screen.show_mobs=Toon wezens
+quickcraft.screen.hide_mobs=Verberg wezens
+quickcraft.screen.controls=Besturing
+quickcraft.screen.history=Historie
+quickcraft.screen.emc_total=EMC: %s
+quickcraft.screen.emc_uses=Kost %s
+quickcraft.screen.missing_station=Ontbreekt: 
+quickcraft.screen.station_options=Te maken bij (W/S):
+quickcraft.screen.show_tree=Vervaardigingsboom tonen
+quickcraft.screen.hide_tree=Vervaardigingsboom verbergen
+quickcraft.screen.copy_tooltip=Materialenlijst naar het klembord kopiëren.
+
+quickcraft.legend.target=Eindresultaat
+quickcraft.legend.have=Voorwerpen die je hebt
+quickcraft.legend.crafted=Voorwerpen die gemaakt worden
+quickcraft.legend.missing=Ontbrekende materialen
+quickcraft.legend.no_station=Niet te maken (geen station)
+quickcraft.legend.dimmed=Gedimd tabblad = tak kan niet af
+
+quickcraft.controls.pan=Slepen/scrollen: verschuiven/zoomen
+quickcraft.controls.swap=Linksklik: recept wisselen
+quickcraft.controls.view_tree=Middelklik: boom van voorwerp bekijken
+quickcraft.controls.switch_tag=W/S of omhoog/omlaag: tag-voorwerp wisselen
+quickcraft.controls.toggle_recipe=Rechtsklik: recept tonen/verbergen
+quickcraft.controls.reset=Ctrl+klik: voorkeuren herstellen
+
+quickcraft.history.title=Vervaardigingsgeschiedenis
+quickcraft.history.empty=Nog geen geschiedenis
+
+quickcraft.deposit.header=Resultaten opslaan in:
+quickcraft.deposit.search=Zoeken...
+quickcraft.deposit.no_matches=Geen resultaten
+quickcraft.deposit.free_slots=%s/%s vakken vrij
+quickcraft.deposit.title=Resultaten opslaan
+quickcraft.deposit.into=In: %s
+quickcraft.deposit.hint=Klik om een container te kiezen
+quickcraft.deposit.your_inventory=je inventaris
+quickcraft.deposit.your_emc=je EMC
+
+quickcraft.source.my_inventory=Mijn inventaris
+quickcraft.source.double_chest=Dubbele kist
+quickcraft.source.me_system=ME-systeem
+quickcraft.source.rs_system=RS-systeem
+
+quickcraft.ingredients.title=Ingrediënten (%s)
+quickcraft.ingredients.pin=Vast
+quickcraft.ingredients.copy=Kopie
+quickcraft.ingredients.not_learned=niet geleerd
+
+quickcraft.copy.full=Volledige lijst kopiëren
+quickcraft.copy.missing=Ontbrekende materialen kopiëren
+quickcraft.copy.shortages=Tekorten kopiëren
+quickcraft.copy.header=Quick Craft - %s %s:
+quickcraft.copy.shortage=%s: %s/%s (nog %s nodig)
+
+quickcraft.node.need=nodig %s
+quickcraft.node.keep=houdt %s
+
+quickcraft.tooltip.end_result=Eindresultaat
+quickcraft.tooltip.required=Nodig: %s
+quickcraft.tooltip.available=Beschikbaar: %s
+quickcraft.tooltip.from_emc=(+%s uit EMC)
+quickcraft.tooltip.free_after=(%s vrij na ander gebruik)
+quickcraft.tooltip.catalyst=Katalysator: blijft behouden, wordt niet verbruikt
+quickcraft.tooltip.using=Je hebt genoeg (bron: %s)
+quickcraft.tooltip.needs_station=Nodig in de buurt: %s
+quickcraft.tooltip.accepts=Accepteert (W/S of omhoog/omlaag om te wisselen):
+quickcraft.tooltip.bought_emc=Gekocht met EMC
+quickcraft.tooltip.bought_emc_each=Gekocht met EMC, %s per stuk
+quickcraft.tooltip.not_enough_emc=Niet genoeg EMC
+quickcraft.tooltip.reference=Recept uitgeklapt bij het eerste gebruik in deze boom
+quickcraft.tooltip.recipe=Recept: %s
+quickcraft.tooltip.yields=Levert %s per keer (%s)
+quickcraft.tooltip.manual=Lever je zelf (wordt niet gemaakt)
+quickcraft.tooltip.swap=Linksklik: recept wisselen (%s opties)
+quickcraft.tooltip.eye=Oogpictogram: vervaardigingsboom tonen of verbergen
+quickcraft.tooltip.hide_recipe=Rechtsklik: recept verbergen (zelf leveren)
+quickcraft.tooltip.reveal_recipe=Rechtsklik: recept tonen
+quickcraft.tooltip.base=Basismateriaal: geen recept
+quickcraft.tooltip.made_in=Gemaakt in: %s
+quickcraft.tooltip.view_tree=Middelklik: boom van dit voorwerp bekijken
+
+quickcraft.mob.drops=Laat %s vallen: %s
+quickcraft.mob.biomes=Biomen: %s
+quickcraft.mob.experience=Ervaring: %s
+quickcraft.mob.all_drops=Alle buit:
+quickcraft.mob.next=Linksklik: volgend wezen (%s)
+quickcraft.mob.looting=+Plundering
+
+quickcraft.pinned.top_right=RB
+quickcraft.pinned.top_left=LB
+quickcraft.pinned.bottom_left=LO
+quickcraft.pinned.bottom_right=RO
+
+quickcraft.force.button=Vervaardigen forceren
+quickcraft.force.not_enough=Je hebt niet genoeg voorwerpen om dit volledig te maken
+quickcraft.force.can_craft=Kan %s van %s x %s maken
+quickcraft.force.explain=Forceren maakt zoveel voorwerpen als je materialen toelaten.
+quickcraft.force.missing=Ontbreekt: %sx %s
+quickcraft.force.acquire=Je krijgt:
+quickcraft.force.empty=Niet genoeg materialen om iets te maken
+
+quickcraft.reason.not_learned=(niet geleerd)
+quickcraft.reason.not_enough_emc=(niet genoeg EMC)
+quickcraft.reason.catalyst=(katalysator)
+quickcraft.reason.station=(heeft een station nodig)
+quickcraft.reason.tree_limit=(boomlimiet)
+quickcraft.reason.loop=(lus)
+quickcraft.reason.manual=(door jou geleverd)
+
+quickcraft.station.stonecutter=Steenzaag
+quickcraft.station.smithing_table=Smeedstafel
+quickcraft.station.extreme_crafting_table=Extreme werkbank
+quickcraft.station.basic_crafting_table=Basiswerkbank
+quickcraft.station.advanced_crafting_table=Geavanceerde werkbank
+quickcraft.station.elite_crafting_table=Elitewerkbank
+quickcraft.station.ultimate_crafting_table=Ultieme werkbank
+
+quickcraft.chat.crafted=Quick Craft: %sx %s gemaakt
+quickcraft.chat.partial=Quick Craft: %s/%s %s gemaakt, materialen op
+quickcraft.chat.not_enough=Quick Craft: niet genoeg materialen om %s te maken
+quickcraft.chat.needs_station=Quick Craft: %s in de buurt nodig om %s te maken
+quickcraft.chat.aborted=Quick Craft: kon %sx %s niet uit de opslag halen, er is niets gemaakt
+quickcraft.chat.tree_limit=(receptenboom heeft de maxTreeNodes-limiet bereikt, verhoog die in de configuratie)
+quickcraft.chat.missing=ontbreekt: %s
+quickcraft.chat.placed=%s naar %s
+quickcraft.chat.dropped=%s voor je voeten gevallen
+quickcraft.chat.leftover=+%s overgebleven voorwerp
+quickcraft.chat.leftovers=+%s overgebleven voorwerpen
+
+quickcraft.configuration.general=Algemeen
+quickcraft.configuration.general.tooltip=Opties voor maken, opslag en het menu.
+quickcraft.configuration.client=Client
+quickcraft.configuration.client.tooltip=Kleuren en weergaveopties van het Quick Craft-menu.
+quickcraft.configuration.preferredItems=Voorkeursvoorwerpen
+quickcraft.configuration.preferredItems.tooltip=Voorwerp-id's die de voorkeur krijgen als een ingrediënt of recept meerdere opties heeft. Eerdere items winnen; leeg gebruikt de standaard.
+quickcraft.configuration.containerScanRange=Bereik voor opslag
+quickcraft.configuration.containerScanRange.tooltip=Straal in blokken om voorwerpen uit te halen en resultaten in op te slaan. 0 zet opslag in de buurt uit.
+quickcraft.configuration.depositBlacklist=Zwarte lijst voor opslag
+quickcraft.configuration.depositBlacklist.tooltip=Blokken die nooit worden aangeboden om in op te slaan: een blok-id, een mod-id of een OreDictionary-naam die begint met @ of #.
+quickcraft.configuration.extraSources=Extra bronnen
+quickcraft.configuration.extraSources.tooltip=Extra blok- of voorwerp-id's om uit te halen en in op te slaan. Ze moeten een voorwerpinventaris hebben.
+quickcraft.configuration.collapseOwnedItems=Bezit inklappen
+quickcraft.configuration.collapseOwnedItems.tooltip=Voorwerpen waarvan je al genoeg hebt, worden niet uitgeklapt tot een eigen receptenboom.
+quickcraft.configuration.craftSoundEnabled=Geluid bij maken
+quickcraft.configuration.craftSoundEnabled.tooltip=Speel een geluid af als Quick Craft klaar is.
+quickcraft.configuration.craftSound=Geluids-id
+quickcraft.configuration.craftSound.tooltip=Het geluids-id dat speelt als Quick Craft klaar is.
+quickcraft.configuration.maxTreeDepth=Max. boomdiepte
+quickcraft.configuration.maxTreeDepth.tooltip=Hoe diep de vervaardigingsboom kan uitklappen.
+quickcraft.configuration.maxTreeNodes=Max. boomknopen
+quickcraft.configuration.maxTreeNodes.tooltip=Veiligheidslimiet voor het aantal stappen in een vervaardigingsboom.
+quickcraft.configuration.animationsEnabled=Animaties
+quickcraft.configuration.animationsEnabled.tooltip=Animeer de vervaardigingsboom en de panelen in het Quick Craft-menu.
+quickcraft.configuration.creativeBypass=Creatief overslaan
+quickcraft.configuration.creativeBypass.tooltip=In creatieve modus krijg je het gevraagde voorwerp meteen, zonder ingrediënten te gebruiken.
+quickcraft.configuration.pinnedListAnimation=Animatie vastgezette lijst
+quickcraft.configuration.pinnedListAnimation.tooltip=De rijen van de vastgezette lijst glijden rustig in beeld.
+quickcraft.configuration.hideLoopingRecipes=Lusrecepten verbergen
+quickcraft.configuration.hideLoopingRecipes.tooltip=Verberg recepten die naar zichzelf teruglopen, tenzij je het lusvoorwerp al hebt.
+quickcraft.configuration.openOnlyWithRecipe=Alleen openen met recept
+quickcraft.configuration.openOnlyWithRecipe.tooltip=De Quick Craft-toets doet niets bij voorwerpen zonder ondersteund recept.
+quickcraft.configuration.hoverBulge=Vergroten bij aanwijzen
+quickcraft.configuration.hoverBulge.tooltip=Tabbladen worden iets groter als je ze met de muis aanwijst.
+quickcraft.configuration.sizeTabToFit=Tabbladen passend maken
+quickcraft.configuration.sizeTabToFit.tooltip=Tabbladen worden breder zodat de hele voorwerpnaam past.
+quickcraft.configuration.shiftCraftAmount=Aantal met Shift
+quickcraft.configuration.shiftCraftAmount.tooltip=Hoeveel voorwerpen je maakt terwijl je Shift ingedrukt houdt: een getal van 1 tot 1000000, of Max.
+quickcraft.configuration.useProjectEEmc=ProjectE-EMC gebruiken
+quickcraft.configuration.useProjectEEmc.tooltip=Met een transmutatietafel of -tablet in de buurt koopt EMC ontbrekende geleerde materialen en leer je wat je maakt.
+quickcraft.configuration.useKleinStarEmc=EMC van Kleinsterren gebruiken
+quickcraft.configuration.useKleinStarEmc.tooltip=Kleinsterren in je inventaris voegen hun EMC toe aan wat Quick Craft kan uitgeven, na je eigen EMC.
+quickcraft.configuration.backpackSources=Rugzakken als bron
+quickcraft.configuration.backpackSources.tooltip=Haal uit en sla op in elk voorwerp in je inventaris met een eigen inventaris, zoals rugzakken.
+quickcraft.configuration.colorAvailable=Kleur voor bezit
+quickcraft.configuration.colorAvailable.tooltip=Kleur voor voorwerpen die je al hebt. Hex zoals FF55FF55 of 55FF55.
+quickcraft.configuration.colorCrafted=Kleur voor te maken
+quickcraft.configuration.colorCrafted.tooltip=Kleur voor voorwerpen die gemaakt worden.
+quickcraft.configuration.colorMissing=Kleur voor ontbrekend
+quickcraft.configuration.colorMissing.tooltip=Kleur voor ontbrekende materialen.
+quickcraft.configuration.colorNoStation=Kleur zonder station
+quickcraft.configuration.colorNoStation.tooltip=Kleur voor stappen waarvoor je geen station hebt.
+quickcraft.configuration.colorTarget=Kleur voor het doel
+quickcraft.configuration.colorTarget.tooltip=Kleur voor het voorwerp dat je maakt.
+quickcraft.configuration.colorNodeBackground=Achtergrondkleur tabblad
+quickcraft.configuration.colorNodeBackground.tooltip=Vulkleur achter elke stap.
+quickcraft.configuration.colorLines=Lijnkleur
+quickcraft.configuration.colorLines.tooltip=Kleur van de lijnen tussen de stappen.
+quickcraft.configuration.mobPreview=Wezenvoorbeeld
+quickcraft.configuration.mobPreview.tooltip=3D-voorbeeld van wezens, zichtbaar als Just Enough Resources is geïnstalleerd.
+quickcraft.configuration.entitySpin=Draaien
+quickcraft.configuration.entitySpin.tooltip=Laat het wezenvoorbeeld draaien.
+quickcraft.configuration.entityIdleAnimation=Rustanimatie
+quickcraft.configuration.entityIdleAnimation.tooltip=Speel de rustanimatie van het wezen af.
+quickcraft.configuration.entityWalkAnimation=Loopanimatie
+quickcraft.configuration.entityWalkAnimation.tooltip=Speel de loopanimatie van het wezen af.
+quickcraft.configuration.entitySpinSpeed=Draaisnelheid
+quickcraft.configuration.entitySpinSpeed.tooltip=Vermenigvuldiger voor de draaisnelheid van het voorbeeld.
+quickcraft.configuration.projecte=ProjectE
+quickcraft.configuration.projecte.tooltip=ProjectE-opties, zichtbaar als ProjectE is geïnstalleerd.
+quickcraft.configuration.showEmc=EMC tonen
+quickcraft.configuration.showEmc.tooltip=Toon je totale EMC bovenin het menu als er een transmutatietafel of -tablet beschikbaar is.

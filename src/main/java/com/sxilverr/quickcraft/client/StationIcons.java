@@ -24,6 +24,6 @@ public final class StationIcons {
 
     public static String name(Station station) {
         ItemStack icon = icon(station);
-        return icon.isEmpty() ? station.displayName() : icon.getDisplayName();
+        return icon.isEmpty() ? station.displayName().getUnformattedText() : icon.getDisplayName();
     }
 }

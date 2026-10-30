@@ -1,21 +1,22 @@
 package com.sxilverr.quickcraft.craft;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
 
 import java.util.Collections;
 import java.util.List;
 
 public final class CraftSummary {
     public static final class Placement {
-        private final String where;
+        private final ITextComponent where;
         private final int count;
 
-        public Placement(String where, int count) {
+        public Placement(ITextComponent where, int count) {
             this.where = where;
             this.count = count;
         }
 
-        public String where() {
+        public ITextComponent where() {
             return where;
         }
 
@@ -26,7 +27,7 @@ public final class CraftSummary {
 
     private final int crafted;
     private final int requested;
-    private final String missingStation;
+    private final ITextComponent missingStation;
     private final List<Placement> placements;
     private final int dropped;
     private final int byproducts;
@@ -35,7 +36,7 @@ public final class CraftSummary {
     private final boolean treeLimited;
     private final List<CraftPlanner.Blocker> blockers;
 
-    public CraftSummary(int crafted, int requested, String missingStation,
+    public CraftSummary(int crafted, int requested, ITextComponent missingStation,
                         List<Placement> placements, int dropped, int byproducts, ItemStack blocked, int blockedCount,
                         boolean treeLimited, List<CraftPlanner.Blocker> blockers) {
         this.crafted = crafted;
@@ -50,7 +51,7 @@ public final class CraftSummary {
         this.blockers = blockers == null ? Collections.<CraftPlanner.Blocker>emptyList() : blockers;
     }
 
-    public CraftSummary(int crafted, int requested, String missingStation,
+    public CraftSummary(int crafted, int requested, ITextComponent missingStation,
                         List<Placement> placements, int dropped, int byproducts) {
         this(crafted, requested, missingStation, placements, dropped, byproducts, ItemStack.EMPTY, 0, false,
                 Collections.<CraftPlanner.Blocker>emptyList());
@@ -73,7 +74,7 @@ public final class CraftSummary {
         return requested;
     }
 
-    public String missingStation() {
+    public ITextComponent missingStation() {
         return missingStation;
     }
 

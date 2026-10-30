@@ -1,0 +1,226 @@
+key.categories.quickcraft=Quick Craft
+key.quickcraft.open=Quick Craft
+key.quickcraft.scroll_up=Прокрутити закріплений список угору
+key.quickcraft.scroll_down=Прокрутити закріплений список униз
+key.quickcraft.show_recipe=Показати рецепт
+key.quickcraft.show_uses=Показати застосування
+
+quickcraft.max=Макс.
+
+quickcraft.max_count=Макс. (%s)
+
+quickcraft.more=ще: +%s
+
+quickcraft.tree_limit=Досягнуто ліміту дерева: збільште maxTreeNodes або maxTreeDepth у конфігурації
+
+quickcraft.screen.title=Quick Craft - %s
+quickcraft.screen.qty=К-сть:
+quickcraft.screen.craft_max=Зробити все
+quickcraft.screen.can_craft=можна змайструвати: %s
+quickcraft.screen.confirm=Змайструвати
+quickcraft.screen.close=Закрити
+quickcraft.screen.ingredients=Інгредієнти
+quickcraft.screen.refresh=Оновити
+quickcraft.screen.refresh.tooltip=Шукати доступні предмети
+quickcraft.screen.show_mobs=Показати мобів
+quickcraft.screen.hide_mobs=Сховати мобів
+quickcraft.screen.controls=Керування
+quickcraft.screen.history=Історія
+quickcraft.screen.emc_total=EMC: %s
+quickcraft.screen.emc_uses=Витрата: %s
+quickcraft.screen.missing_station=Бракує: 
+quickcraft.screen.station_options=Можна змайструвати на (W/S):
+quickcraft.screen.show_tree=Показати дерево майстрування
+quickcraft.screen.hide_tree=Сховати дерево майстрування
+quickcraft.screen.copy_tooltip=Скопіювати список матеріалів до буфера обміну.
+
+quickcraft.legend.target=Кінцевий предмет
+quickcraft.legend.have=Предмети, які у вас є
+quickcraft.legend.crafted=Предмети, що майструються
+quickcraft.legend.missing=Матеріали, яких бракує
+quickcraft.legend.no_station=Не змайструвати (немає станції)
+quickcraft.legend.dimmed=Затемнена вкладка = гілку не завершити
+
+quickcraft.controls.pan=Тягнути/коліщатко: зсув/масштаб
+quickcraft.controls.swap=ЛКМ: змінити рецепт
+quickcraft.controls.view_tree=СКМ: дерево предмета
+quickcraft.controls.switch_tag=W/S або вгору/вниз: змінити предмет теґу
+quickcraft.controls.toggle_recipe=ПКМ: показати/сховати рецепт
+quickcraft.controls.reset=Ctrl+клік: скинути вподобання
+
+quickcraft.history.title=Історія майстрування
+quickcraft.history.empty=Історії ще немає
+
+quickcraft.deposit.header=Покласти результати в:
+quickcraft.deposit.search=Пошук...
+quickcraft.deposit.no_matches=Нічого не знайдено
+quickcraft.deposit.free_slots=Вільних комірок: %s/%s
+quickcraft.deposit.title=Покласти результати
+quickcraft.deposit.into=Куди: %s
+quickcraft.deposit.hint=Натисніть, щоб вибрати сховище
+quickcraft.deposit.your_inventory=ваш інвентар
+quickcraft.deposit.your_emc=ваш EMC
+
+quickcraft.source.my_inventory=Мій інвентар
+quickcraft.source.double_chest=Подвійна скриня
+quickcraft.source.me_system=Система ME
+quickcraft.source.rs_system=Система RS
+
+quickcraft.ingredients.title=Склад (%s)
+quickcraft.ingredients.pin=Закріпити
+quickcraft.ingredients.copy=Копія
+quickcraft.ingredients.not_learned=не вивчено
+
+quickcraft.copy.full=Копіювати весь список
+quickcraft.copy.missing=Копіювати відсутні матеріали
+quickcraft.copy.shortages=Копіювати нестачу
+quickcraft.copy.header=Quick Craft - %s %s:
+quickcraft.copy.shortage=%s: %s/%s (бракує %s)
+
+quickcraft.node.need=треба: %s
+quickcraft.node.keep=лишається: %s
+
+quickcraft.tooltip.end_result=Кінцевий результат
+quickcraft.tooltip.required=Потрібно: %s
+quickcraft.tooltip.available=Наявно: %s
+quickcraft.tooltip.from_emc=(+%s з EMC)
+quickcraft.tooltip.free_after=(вільно після інших потреб: %s)
+quickcraft.tooltip.catalyst=Каталізатор: залишається, не витрачається
+quickcraft.tooltip.using=Вам вистачає (джерело: %s)
+quickcraft.tooltip.needs_station=Потрібно поруч: %s
+quickcraft.tooltip.accepts=Приймає (W/S або вгору/вниз для зміни):
+quickcraft.tooltip.bought_emc=Куплено за EMC
+quickcraft.tooltip.bought_emc_each=Куплено за EMC, %s за штуку
+quickcraft.tooltip.not_enough_emc=Недостатньо EMC
+quickcraft.tooltip.reference=Рецепт розгорнуто там, де його вперше використано в цьому дереві
+quickcraft.tooltip.recipe=Рецепт: %s
+quickcraft.tooltip.yields=За одне майстрування: %s (%s)
+quickcraft.tooltip.manual=Ви надаєте самі (не майструється)
+quickcraft.tooltip.swap=ЛКМ: змінити рецепт (варіантів: %s)
+quickcraft.tooltip.eye=Значок ока: показати або сховати дерево майстрування
+quickcraft.tooltip.hide_recipe=ПКМ: сховати рецепт (надаєте самі)
+quickcraft.tooltip.reveal_recipe=ПКМ: показати рецепт
+quickcraft.tooltip.base=Базовий матеріал: рецепта немає
+quickcraft.tooltip.made_in=Де отримати: %s
+quickcraft.tooltip.view_tree=СКМ: дерево цього предмета
+
+quickcraft.mob.drops=Здобич: %s, %s
+quickcraft.mob.biomes=Біоми: %s
+quickcraft.mob.experience=Досвід: %s
+quickcraft.mob.all_drops=Уся здобич:
+quickcraft.mob.next=ЛКМ: наступний моб (%s)
+quickcraft.mob.looting=+Продуктивність
+
+quickcraft.pinned.top_right=ПВ
+quickcraft.pinned.top_left=ЛВ
+quickcraft.pinned.bottom_left=ЛН
+quickcraft.pinned.bottom_right=ПН
+
+quickcraft.force.button=Змайструвати примусово
+quickcraft.force.not_enough=У вас недостатньо предметів, щоб змайструвати все
+quickcraft.force.can_craft=Можна змайструвати %s з %s x %s
+quickcraft.force.explain=Примусове майстрування створить стільки предметів, скільки дозволяють ваші матеріали.
+quickcraft.force.missing=Бракує %sx %s
+quickcraft.force.acquire=Ви отримаєте:
+quickcraft.force.empty=Недостатньо матеріалів, щоб щось змайструвати
+
+quickcraft.reason.not_learned=(не вивчено)
+quickcraft.reason.not_enough_emc=(мало EMC)
+quickcraft.reason.catalyst=(каталізатор)
+quickcraft.reason.station=(потрібна станція)
+quickcraft.reason.tree_limit=(ліміт дерева)
+quickcraft.reason.loop=(цикл)
+quickcraft.reason.manual=(надаєте самі)
+
+quickcraft.station.stonecutter=Каменеріз
+quickcraft.station.smithing_table=Ковальський стіл
+quickcraft.station.extreme_crafting_table=Екстремальний верстак
+quickcraft.station.basic_crafting_table=Базовий верстак
+quickcraft.station.advanced_crafting_table=Покращений верстак
+quickcraft.station.elite_crafting_table=Елітний верстак
+quickcraft.station.ultimate_crafting_table=Найвищий верстак
+
+quickcraft.chat.crafted=Quick Craft: змайстровано %sx %s
+quickcraft.chat.partial=Quick Craft: змайстровано %s/%s %s, матеріали закінчилися
+quickcraft.chat.not_enough=Quick Craft: недостатньо матеріалів для: %s
+quickcraft.chat.needs_station=Quick Craft: бракує поруч: %s, щоб змайструвати: %s
+quickcraft.chat.aborted=Quick Craft: не вдалося взяти зі сховища %sx %s, нічого не змайстровано
+quickcraft.chat.tree_limit=(дерево рецептів досягло ліміту maxTreeNodes, збільште його в конфігурації)
+quickcraft.chat.missing=бракує: %s
+quickcraft.chat.placed=%2$s: %1$s
+quickcraft.chat.dropped=викинуто під ноги: %s
+quickcraft.chat.leftover=залишки: +%s
+quickcraft.chat.leftovers=залишки: +%s
+
+quickcraft.configuration.general=Загальне
+quickcraft.configuration.general.tooltip=Налаштування майстрування, сховищ і меню.
+quickcraft.configuration.client=Клієнт
+quickcraft.configuration.client.tooltip=Кольори й параметри відображення меню Quick Craft.
+quickcraft.configuration.preferredItems=Пріоритетні предмети
+quickcraft.configuration.preferredItems.tooltip=ID предметів, яким надається перевага, коли інгредієнт або рецепт має кілька варіантів. Перемагають перші; порожній список означає типові.
+quickcraft.configuration.containerScanRange=Радіус сховищ
+quickcraft.configuration.containerScanRange.tooltip=Радіус у блоках, звідки беруться предмети й куди кладуться результати. 0 вимикає сховища поруч.
+quickcraft.configuration.depositBlacklist=Заборонені сховища
+quickcraft.configuration.depositBlacklist.tooltip=Блоки, які ніколи не пропонуються для результатів: ID блока, ID мода або назва з OreDictionary, що починається з @ чи #.
+quickcraft.configuration.extraSources=Додаткові джерела
+quickcraft.configuration.extraSources.tooltip=Додаткові ID блоків або предметів, звідки брати й куди класти. Вони мають мати інвентар предметів.
+quickcraft.configuration.collapseOwnedItems=Згортати наявне
+quickcraft.configuration.collapseOwnedItems.tooltip=Предмети, яких у вас уже вистачає, не розгортаються у власне дерево рецептів.
+quickcraft.configuration.craftSoundEnabled=Звук майстрування
+quickcraft.configuration.craftSoundEnabled.tooltip=Відтворювати звук, коли Quick Craft завершує роботу.
+quickcraft.configuration.craftSound=ID звуку
+quickcraft.configuration.craftSound.tooltip=ID звуку, що лунає, коли Quick Craft завершує роботу.
+quickcraft.configuration.maxTreeDepth=Макс. глибина дерева
+quickcraft.configuration.maxTreeDepth.tooltip=Наскільки глибоко може розгортатися дерево майстрування.
+quickcraft.configuration.maxTreeNodes=Макс. вузлів дерева
+quickcraft.configuration.maxTreeNodes.tooltip=Запобіжна межа кількості кроків у дереві майстрування.
+quickcraft.configuration.animationsEnabled=Анімації
+quickcraft.configuration.animationsEnabled.tooltip=Анімувати дерево майстрування й панелі в меню Quick Craft.
+quickcraft.configuration.creativeBypass=Обхід у творчому режимі
+quickcraft.configuration.creativeBypass.tooltip=У творчому режимі потрібний предмет видається одразу, без витрати інгредієнтів.
+quickcraft.configuration.pinnedListAnimation=Анімація закріпленого списку
+quickcraft.configuration.pinnedListAnimation.tooltip=Рядки закріпленого списку плавно з'являються.
+quickcraft.configuration.hideLoopingRecipes=Ховати циклічні рецепти
+quickcraft.configuration.hideLoopingRecipes.tooltip=Ховати рецепти, що повертаються самі до себе, якщо у вас ще немає предмета з циклу.
+quickcraft.configuration.openOnlyWithRecipe=Відкривати лише з рецептом
+quickcraft.configuration.openOnlyWithRecipe.tooltip=Клавіша Quick Craft нічого не робить для предметів без підтримуваного рецепта.
+quickcraft.configuration.hoverBulge=Збільшення під курсором
+quickcraft.configuration.hoverBulge.tooltip=Вкладки трохи збільшуються, коли на них наводите курсор.
+quickcraft.configuration.sizeTabToFit=Вкладки за довжиною назви
+quickcraft.configuration.sizeTabToFit.tooltip=Вкладки розширюються, щоб умістити повну назву предмета.
+quickcraft.configuration.shiftCraftAmount=Кількість із Shift
+quickcraft.configuration.shiftCraftAmount.tooltip=Скільки предметів майструвати з затиснутим Shift: число від 1 до 1000000 або Max.
+quickcraft.configuration.useProjectEEmc=Використовувати EMC з ProjectE
+quickcraft.configuration.useProjectEEmc.tooltip=Якщо поруч стіл або планшет трансмутації, EMC купує відсутні вивчені матеріали, а змайстроване вивчається.
+quickcraft.configuration.useKleinStarEmc=Використовувати EMC зірок Кляйна
+quickcraft.configuration.useKleinStarEmc.tooltip=Зірки Кляйна в інвентарі додають свій EMC до того, що може витратити Quick Craft, після вашого власного EMC.
+quickcraft.configuration.backpackSources=Рюкзаки як джерело
+quickcraft.configuration.backpackSources.tooltip=Брати з будь-якого предмета у вашому інвентарі, що має власний інвентар, наприклад рюкзака, і класти в нього.
+quickcraft.configuration.colorAvailable=Колір наявного
+quickcraft.configuration.colorAvailable.tooltip=Колір предметів, які у вас уже є. Hex, як FF55FF55 або 55FF55.
+quickcraft.configuration.colorCrafted=Колір того, що майструється
+quickcraft.configuration.colorCrafted.tooltip=Колір предметів, які буде змайстровано.
+quickcraft.configuration.colorMissing=Колір відсутнього
+quickcraft.configuration.colorMissing.tooltip=Колір матеріалів, яких бракує.
+quickcraft.configuration.colorNoStation=Колір без станції
+quickcraft.configuration.colorNoStation.tooltip=Колір кроків, для яких немає станції.
+quickcraft.configuration.colorTarget=Колір цілі
+quickcraft.configuration.colorTarget.tooltip=Колір предмета, який ви майструєте.
+quickcraft.configuration.colorNodeBackground=Колір тла вкладки
+quickcraft.configuration.colorNodeBackground.tooltip=Колір заливки за кожним кроком.
+quickcraft.configuration.colorLines=Колір ліній
+quickcraft.configuration.colorLines.tooltip=Колір ліній між кроками.
+quickcraft.configuration.mobPreview=Попередній перегляд мобів
+quickcraft.configuration.mobPreview.tooltip=3D-перегляд мобів, видимий, коли встановлено Just Enough Resources.
+quickcraft.configuration.entitySpin=Обертання
+quickcraft.configuration.entitySpin.tooltip=Обертати перегляд моба.
+quickcraft.configuration.entityIdleAnimation=Анімація спокою
+quickcraft.configuration.entityIdleAnimation.tooltip=Відтворювати анімацію спокою моба.
+quickcraft.configuration.entityWalkAnimation=Анімація ходьби
+quickcraft.configuration.entityWalkAnimation.tooltip=Відтворювати анімацію ходьби моба.
+quickcraft.configuration.entitySpinSpeed=Швидкість обертання
+quickcraft.configuration.entitySpinSpeed.tooltip=Множник швидкості обертання перегляду.
+quickcraft.configuration.projecte=ProjectE
+quickcraft.configuration.projecte.tooltip=Налаштування ProjectE, видимі, коли встановлено ProjectE.
+quickcraft.configuration.showEmc=Показувати EMC
+quickcraft.configuration.showEmc.tooltip=Показувати ваш загальний EMC у заголовку меню, коли поруч є стіл або планшет трансмутації.

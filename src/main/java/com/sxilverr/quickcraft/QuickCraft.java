@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
         name = QuickCraft.NAME,
         version = QuickCraft.VERSION,
         acceptedMinecraftVersions = "[1.12,1.13)",
+        guiFactory = "com.sxilverr.quickcraft.client.QuickCraftGuiFactory",
         dependencies = "after:jei@[4.15.0,);after:appliedenergistics2;after:refinedstorage;after:projecte;after:jeresources;after:avaritia")
 public class QuickCraft {
     public static final String MODID = "quickcraft";

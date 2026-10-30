@@ -23,6 +23,9 @@ import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -41,8 +44,8 @@ public final class ItemSourceFactory {
 
     public static List<LabeledSource> scan(EntityPlayerMP player, int scanRange) {
         List<LabeledSource> out = new ArrayList<LabeledSource>();
-        out.add(new LabeledSource(LabeledSource.SELF_ID, "My Inventory", new ItemStack(Items.SKULL, 1, 3),
-                null, new HandlerItemSource(new PlayerMainInvWrapper(player.inventory)), true));
+        out.add(new LabeledSource(LabeledSource.SELF_ID, new TextComponentTranslation("quickcraft.source.my_inventory"),
+                new ItemStack(Items.SKULL, 1, 3), null, new HandlerItemSource(new PlayerMainInvWrapper(player.inventory)), true));
 
         Set<Object> seenNetworks = Collections.newSetFromMap(new IdentityHashMap<Object, Boolean>());
         Set<ResourceLocation> extraSources = QuickCraftConfig.extraSources();
@@ -88,8 +91,9 @@ public final class ItemSourceFactory {
                         ResourceLocation blockId = Reg.idOf(block);
                         boolean canDeposit = depositable(tile, block, blacklist)
                                 || (extraSources.contains(blockId) && !blacklist.matches(block));
-                        String name = handler.getSlots() > 27 && tile instanceof TileEntityChest
-                                ? "Double Chest" : icon.getDisplayName();
+                        ITextComponent name = handler.getSlots() > 27 && tile instanceof TileEntityChest
+                                ? new TextComponentTranslation("quickcraft.source.double_chest")
+                                : new TextComponentString(icon.getDisplayName());
                         out.add(new LabeledSource("block:" + posKey(pos), name, icon, pos,
                                 new HandlerItemSource(handler, icon), canDeposit));
                     }
@@ -147,7 +151,7 @@ public final class ItemSourceFactory {
             if (handler == null || handler.getSlots() == 0) continue;
             ItemStack icon = stack.copy();
             icon.setCount(1);
-            out.add(new LabeledSource("item:" + i, stack.getDisplayName(), icon, null,
+            out.add(new LabeledSource("item:" + i, new TextComponentString(stack.getDisplayName()), icon, null,
                     new HandlerItemSource(handler, icon), !blacklist.matches(stack.getItem())));
         }
     }

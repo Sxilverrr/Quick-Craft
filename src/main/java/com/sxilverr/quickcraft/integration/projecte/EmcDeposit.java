@@ -7,6 +7,9 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,7 +51,7 @@ public final class EmcDeposit {
         if (!tablet.isEmpty()) {
             ItemStack icon = tablet.copy();
             icon.setCount(1);
-            out.add(new LabeledSource(TABLET_ID, icon.getDisplayName(), icon, null, SINK, true));
+            out.add(new LabeledSource(TABLET_ID, new TextComponentString(icon.getDisplayName()), icon, null, SINK, true));
         }
 
         BlockPos table = ProjectESupport.findTable(player.world, player.getPosition(),
@@ -56,16 +59,17 @@ public final class EmcDeposit {
         if (table != null) {
             Block block = ProjectESupport.tableBlock();
             ItemStack icon = block == null ? ItemStack.EMPTY : new ItemStack(block);
-            String name = icon.isEmpty() ? "Transmutation Table" : icon.getDisplayName();
+            ITextComponent name = icon.isEmpty() ? new TextComponentTranslation("tile.pe_transmutation_stone.name")
+                    : new TextComponentString(icon.getDisplayName());
             out.add(new LabeledSource(TABLE_ID, name, icon, table, SINK, true));
         }
         return out;
     }
 
-    public static String label(String id, List<LabeledSource> targets) {
+    public static ITextComponent label(String id, List<LabeledSource> targets) {
         for (LabeledSource target : targets) {
             if (target.id().equals(id)) return target.name();
         }
-        return "your EMC";
+        return new TextComponentTranslation("quickcraft.deposit.your_emc");
     }
 }

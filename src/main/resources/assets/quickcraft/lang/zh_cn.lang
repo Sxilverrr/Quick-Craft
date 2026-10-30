@@ -1,0 +1,226 @@
+key.categories.quickcraft=Quick Craft
+key.quickcraft.open=Quick Craft
+key.quickcraft.scroll_up=向上滚动固定列表
+key.quickcraft.scroll_down=向下滚动固定列表
+key.quickcraft.show_recipe=查看配方
+key.quickcraft.show_uses=查看用途
+
+quickcraft.max=最大
+
+quickcraft.max_count=最大（%s）
+
+quickcraft.more=另有%s项
+
+quickcraft.tree_limit=已达到合成树上限：请在配置中调高 maxTreeNodes 或 maxTreeDepth
+
+quickcraft.screen.title=Quick Craft - %s
+quickcraft.screen.qty=数量：
+quickcraft.screen.craft_max=合成最大数量
+quickcraft.screen.can_craft=可合成：%s
+quickcraft.screen.confirm=确认合成
+quickcraft.screen.close=关闭
+quickcraft.screen.ingredients=材料
+quickcraft.screen.refresh=刷新
+quickcraft.screen.refresh.tooltip=扫描可用物品
+quickcraft.screen.show_mobs=显示生物
+quickcraft.screen.hide_mobs=隐藏生物
+quickcraft.screen.controls=操作说明
+quickcraft.screen.history=历史记录
+quickcraft.screen.emc_total=EMC：%s
+quickcraft.screen.emc_uses=消耗 %s
+quickcraft.screen.missing_station=缺少：
+quickcraft.screen.station_options=可在以下位置合成（W/S）：
+quickcraft.screen.show_tree=显示合成树
+quickcraft.screen.hide_tree=隐藏合成树
+quickcraft.screen.copy_tooltip=将材料清单复制到剪贴板。
+
+quickcraft.legend.target=最终产物
+quickcraft.legend.have=已拥有的物品
+quickcraft.legend.crafted=需要合成的物品
+quickcraft.legend.missing=缺少的材料
+quickcraft.legend.no_station=无法合成（缺少工作站）
+quickcraft.legend.dimmed=变暗的标签 = 该分支无法完成
+
+quickcraft.controls.pan=拖动/滚轮：平移/缩放
+quickcraft.controls.swap=左键：切换配方
+quickcraft.controls.view_tree=中键：查看该物品的合成树
+quickcraft.controls.switch_tag=W/S 或 上/下：切换标签物品
+quickcraft.controls.toggle_recipe=右键：显示/隐藏配方
+quickcraft.controls.reset=Ctrl+点击：重置偏好
+
+quickcraft.history.title=合成历史
+quickcraft.history.empty=暂无历史记录
+
+quickcraft.deposit.header=将产物存入：
+quickcraft.deposit.search=搜索...
+quickcraft.deposit.no_matches=无匹配结果
+quickcraft.deposit.free_slots=空闲槽位：%s/%s
+quickcraft.deposit.title=存放产物
+quickcraft.deposit.into=存入：%s
+quickcraft.deposit.hint=点击选择容器
+quickcraft.deposit.your_inventory=你的物品栏
+quickcraft.deposit.your_emc=你的 EMC
+
+quickcraft.source.my_inventory=我的物品栏
+quickcraft.source.double_chest=大型箱子
+quickcraft.source.me_system=ME 系统
+quickcraft.source.rs_system=RS 系统
+
+quickcraft.ingredients.title=材料（%s）
+quickcraft.ingredients.pin=固定
+quickcraft.ingredients.copy=复制
+quickcraft.ingredients.not_learned=未学习
+
+quickcraft.copy.full=复制完整清单
+quickcraft.copy.missing=复制缺少的材料
+quickcraft.copy.shortages=复制材料缺口
+quickcraft.copy.header=Quick Craft - %s %s：
+quickcraft.copy.shortage=%s：%s/%s（还差 %s）
+
+quickcraft.node.need=需要 %s
+quickcraft.node.keep=保留 %s
+
+quickcraft.tooltip.end_result=最终产物
+quickcraft.tooltip.required=需要：%s
+quickcraft.tooltip.available=可用：%s
+quickcraft.tooltip.from_emc=（+%s 来自 EMC）
+quickcraft.tooltip.free_after=（满足其他用途后剩余 %s）
+quickcraft.tooltip.catalyst=催化剂：保留，不消耗
+quickcraft.tooltip.using=数量足够（来源：%s）
+quickcraft.tooltip.needs_station=需要附近有：%s
+quickcraft.tooltip.accepts=可用物品（W/S 或 上/下 切换）：
+quickcraft.tooltip.bought_emc=用 EMC 购买
+quickcraft.tooltip.bought_emc_each=用 EMC 购买，每个 %s
+quickcraft.tooltip.not_enough_emc=EMC 不足
+quickcraft.tooltip.reference=配方在此树中首次用到的位置展开
+quickcraft.tooltip.recipe=配方：%s
+quickcraft.tooltip.yields=每次合成产出 %s 个（%s）
+quickcraft.tooltip.manual=由你自行提供（不合成）
+quickcraft.tooltip.swap=左键：切换配方（%s 个选项）
+quickcraft.tooltip.eye=眼睛图标：显示或隐藏合成树
+quickcraft.tooltip.hide_recipe=右键：隐藏配方（自行提供）
+quickcraft.tooltip.reveal_recipe=右键：显示配方
+quickcraft.tooltip.base=基础材料：没有配方
+quickcraft.tooltip.made_in=获取方式：%s
+quickcraft.tooltip.view_tree=中键：查看此物品的合成树
+
+quickcraft.mob.drops=掉落 %s：%s
+quickcraft.mob.biomes=生物群系：%s
+quickcraft.mob.experience=经验：%s
+quickcraft.mob.all_drops=全部掉落物：
+quickcraft.mob.next=左键：下一个生物（%s）
+quickcraft.mob.looting=+抢夺
+
+quickcraft.pinned.top_right=右上
+quickcraft.pinned.top_left=左上
+quickcraft.pinned.bottom_left=左下
+quickcraft.pinned.bottom_right=右下
+
+quickcraft.force.button=强制合成
+quickcraft.force.not_enough=你的物品不足以全部合成
+quickcraft.force.can_craft=可合成 %s / %s x %s
+quickcraft.force.explain=强制合成会用现有材料合成尽可能多的物品。
+quickcraft.force.missing=缺少 %sx %s
+quickcraft.force.acquire=将获得：
+quickcraft.force.empty=材料不足，无法合成任何物品
+
+quickcraft.reason.not_learned=（未学习）
+quickcraft.reason.not_enough_emc=（EMC 不足）
+quickcraft.reason.catalyst=（催化剂）
+quickcraft.reason.station=（需要工作站）
+quickcraft.reason.tree_limit=（合成树上限）
+quickcraft.reason.loop=（循环）
+quickcraft.reason.manual=（自行提供）
+
+quickcraft.station.stonecutter=切石机
+quickcraft.station.smithing_table=锻造台
+quickcraft.station.extreme_crafting_table=极限工作台
+quickcraft.station.basic_crafting_table=基础工作台
+quickcraft.station.advanced_crafting_table=高级工作台
+quickcraft.station.elite_crafting_table=精英工作台
+quickcraft.station.ultimate_crafting_table=终极工作台
+
+quickcraft.chat.crafted=Quick Craft：已合成 %sx %s
+quickcraft.chat.partial=Quick Craft：已合成 %s/%s %s，材料已用完
+quickcraft.chat.not_enough=Quick Craft：材料不足，无法合成 %s
+quickcraft.chat.needs_station=Quick Craft：附近需要 %s 才能合成 %s
+quickcraft.chat.aborted=Quick Craft：无法从存储中取出 %sx %s，未合成任何物品
+quickcraft.chat.tree_limit=（配方树达到 maxTreeNodes 上限，请在配置中调高）
+quickcraft.chat.missing=缺少：%s
+quickcraft.chat.placed=%s 个存入 %s
+quickcraft.chat.dropped=%s 个掉落在脚下
+quickcraft.chat.leftover=+%s 个剩余物品
+quickcraft.chat.leftovers=+%s 个剩余物品
+
+quickcraft.configuration.general=通用
+quickcraft.configuration.general.tooltip=合成、存储和菜单选项。
+quickcraft.configuration.client=客户端
+quickcraft.configuration.client.tooltip=Quick Craft 菜单的颜色和显示选项。
+quickcraft.configuration.preferredItems=优先物品
+quickcraft.configuration.preferredItems.tooltip=材料或配方有多个选项时优先使用的物品 ID。越靠前越优先；留空则使用默认值。
+quickcraft.configuration.containerScanRange=容器扫描范围
+quickcraft.configuration.containerScanRange.tooltip=从中取物品和存放产物的方块半径。0 表示不使用附近的容器。
+quickcraft.configuration.depositBlacklist=存放黑名单
+quickcraft.configuration.depositBlacklist.tooltip=永远不作为存放位置的方块：方块 ID、模组 ID，或以 @ 或 # 开头的矿物词典名称。
+quickcraft.configuration.extraSources=额外来源
+quickcraft.configuration.extraSources.tooltip=额外的可取物品和存放的方块或物品 ID，必须带有物品栏。
+quickcraft.configuration.collapseOwnedItems=折叠已拥有的物品
+quickcraft.configuration.collapseOwnedItems.tooltip=数量已足够的物品不会展开成自己的配方树。
+quickcraft.configuration.craftSoundEnabled=合成音效
+quickcraft.configuration.craftSoundEnabled.tooltip=Quick Craft 完成时播放音效。
+quickcraft.configuration.craftSound=音效 ID
+quickcraft.configuration.craftSound.tooltip=Quick Craft 完成时播放的音效 ID。
+quickcraft.configuration.maxTreeDepth=合成树最大深度
+quickcraft.configuration.maxTreeDepth.tooltip=合成树最多能展开多深。
+quickcraft.configuration.maxTreeNodes=合成树最大节点数
+quickcraft.configuration.maxTreeNodes.tooltip=合成树中步骤数量的安全上限。
+quickcraft.configuration.animationsEnabled=动画
+quickcraft.configuration.animationsEnabled.tooltip=为 Quick Craft 菜单中的合成树和面板播放动画。
+quickcraft.configuration.creativeBypass=创造模式直接给予
+quickcraft.configuration.creativeBypass.tooltip=创造模式下直接给予所需物品，不消耗任何材料。
+quickcraft.configuration.pinnedListAnimation=固定列表动画
+quickcraft.configuration.pinnedListAnimation.tooltip=固定的材料列表出现时各行平滑滑入。
+quickcraft.configuration.hideLoopingRecipes=隐藏循环配方
+quickcraft.configuration.hideLoopingRecipes.tooltip=隐藏会绕回自身的配方，除非你已经有循环中的物品。
+quickcraft.configuration.openOnlyWithRecipe=仅在有配方时打开
+quickcraft.configuration.openOnlyWithRecipe.tooltip=对没有支持配方的物品按 Quick Craft 键时不做任何事。
+quickcraft.configuration.hoverBulge=悬停放大
+quickcraft.configuration.hoverBulge.tooltip=鼠标悬停时标签会稍微放大。
+quickcraft.configuration.sizeTabToFit=标签宽度适应名称
+quickcraft.configuration.sizeTabToFit.tooltip=标签会变宽以显示完整的物品名称。
+quickcraft.configuration.shiftCraftAmount=按住 Shift 的合成数量
+quickcraft.configuration.shiftCraftAmount.tooltip=按住 Shift 时合成的物品数量：1 到 1000000 之间的数字，或 Max。
+quickcraft.configuration.useProjectEEmc=使用 ProjectE EMC
+quickcraft.configuration.useProjectEEmc.tooltip=附近有转化桌或转化平板时，用 EMC 购买缺少的已学习材料，并学习合成出的物品。
+quickcraft.configuration.useKleinStarEmc=使用克莱因之星 EMC
+quickcraft.configuration.useKleinStarEmc.tooltip=物品栏中克莱因之星的 EMC 会加入 Quick Craft 可花费的 EMC，在你自己的 EMC 之后使用。
+quickcraft.configuration.backpackSources=背包作为来源
+quickcraft.configuration.backpackSources.tooltip=从物品栏中任何自带物品栏的物品（如背包）取出和存入。
+quickcraft.configuration.colorAvailable=已拥有颜色
+quickcraft.configuration.colorAvailable.tooltip=已拥有物品的颜色。十六进制，如 FF55FF55 或 55FF55。
+quickcraft.configuration.colorCrafted=待合成颜色
+quickcraft.configuration.colorCrafted.tooltip=将要合成的物品的颜色。
+quickcraft.configuration.colorMissing=缺少颜色
+quickcraft.configuration.colorMissing.tooltip=缺少的材料的颜色。
+quickcraft.configuration.colorNoStation=无工作站颜色
+quickcraft.configuration.colorNoStation.tooltip=缺少工作站而无法合成的步骤的颜色。
+quickcraft.configuration.colorTarget=目标颜色
+quickcraft.configuration.colorTarget.tooltip=正在合成的物品的颜色。
+quickcraft.configuration.colorNodeBackground=标签背景颜色
+quickcraft.configuration.colorNodeBackground.tooltip=每个步骤后面的填充颜色。
+quickcraft.configuration.colorLines=连线颜色
+quickcraft.configuration.colorLines.tooltip=连接各步骤的线条颜色。
+quickcraft.configuration.mobPreview=生物预览
+quickcraft.configuration.mobPreview.tooltip=3D 生物预览，安装 Just Enough Resources 时显示。
+quickcraft.configuration.entitySpin=旋转
+quickcraft.configuration.entitySpin.tooltip=旋转生物预览。
+quickcraft.configuration.entityIdleAnimation=待机动画
+quickcraft.configuration.entityIdleAnimation.tooltip=播放生物的待机动画。
+quickcraft.configuration.entityWalkAnimation=行走动画
+quickcraft.configuration.entityWalkAnimation.tooltip=播放生物的行走动画。
+quickcraft.configuration.entitySpinSpeed=旋转速度
+quickcraft.configuration.entitySpinSpeed.tooltip=生物预览旋转速度的倍率。
+quickcraft.configuration.projecte=ProjectE
+quickcraft.configuration.projecte.tooltip=ProjectE 选项，安装 ProjectE 时显示。
+quickcraft.configuration.showEmc=显示 EMC
+quickcraft.configuration.showEmc.tooltip=有转化桌或转化平板时，在菜单顶部显示你的 EMC 总量。

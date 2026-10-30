@@ -3,6 +3,8 @@ package com.sxilverr.quickcraft.client;
 import com.sxilverr.quickcraft.network.DepositTargetsResponsePacket;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,12 +13,12 @@ import java.util.List;
 public final class ClientDepositTargets {
     public static final class Target {
         private final String id;
-        private final String label;
+        private final ITextComponent label;
         private final ItemStack icon;
         private final int freeSlots;
         private final int totalSlots;
 
-        public Target(String id, String label, ItemStack icon, int freeSlots, int totalSlots) {
+        public Target(String id, ITextComponent label, ItemStack icon, int freeSlots, int totalSlots) {
             this.id = id;
             this.label = label;
             this.icon = icon;
@@ -29,7 +31,7 @@ public final class ClientDepositTargets {
         }
 
         public String label() {
-            return label;
+            return label.getUnformattedText();
         }
 
         public ItemStack icon() {
@@ -46,7 +48,8 @@ public final class ClientDepositTargets {
     }
 
     private static final Target DEFAULT =
-            new Target("self", "My Inventory", new ItemStack(Items.SKULL, 1, 3), -1, -1);
+            new Target("self", new TextComponentTranslation("quickcraft.source.my_inventory"),
+                    new ItemStack(Items.SKULL, 1, 3), -1, -1);
 
     private static List<Target> targets = Collections.singletonList(DEFAULT);
     private static String selectedId = "self";
