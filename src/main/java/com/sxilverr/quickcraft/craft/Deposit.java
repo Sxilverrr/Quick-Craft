@@ -8,14 +8,12 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 public final class Deposit {
     private final List<LabeledSource> sinks;
     private final EntityPlayerMP player;
-    private final Map<ITextComponent, Integer> tally = new LinkedHashMap<ITextComponent, Integer>();
+    private final List<CraftSummary.Placement> tally = new ArrayList<CraftSummary.Placement>();
     private int dropped;
     private int byproducts;
     private ITextComponent emcLabel = new TextComponentTranslation("quickcraft.deposit.your_emc");
@@ -85,8 +83,13 @@ public final class Deposit {
     }
 
     private void merge(ITextComponent where, int amount) {
-        Integer existing = tally.get(where);
-        tally.put(where, existing == null ? amount : existing + amount);
+        for (int i = 0; i < tally.size(); i++) {
+            CraftSummary.Placement placement = tally.get(i);
+            if (!placement.where().equals(where)) continue;
+            tally.set(i, new CraftSummary.Placement(where, placement.count() + amount));
+            return;
+        }
+        tally.add(new CraftSummary.Placement(where, amount));
     }
 
     private static ITextComponent feedbackName(LabeledSource sink) {
@@ -94,11 +97,7 @@ public final class Deposit {
     }
 
     public List<CraftSummary.Placement> placements() {
-        List<CraftSummary.Placement> out = new ArrayList<CraftSummary.Placement>();
-        for (Map.Entry<ITextComponent, Integer> entry : tally.entrySet()) {
-            out.add(new CraftSummary.Placement(entry.getKey(), entry.getValue()));
-        }
-        return out;
+        return tally;
     }
 
     public int dropped() {
