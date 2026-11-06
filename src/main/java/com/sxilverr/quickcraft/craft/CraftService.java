@@ -79,12 +79,17 @@ public final class CraftService {
         Stations stations = StationScan.detect(player.world, player);
         EmcSession emc = openEmcSession(player);
         ItemKey targetKey = ItemKey.of(target);
+        boolean fitInventory = qty >= CraftPlanner.MAX_QUANTITY && LabeledSource.SELF_ID.equals(destinationId);
 
         Shortfall shortfall = null;
         for (int attempt = 0; attempt < MAX_COMMIT_ATTEMPTS; attempt++) {
             CraftPlanner.Plan plan = CraftPlanner.plan(builder, target, qty, overrides, ingredientChoices, initial,
                     Availability.Factory.of(new HashMap<ItemKey, Integer>(initial.counts())), stations,
                     QuickCraftConfig.collapseOwnedItems(), QuickCraftConfig.hideLoopingRecipes(), emc, null);
+            if (fitInventory) plan = CraftPlanner.fitInventory(plan, player.inventory.mainInventory, n -> CraftPlanner.plan(
+                    builder, target, n, overrides, ingredientChoices, initial,
+                    Availability.Factory.of(new HashMap<ItemKey, Integer>(initial.counts())), stations,
+                    QuickCraftConfig.collapseOwnedItems(), QuickCraftConfig.hideLoopingRecipes(), null, null));
 
             shortfall = commit(source, deposit, initial, plan.working(), CraftTrees.madeVariants(plan.root()), targetKey, emc,
                     plan.bank(), player, destinationId);

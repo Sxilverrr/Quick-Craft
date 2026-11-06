@@ -18,10 +18,12 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.IntFunction;
 
 public final class CraftPlanner {
     public static final int MAX_QUANTITY = 1000000;
@@ -174,12 +176,13 @@ public final class CraftPlanner {
                             Map<String, Item> ingredientChoices, VirtualPool initial, Availability availability,
                             Stations stations, boolean collapseOwned, boolean hideLooping, EmcSource emc, BigInteger budget) {
         int qty = Math.max(1, quantity);
-        builder.setEmcLookup(emc == null ? EmcLookup.NONE : emc);
+        EmcSource buyer = qty >= MAX_QUANTITY ? null : emc;
+        builder.setEmcLookup(buyer == null ? EmcLookup.NONE : buyer);
         CraftNode root = builder.build(target, qty, overrides, ingredientChoices, availability, stations, collapseOwned, hideLooping);
         Set<ItemKey> keys = collectKeys(root, new HashSet<ItemKey>());
         keys.addAll(builder.loopIngredientKeys());
         EmcBank bank = null;
-        if (emc != null) bank = emc.bank(keys, budget == null ? emc.emc() : budget);
+        if (emc != null) bank = emc.bank(buyer == null ? Collections.<ItemKey>emptySet() : keys, budget == null ? emc.emc() : budget);
         VirtualPool working = initial.copy();
         working.setEmc(bank);
         CraftExecutor.simulate(root, working);
@@ -187,7 +190,7 @@ public final class CraftPlanner {
         buyTarget(bank, initial, working, targetKey, qty);
         int craftable = Math.max(0, Math.min(qty, working.count(targetKey) - initial.count(targetKey)));
         List<Blocker> blockers = craftable >= qty ? Collections.<Blocker>emptyList() : diagnose(root,
-                craftable > 0 ? working : initial, bank, emc, craftable > 0, qty, qty >= MAX_QUANTITY ? 1 : qty - craftable);
+                craftable > 0 ? working : initial, bank, buyer, craftable > 0, qty, qty >= MAX_QUANTITY ? 1 : qty - craftable);
         return new Plan(root, initial, working, bank, keys, qty, craftable, builder.truncated(), blockers);
     }
 
@@ -199,6 +202,60 @@ public final class CraftPlanner {
         out.add(ItemKey.of(node.output));
         for (CraftNode child : node.children) collectKeys(child, out);
         return out;
+    }
+
+    public static Plan fitInventory(Plan plan, List<ItemStack> inventory, IntFunction<Plan> replan) {
+        for (int i = 0; i < 8; i++) {
+            int over = overflow(plan, inventory);
+            if (over <= 0 || plan.craftable() <= 1) return plan;
+            plan = replan.apply(Math.max(1, plan.craftable() - over));
+        }
+        return plan;
+    }
+
+    private static int overflow(Plan plan, List<ItemStack> inventory) {
+        List<ItemStack> slots = new ArrayList<ItemStack>(inventory.size());
+        for (ItemStack stack : inventory) slots.add(stack.copy());
+        Set<ItemKey> keys = new HashSet<ItemKey>(plan.initial().counts().keySet());
+        keys.addAll(plan.working().counts().keySet());
+        Map<ItemKey, Integer> produced = new HashMap<ItemKey, Integer>();
+        for (ItemKey key : keys) {
+            int delta = plan.working().exact(key) - plan.initial().exact(key);
+            if (delta < 0) take(slots, key, -delta);
+            else if (delta > 0) produced.put(key, delta);
+        }
+        int over = 0;
+        for (Map.Entry<ItemKey, Integer> entry : produced.entrySet()) over += put(slots, entry.getKey(), entry.getValue());
+        return over;
+    }
+
+    private static void take(List<ItemStack> slots, ItemKey key, int amount) {
+        for (ItemStack slot : slots) {
+            if (amount <= 0) return;
+            if (slot.isEmpty() || !ItemKey.of(slot).equals(key)) continue;
+            int n = Math.min(amount, slot.getCount());
+            slot.shrink(n);
+            amount -= n;
+        }
+    }
+
+    private static int put(List<ItemStack> slots, ItemKey key, int amount) {
+        int max = Math.max(1, key.toStack(1).getMaxStackSize());
+        for (ItemStack slot : slots) {
+            if (amount <= 0) return 0;
+            if (slot.isEmpty() || !ItemKey.of(slot).equals(key)) continue;
+            int n = Math.min(amount, max - slot.getCount());
+            if (n <= 0) continue;
+            slot.grow(n);
+            amount -= n;
+        }
+        for (int i = 0; i < slots.size() && amount > 0; i++) {
+            if (!slots.get(i).isEmpty()) continue;
+            int n = Math.min(amount, max);
+            slots.set(i, key.toStack(n));
+            amount -= n;
+        }
+        return amount;
     }
 
     private static void buyTarget(EmcBank bank, VirtualPool initial, VirtualPool working, ItemKey targetKey, int qty) {

@@ -18,6 +18,7 @@ import com.sxilverr.quickcraft.crafting.StationProviders;
 import com.sxilverr.quickcraft.crafting.StationScan;
 import com.sxilverr.quickcraft.crafting.Stations;
 import com.sxilverr.quickcraft.crafting.TreeBuilder;
+import com.sxilverr.quickcraft.storage.LabeledSource;
 import com.sxilverr.quickcraft.integration.OriginHint;
 import com.sxilverr.quickcraft.integration.QuickCraftIntegrations;
 import com.sxilverr.quickcraft.integration.jer.DropLine;
@@ -479,7 +480,7 @@ public class QuickCraftScreen extends GuiScreen {
         emcSource = ProjectEClient.session(this.mc.player, QuickCraftConfig.containerScanRange());
         int qty = quantity;
         if (maxMode) {
-            qty = Math.max(1, planFor(CraftPlanner.MAX_QUANTITY, stations, collapse, hideLoop, null, false).craftable());
+            qty = Math.max(1, maxCount(stations, collapse, hideLoop));
             suppressResponder = true;
             quantityBox.setText(I18n.format("quickcraft.max_count", qty));
             lastQuantityText = quantityBox.getText();
@@ -882,9 +883,15 @@ public class QuickCraftScreen extends GuiScreen {
         if (maxCraftableCache >= 0) return maxCraftableCache;
         Stations stations = detectedStations != null
                 ? detectedStations : StationScan.detect(this.mc.world, this.mc.player);
-        maxCraftableCache = Math.max(0, planFor(CraftPlanner.MAX_QUANTITY, stations, QuickCraftConfig.collapseOwnedItems(),
-                QuickCraftConfig.hideLoopingRecipes(), null, false).craftable());
+        maxCraftableCache = Math.max(0, maxCount(stations, QuickCraftConfig.collapseOwnedItems(), QuickCraftConfig.hideLoopingRecipes()));
         return maxCraftableCache;
+    }
+
+    private int maxCount(final Stations stations, final boolean collapse, final boolean hideLoop) {
+        CraftPlanner.Plan plan = planFor(CraftPlanner.MAX_QUANTITY, stations, collapse, hideLoop, null, false);
+        if (this.mc.player == null || !LabeledSource.SELF_ID.equals(ClientDepositTargets.selectedId())) return plan.craftable();
+        return CraftPlanner.fitInventory(plan, this.mc.player.inventory.mainInventory,
+                n -> planFor(n, stations, collapse, hideLoop, null, false)).craftable();
     }
 
     private void renderStationDropdown(int anchorX) {
@@ -1044,6 +1051,7 @@ public class QuickCraftScreen extends GuiScreen {
         ClientDepositTargets.select(target.id());
         playClick();
         depositMenuOpen = false;
+        rebuild();
     }
 
     private void updateControlsHover(int mouseX, int mouseY) {
