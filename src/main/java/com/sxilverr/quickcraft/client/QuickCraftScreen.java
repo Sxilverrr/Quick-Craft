@@ -24,6 +24,7 @@ import com.sxilverr.quickcraft.crafting.StationProviders;
 import com.sxilverr.quickcraft.crafting.StationScan;
 import com.sxilverr.quickcraft.crafting.Stations;
 import com.sxilverr.quickcraft.crafting.TreeBuilder;
+import com.sxilverr.quickcraft.storage.LabeledSource;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -40,6 +41,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import com.sxilverr.quickcraft.integration.OriginHint;
 import com.sxilverr.quickcraft.integration.QuickCraftIntegrations;
@@ -391,9 +393,16 @@ public class QuickCraftScreen extends Screen {
         if (maxCraftableCache >= 0) return maxCraftableCache;
         Minecraft mc = Minecraft.getInstance();
         Stations stations = detectedStations != null ? detectedStations : StationScan.detect(mc.level, mc.player);
-        maxCraftableCache = Math.max(0, planFor(CraftPlanner.MAX_QUANTITY, stations, QuickCraftConfig.collapseOwnedItems(),
-                QuickCraftConfig.hideLoopingRecipes(), null, false).craftable());
+        maxCraftableCache = Math.max(0, maxCount(stations, QuickCraftConfig.collapseOwnedItems(), QuickCraftConfig.hideLoopingRecipes()));
         return maxCraftableCache;
+    }
+
+    private int maxCount(Stations stations, boolean collapse, boolean hideLoop) {
+        CraftPlanner.Plan plan = planFor(CraftPlanner.MAX_QUANTITY, stations, collapse, hideLoop, null, false);
+        Player player = Minecraft.getInstance().player;
+        if (player == null || !LabeledSource.SELF_ID.equals(ClientDepositTargets.selectedId())) return plan.craftable();
+        return CraftPlanner.fitInventory(plan, player.getInventory().items,
+                n -> planFor(n, stations, collapse, hideLoop, null, false)).craftable();
     }
 
     @Override
@@ -553,7 +562,7 @@ public class QuickCraftScreen extends Screen {
         emcSource = Services.PLATFORM.openEmc(mc.player, QuickCraftConfig.containerScanRange());
         int qty = quantity;
         if (maxMode) {
-            qty = Math.max(1, planFor(CraftPlanner.MAX_QUANTITY, stations, collapse, hideLoop, null, false).craftable());
+            qty = Math.max(1, maxCount(stations, collapse, hideLoop));
             suppressResponder = true;
             quantityBox.setValue(I18n.get("quickcraft.max_count", qty));
             suppressResponder = false;
@@ -1030,6 +1039,7 @@ public class QuickCraftScreen extends Screen {
         ClientDepositTargets.select(target.id());
         playClick();
         depositMenuOpen = false;
+        rebuild();
     }
 
     private void updateControlsHover(int mouseX, int mouseY) {
