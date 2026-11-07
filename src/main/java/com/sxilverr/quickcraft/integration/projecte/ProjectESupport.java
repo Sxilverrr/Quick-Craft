@@ -1,5 +1,6 @@
 package com.sxilverr.quickcraft.integration.projecte;
 
+import com.sxilverr.quickcraft.QuickCraftConfig;
 import com.sxilverr.quickcraft.util.Reflect;
 import com.sxilverr.quickcraft.util.Reg;
 import net.minecraft.block.Block;
@@ -198,7 +199,7 @@ public final class ProjectESupport {
     }
 
     public static boolean hasAccess(EntityPlayer player, World world, BlockPos center, int range) {
-        return !findTablet(player).isEmpty() || findTable(world, center, range) != null;
+        return QuickCraftConfig.emcWithoutTransmutation() || !findTablet(player).isEmpty() || findTable(world, center, range) != null;
     }
 
     public static ItemStack findTablet(EntityPlayer player) {

@@ -4,6 +4,7 @@ import com.sxilverr.quickcraft.crafting.Availability;
 import com.sxilverr.quickcraft.crafting.CraftNode;
 import com.sxilverr.quickcraft.crafting.CraftTrees;
 import com.sxilverr.quickcraft.crafting.EmcLookup;
+import com.sxilverr.quickcraft.crafting.ForeignRecipe;
 import com.sxilverr.quickcraft.crafting.ItemKey;
 import com.sxilverr.quickcraft.crafting.Stations;
 import com.sxilverr.quickcraft.crafting.TreeBuilder;
@@ -17,7 +18,6 @@ import net.minecraft.util.text.TextComponentTranslation;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -88,9 +88,12 @@ public final class CraftPlanner {
         private final int craftable;
         private final boolean truncated;
         private final List<Blocker> blockers;
+        private final Map<ItemKey, Integer> collected;
+        private final boolean bought;
 
         Plan(CraftNode root, VirtualPool initial, VirtualPool working, EmcBank bank, Set<ItemKey> keys,
-             int requested, int craftable, boolean truncated, List<Blocker> blockers) {
+             int requested, int craftable, boolean truncated, List<Blocker> blockers,
+             Map<ItemKey, Integer> collected, boolean bought) {
             this.root = root;
             this.initial = initial;
             this.working = working;
@@ -100,6 +103,8 @@ public final class CraftPlanner {
             this.craftable = craftable;
             this.truncated = truncated;
             this.blockers = blockers;
+            this.collected = collected;
+            this.bought = bought;
         }
 
         public CraftNode root() {
@@ -138,6 +143,14 @@ public final class CraftPlanner {
             return blockers;
         }
 
+        public Map<ItemKey, Integer> collected() {
+            return collected;
+        }
+
+        public boolean bought() {
+            return bought;
+        }
+
         public boolean full() {
             return requested > 0 && craftable >= requested;
         }
@@ -148,27 +161,6 @@ public final class CraftPlanner {
 
         public BigInteger spentEmc() {
             return bank == null ? BigInteger.ZERO : bank.spentEmc();
-        }
-
-        public CraftPreview.Result toResult() {
-            Map<ItemKey, ItemKey> made = CraftTrees.madeVariants(root);
-            ItemKey rootKey = ItemKey.of(root.output);
-            final ItemKey targetKey = made.getOrDefault(rootKey, rootKey);
-            List<CraftPreview.Gain> gained = new ArrayList<CraftPreview.Gain>();
-            for (ItemKey key : working.counts().keySet()) {
-                int delta = working.exact(key) - initial.exact(key);
-                if (delta > 0) gained.add(new CraftPreview.Gain(made.getOrDefault(key, key), delta));
-            }
-            Collections.sort(gained, new Comparator<CraftPreview.Gain>() {
-                @Override
-                public int compare(CraftPreview.Gain a, CraftPreview.Gain b) {
-                    int ta = a.key().equals(targetKey) ? 0 : 1;
-                    int tb = b.key().equals(targetKey) ? 0 : 1;
-                    if (ta != tb) return ta - tb;
-                    return b.count() - a.count();
-                }
-            });
-            return new CraftPreview.Result(craftable, requested, gained, blockers);
         }
     }
 
@@ -182,16 +174,39 @@ public final class CraftPlanner {
         Set<ItemKey> keys = collectKeys(root, new HashSet<ItemKey>());
         keys.addAll(builder.loopIngredientKeys());
         EmcBank bank = null;
-        if (emc != null) bank = emc.bank(buyer == null ? Collections.<ItemKey>emptySet() : keys, budget == null ? emc.emc() : budget);
+        BigInteger start = emc == null ? null : budget == null ? emc.emc() : budget;
+        if (emc != null) bank = emc.bank(buyer == null ? Collections.<ItemKey>emptySet() : keys, start);
         VirtualPool working = initial.copy();
         working.setEmc(bank);
         CraftExecutor.simulate(root, working);
         ItemKey targetKey = ItemKey.of(target);
         buyTarget(bank, initial, working, targetKey, qty);
         int craftable = Math.max(0, Math.min(qty, working.count(targetKey) - initial.count(targetKey)));
+        if (buyer != null && (craftable < qty || bank.spentEmc().signum() > 0)) {
+            EmcBank direct = buyer.bank(keys, start);
+            BigInteger cost = BigInteger.valueOf(direct.value(targetKey)).multiply(BigInteger.valueOf(qty));
+            if ((craftable < qty || cost.compareTo(bank.spentEmc()) <= 0) && direct.buy(targetKey, qty)) {
+                VirtualPool bought = initial.copy();
+                bought.setEmc(direct);
+                bought.produce(targetKey, qty);
+                return new Plan(root, initial, bought, direct, keys, qty, qty, builder.truncated(),
+                        Collections.<Blocker>emptyList(), Collections.<ItemKey, Integer>emptyMap(), true);
+            }
+        }
         List<Blocker> blockers = craftable >= qty ? Collections.<Blocker>emptyList() : diagnose(root,
                 craftable > 0 ? working : initial, bank, buyer, craftable > 0, qty, qty >= MAX_QUANTITY ? 1 : qty - craftable);
-        return new Plan(root, initial, working, bank, keys, qty, craftable, builder.truncated(), blockers);
+        return new Plan(root, initial, working, bank, keys, qty, craftable, builder.truncated(), blockers,
+                Collections.<ItemKey, Integer>emptyMap(), false);
+    }
+
+    public static Plan collect(Plan plan, Map<ItemKey, ForeignRecipe> foreign) {
+        if (plan.craftable() > 0 || plan.requested() >= MAX_QUANTITY) return plan;
+        VirtualPool working = plan.initial().copy();
+        working.setEmc(plan.bank());
+        Map<ItemKey, Integer> collected = CraftExecutor.collect(plan.root(), working, foreign);
+        if (collected.isEmpty()) return plan;
+        return new Plan(plan.root(), plan.initial(), working, plan.bank(), plan.keys(), plan.requested(), 0,
+                plan.truncated(), plan.blockers(), collected, false);
     }
 
     public static int creativeQuantity(ItemStack target, int requested) {

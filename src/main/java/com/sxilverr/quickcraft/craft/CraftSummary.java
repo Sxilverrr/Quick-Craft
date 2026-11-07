@@ -35,10 +35,12 @@ public final class CraftSummary {
     private final int blockedCount;
     private final boolean treeLimited;
     private final List<CraftPlanner.Blocker> blockers;
+    private final boolean collected;
+    private final boolean bought;
 
     public CraftSummary(int crafted, int requested, ITextComponent missingStation,
                         List<Placement> placements, int dropped, int byproducts, ItemStack blocked, int blockedCount,
-                        boolean treeLimited, List<CraftPlanner.Blocker> blockers) {
+                        boolean treeLimited, List<CraftPlanner.Blocker> blockers, boolean collected, boolean bought) {
         this.crafted = crafted;
         this.requested = requested;
         this.missingStation = missingStation;
@@ -49,12 +51,14 @@ public final class CraftSummary {
         this.blockedCount = blockedCount;
         this.treeLimited = treeLimited;
         this.blockers = blockers == null ? Collections.<CraftPlanner.Blocker>emptyList() : blockers;
+        this.collected = collected;
+        this.bought = bought;
     }
 
     public CraftSummary(int crafted, int requested, ITextComponent missingStation,
                         List<Placement> placements, int dropped, int byproducts) {
         this(crafted, requested, missingStation, placements, dropped, byproducts, ItemStack.EMPTY, 0, false,
-                Collections.<CraftPlanner.Blocker>emptyList());
+                Collections.<CraftPlanner.Blocker>emptyList(), false, false);
     }
 
     public static CraftSummary empty() {
@@ -63,7 +67,7 @@ public final class CraftSummary {
 
     public static CraftSummary aborted(int requested, ItemStack blocked, int blockedCount) {
         return new CraftSummary(0, requested, null, Collections.<Placement>emptyList(), 0, 0, blocked, blockedCount, false,
-                Collections.<CraftPlanner.Blocker>emptyList());
+                Collections.<CraftPlanner.Blocker>emptyList(), false, false);
     }
 
     public int crafted() {
@@ -104,6 +108,14 @@ public final class CraftSummary {
 
     public List<CraftPlanner.Blocker> blockers() {
         return blockers;
+    }
+
+    public boolean collected() {
+        return collected;
+    }
+
+    public boolean bought() {
+        return bought;
     }
 
     public boolean aborted() {

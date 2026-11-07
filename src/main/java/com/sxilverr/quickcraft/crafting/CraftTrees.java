@@ -71,7 +71,7 @@ public final class CraftTrees {
         int crafts = ceilDiv(required, Math.max(1, node.resultPerCraft));
         int ownCrafts = Math.max(1, node.craftsNeeded);
         for (CraftNode child : node.children) {
-            if (child.isMobSource()) continue;
+            if (child.isDisplayOnly()) continue;
             int childNeed = child.catalyst ? child.requiredCount : clamp((long) (child.requiredCount / ownCrafts) * crafts);
             collect(child, childNeed, totals, samples, catalysts);
         }
@@ -79,7 +79,7 @@ public final class CraftTrees {
 
     private static boolean hasRealChild(CraftNode node) {
         for (CraftNode child : node.children) {
-            if (!child.isMobSource()) return true;
+            if (!child.isDisplayOnly()) return true;
         }
         return false;
     }

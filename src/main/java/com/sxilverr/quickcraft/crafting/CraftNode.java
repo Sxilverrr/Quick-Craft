@@ -30,6 +30,7 @@ public class CraftNode {
     public final int depth;
     public List<MobItemSource> mobSources;
     public int mobIndex;
+    public boolean machineInput;
 
     public CraftNode(ItemStack output, int requiredCount, List<RecipeOption> alternatives, int depth) {
         this.output = output;
@@ -49,6 +50,10 @@ public class CraftNode {
 
     public boolean isMobSource() {
         return mobSources != null && !mobSources.isEmpty();
+    }
+
+    public boolean isDisplayOnly() {
+        return machineInput || isMobSource();
     }
 
     public MobItemSource currentMob() {

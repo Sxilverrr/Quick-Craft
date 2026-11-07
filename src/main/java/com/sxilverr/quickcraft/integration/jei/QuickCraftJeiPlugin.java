@@ -1,5 +1,6 @@
 package com.sxilverr.quickcraft.integration.jei;
 
+import com.sxilverr.quickcraft.crafting.ForeignRecipe;
 import com.sxilverr.quickcraft.integration.OriginHint;
 import com.sxilverr.quickcraft.integration.QuickCraftIntegrations;
 import com.sxilverr.quickcraft.util.Reflect;
@@ -7,8 +8,11 @@ import mezz.jei.api.IJeiRuntime;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.IRecipeRegistry;
 import mezz.jei.api.JEIPlugin;
+import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IFocus;
 import mezz.jei.api.recipe.IRecipeCategory;
+import mezz.jei.api.recipe.IRecipeWrapper;
 import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
 import net.minecraft.item.ItemStack;
 
@@ -81,11 +85,44 @@ public class QuickCraftJeiPlugin implements IModPlugin {
                         break;
                     }
                 }
-                hints.add(new OriginHint(icon, category.getTitle()));
+                hints.add(new OriginHint(icon, category.getTitle(), recipeOf(registry, category, focus, stack)));
             }
             return hints;
         } catch (Throwable t) {
             return Collections.emptyList();
+        }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static ForeignRecipe recipeOf(IRecipeRegistry registry, IRecipeCategory category, IFocus<ItemStack> focus,
+                                          ItemStack target) {
+        try {
+            List wrappers = registry.getRecipeWrappers(category, focus);
+            Class<?> type = Reflect.cls("mezz.jei.ingredients.Ingredients");
+            if (wrappers.isEmpty() || type == null) return null;
+            IIngredients ingredients = (IIngredients) type.getConstructor().newInstance();
+            ((IRecipeWrapper) wrappers.get(0)).getIngredients(ingredients);
+            List<List<ItemStack>> inputs = new ArrayList<List<ItemStack>>();
+            for (List<ItemStack> slot : ingredients.getInputs(VanillaTypes.ITEM)) {
+                if (slot == null) continue;
+                List<ItemStack> options = new ArrayList<ItemStack>();
+                for (ItemStack option : slot) {
+                    if (option != null && !option.isEmpty()) options.add(option);
+                }
+                if (!options.isEmpty()) inputs.add(options);
+            }
+            int made = 0;
+            for (List<ItemStack> slot : ingredients.getOutputs(VanillaTypes.ITEM)) {
+                if (slot == null || made > 0) continue;
+                for (ItemStack output : slot) {
+                    if (output == null || output.getItem() != target.getItem()) continue;
+                    made = Math.max(1, output.getCount());
+                    break;
+                }
+            }
+            return inputs.isEmpty() ? null : new ForeignRecipe(Math.max(1, made), inputs);
+        } catch (Throwable t) {
+            return null;
         }
     }
 

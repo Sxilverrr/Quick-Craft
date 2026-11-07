@@ -1,7 +1,7 @@
 package com.sxilverr.quickcraft.network;
 
 import com.sxilverr.quickcraft.QuickCraft;
-import com.sxilverr.quickcraft.craft.CraftPreview;
+import com.sxilverr.quickcraft.crafting.ForeignRecipe;
 import com.sxilverr.quickcraft.crafting.ItemKey;
 import com.sxilverr.quickcraft.crafting.Stations;
 import com.sxilverr.quickcraft.storage.LabeledSource;
@@ -32,22 +32,12 @@ public final class QuickCraftNetwork {
         CHANNEL.registerMessage(AvailabilityResponsePacket.Handler.class, AvailabilityResponsePacket.class, id++, Side.CLIENT);
         CHANNEL.registerMessage(DepositTargetsRequestPacket.Handler.class, DepositTargetsRequestPacket.class, id++, Side.SERVER);
         CHANNEL.registerMessage(DepositTargetsResponsePacket.Handler.class, DepositTargetsResponsePacket.class, id++, Side.CLIENT);
-        CHANNEL.registerMessage(CraftPreviewResponsePacket.Handler.class, CraftPreviewResponsePacket.class, id++, Side.CLIENT);
     }
 
     public static void sendCraftRequest(ItemStack target, int quantity, Map<ItemKey, ResourceLocation> overrides,
-                                        Map<String, Item> ingredientChoices, String destinationId) {
-        CHANNEL.sendToServer(new CraftRequestPacket(target, quantity, overrides, ingredientChoices, destinationId, false));
-    }
-
-    public static void sendCraftPreviewRequest(ItemStack target, int quantity, Map<ItemKey, ResourceLocation> overrides,
-                                               Map<String, Item> ingredientChoices) {
-        CHANNEL.sendToServer(new CraftRequestPacket(target, quantity, overrides, ingredientChoices, null, true));
-    }
-
-    public static void sendCraftPreview(EntityPlayerMP player, CraftPreview.Result result) {
-        CHANNEL.sendTo(new CraftPreviewResponsePacket(result.craftable(), result.requested(), result.gained(),
-                result.blockers()), player);
+                                        Map<String, Item> ingredientChoices, String destinationId,
+                                        Map<ItemKey, ForeignRecipe> foreign) {
+        CHANNEL.sendToServer(new CraftRequestPacket(target, quantity, overrides, ingredientChoices, destinationId, foreign));
     }
 
     public static void requestDepositTargets() {

@@ -7,6 +7,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.fml.common.Loader;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ public final class QuickCraftConfig {
     private static int maxTreeNodes = 512;
     private static boolean animationsEnabled = true;
     private static boolean creativeBypass = false;
+    private static boolean craftWithoutStations = false;
     private static boolean pinnedListAnimation = true;
     private static boolean hideLoopingRecipes = false;
     private static boolean openOnlyWithRecipe = true;
@@ -55,6 +57,8 @@ public final class QuickCraftConfig {
     private static String shiftCraftAmount = "64";
     private static boolean useProjectEEmc = true;
     private static boolean useKleinStarEmc = true;
+    private static boolean leftoversToEmc = false;
+    private static boolean emcWithoutTransmutation = false;
     private static boolean backpackSources = true;
 
     private static int colorAvailable = 0xFF55FF55;
@@ -131,6 +135,9 @@ public final class QuickCraftConfig {
         creativeBypass = config.getBoolean("creativeBypass", GENERAL, false,
                 "Players in creative mode craft the requested item instantly without needing or consuming any ingredients.");
 
+        craftWithoutStations = config.getBoolean("craftWithoutStations", GENERAL, false,
+                "Craft every recipe without its crafting table or other station nearby.");
+
         pinnedListAnimation = config.getBoolean("pinnedListAnimation", GENERAL, true,
                 "The pinned (bookmarked) ingredients list eases its rows in when it appears.");
 
@@ -154,6 +161,13 @@ public final class QuickCraftConfig {
         useKleinStarEmc = config.getBoolean("useKleinStarEmc", GENERAL, true,
                 "Klein Stars carried in your inventory add their stored EMC to what Quick Craft can spend. "
                         + "Your own EMC is spent first, then the stars are drained.");
+
+        if (Loader.isModLoaded("projecte")) {
+            leftoversToEmc = config.getBoolean("leftoversToEmc", GENERAL, false,
+                    "Turn leftover items from a craft into EMC.");
+            emcWithoutTransmutation = config.getBoolean("emcWithoutTransmutation", GENERAL, false,
+                    "Use EMC without a transmutation table nearby or a transmutation tablet in your inventory.");
+        }
 
         backpackSources = config.getBoolean("backpackSources", GENERAL, true,
                 "Pull from, and deposit into, any item in your inventory that holds its own inventory. "
@@ -257,6 +271,10 @@ public final class QuickCraftConfig {
         return creativeBypass;
     }
 
+    public static boolean craftWithoutStations() {
+        return craftWithoutStations;
+    }
+
     public static boolean pinnedListAnimation() {
         return pinnedListAnimation;
     }
@@ -283,6 +301,14 @@ public final class QuickCraftConfig {
 
     public static boolean useKleinStarEmc() {
         return useKleinStarEmc;
+    }
+
+    public static boolean leftoversToEmc() {
+        return leftoversToEmc;
+    }
+
+    public static boolean emcWithoutTransmutation() {
+        return emcWithoutTransmutation;
     }
 
     public static boolean backpackSources() {

@@ -1,5 +1,6 @@
 package com.sxilverr.quickcraft.crafting;
 
+import com.sxilverr.quickcraft.QuickCraftConfig;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -31,7 +32,7 @@ public final class Stations {
     }
 
     public boolean has(Station station) {
-        return sources.containsKey(station);
+        return QuickCraftConfig.craftWithoutStations() || sources.containsKey(station);
     }
 
     public ItemStack sourceFor(Station station) {

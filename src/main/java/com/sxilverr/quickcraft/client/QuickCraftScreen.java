@@ -3,12 +3,12 @@ package com.sxilverr.quickcraft.client;
 import com.google.common.base.Predicate;
 import com.sxilverr.quickcraft.QuickCraftConfig;
 import com.sxilverr.quickcraft.craft.CraftPlanner;
-import com.sxilverr.quickcraft.craft.CraftPreview;
 import com.sxilverr.quickcraft.craft.EmcSource;
 import com.sxilverr.quickcraft.craft.VirtualPool;
 import com.sxilverr.quickcraft.crafting.Availability;
 import com.sxilverr.quickcraft.crafting.CraftNode;
 import com.sxilverr.quickcraft.crafting.CraftTrees;
+import com.sxilverr.quickcraft.crafting.ForeignRecipe;
 import com.sxilverr.quickcraft.crafting.ItemKey;
 import com.sxilverr.quickcraft.crafting.ItemOrigins;
 import com.sxilverr.quickcraft.crafting.RecipeOption;
@@ -51,6 +51,7 @@ import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -218,7 +219,6 @@ public class QuickCraftScreen extends GuiScreen {
     private final Set<ItemKey> peekOpen = new HashSet<ItemKey>();
     private final Map<ItemKey, Long> peekStarts = new HashMap<ItemKey, Long>();
     private boolean eyeHovered;
-    private boolean confirmPending;
 
     public QuickCraftScreen(ItemStack target, int quantity) {
         this.target = target.copy();
@@ -340,9 +340,21 @@ public class QuickCraftScreen extends GuiScreen {
 
     private void sendCraft(int recorded, int requested) {
         CraftHistory.record(target, recorded);
+        Map<ItemKey, ForeignRecipe> foreign = new LinkedHashMap<ItemKey, ForeignRecipe>();
+        collectForeign(root, foreign);
         QuickCraftNetwork.sendCraftRequest(target, requested, overrides, ingredientChoices,
-                ClientDepositTargets.selectedId());
+                ClientDepositTargets.selectedId(), foreign);
         this.mc.displayGuiScreen(null);
+    }
+
+    private void collectForeign(CraftNode node, Map<ItemKey, ForeignRecipe> out) {
+        if (node == null) return;
+        for (OriginHint hint : originsFor(node)) {
+            if (hint.recipe() == null) continue;
+            if (!out.containsKey(ItemKey.of(node.output))) out.put(ItemKey.of(node.output), hint.recipe());
+            break;
+        }
+        for (CraftNode child : node.children) collectForeign(child, out);
     }
 
     private void retarget(ItemStack newTarget, boolean pushHistory) {
@@ -493,6 +505,7 @@ public class QuickCraftScreen extends GuiScreen {
 
         if (showMobs) attachMobSources(root);
         primeOrigins(root);
+        attachMachineInputs(root, requestKeys);
         Station missing = CraftTrees.missingStation(root);
         if (missing != missingStation) stationSelectedIndex = 0;
         missingStation = missing;
@@ -529,6 +542,47 @@ public class QuickCraftScreen extends GuiScreen {
         for (CraftNode child : node.children) detachMobSources(child);
     }
 
+    private void attachMachineInputs(CraftNode node, Set<ItemKey> keys) {
+        for (CraftNode child : new ArrayList<CraftNode>(node.children)) attachMachineInputs(child, keys);
+        if (node.isCraftable() || node.isDisplayOnly() || node.freeStock >= node.requiredCount) return;
+        ForeignRecipe recipe = null;
+        for (OriginHint hint : originsFor(node)) {
+            if (hint.recipe() == null) continue;
+            recipe = hint.recipe();
+            break;
+        }
+        if (recipe == null) return;
+        int made = Math.max(1, recipe.made());
+        long crafts = ((long) node.requiredCount - node.freeStock + made - 1) / made;
+        Map<ItemKey, CraftNode> inputs = new LinkedHashMap<ItemKey, CraftNode>();
+        for (List<ItemStack> slot : recipe.inputs()) {
+            ItemStack pick = slot.get(0);
+            for (ItemStack option : slot) {
+                if (haveCount(ItemKey.of(option)) > haveCount(ItemKey.of(pick))) pick = option;
+            }
+            ItemKey key = ItemKey.of(pick);
+            int need = (int) Math.min(Integer.MAX_VALUE, Math.max(1, pick.getCount()) * crafts);
+            CraftNode input = inputs.get(key);
+            if (input != null) {
+                input.requiredCount = (int) Math.min(Integer.MAX_VALUE, (long) input.requiredCount + need);
+                continue;
+            }
+            ItemStack shown = pick.copy();
+            shown.setCount(1);
+            input = new CraftNode(shown, need, Collections.<RecipeOption>emptyList(), node.depth + 1);
+            input.machineInput = true;
+            input.freeStock = haveCount(key);
+            inputs.put(key, input);
+            keys.add(key);
+        }
+        node.children.addAll(0, inputs.values());
+    }
+
+    private int haveCount(ItemKey key) {
+        Integer have = haveCounts.get(key);
+        return have == null ? 0 : have;
+    }
+
     private boolean hasEye(CraftNode node) {
         return (node.owned || node.emcBuy) && node.selected() != null;
     }
@@ -550,6 +604,7 @@ public class QuickCraftScreen extends GuiScreen {
                 collectKeys(child, keys);
                 if (showMobs) attachMobSources(child);
                 primeOrigins(child);
+                attachMachineInputs(child, keys);
                 attachPeeks(child, stations, collapse, hideLoop, keys, path);
             }
             path.remove(key);
@@ -1600,7 +1655,7 @@ public class QuickCraftScreen extends GuiScreen {
     }
 
     private List<OriginHint> originsFor(CraftNode node) {
-        if (node.isCraftable() || node.isMobSource()) return Collections.emptyList();
+        if (node.isCraftable() || node.isDisplayOnly()) return Collections.emptyList();
         return ItemOrigins.of(node.output);
     }
 
@@ -1742,9 +1797,25 @@ public class QuickCraftScreen extends GuiScreen {
         int cx = child.x;
         int cy = child.y + NodeView.HEIGHT / 2;
         int midX = cx - TreeLayout.H_GAP / 2;
+        if (child.node.machineInput) {
+            dashedH(px, midX, py, color);
+            dashedV(midX, py, cy, color);
+            dashedH(midX, cx, cy, color);
+            return;
+        }
         Draw.hLine(px, midX, py, color);
         Draw.vLine(midX, py, cy, color);
         Draw.hLine(midX, cx, cy, color);
+    }
+
+    private static void dashedH(int x1, int x2, int y, int color) {
+        int end = Math.max(x1, x2);
+        for (int x = Math.min(x1, x2); x <= end; x += 4) Draw.hLine(x, Math.min(x + 1, end), y, color);
+    }
+
+    private static void dashedV(int x, int y1, int y2, int color) {
+        int end = Math.max(y1, y2);
+        for (int y = Math.min(y1, y2); y <= end; y += 4) Draw.vLine(x, y, Math.min(y + 1, end), color);
     }
 
     private void drawTooltip(NodeView view, int mouseX, int mouseY) {
@@ -1842,10 +1913,17 @@ public class QuickCraftScreen extends GuiScreen {
                         ? "quickcraft.tooltip.hide_recipe"
                         : "quickcraft.tooltip.reveal_recipe"));
             }
+        } else if (node.machineInput) {
+            lines.add(TextFormatting.GRAY + I18n.format("quickcraft.tooltip.machine_input"));
         } else {
             lines.add(TextFormatting.DARK_GRAY + I18n.format("quickcraft.tooltip.base"));
             String origins = originLabel(node);
             if (!origins.isEmpty()) lines.add(TextFormatting.GRAY + I18n.format("quickcraft.tooltip.made_in", origins));
+            for (CraftNode child : node.children) {
+                if (!child.machineInput) continue;
+                lines.add(TextFormatting.GRAY + I18n.format("quickcraft.tooltip.machine_inputs"));
+                break;
+            }
         }
         if (!ItemKey.of(node.output).equals(ItemKey.of(target))) {
             lines.add(TextFormatting.AQUA + I18n.format("quickcraft.tooltip.view_tree"));
@@ -2292,19 +2370,7 @@ public class QuickCraftScreen extends GuiScreen {
             onCraftMax();
             return;
         }
-        if (confirmPending) return;
-        confirmPending = true;
-        QuickCraftNetwork.sendCraftPreviewRequest(target, quantity, overrides, ingredientChoices);
-    }
-
-    public void onCraftPreviewResult(CraftPreview.Result preview) {
-        confirmPending = false;
-        if (preview.full()) {
-            sendCraft(quantity, quantity);
-            return;
-        }
-        this.mc.displayGuiScreen(
-                new ForceCraftConfirmScreen(this, target, quantity, overrides, ingredientChoices, preview));
+        sendCraft(quantity, quantity);
     }
 
     private void onCraftMax() {

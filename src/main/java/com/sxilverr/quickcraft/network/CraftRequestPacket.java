@@ -1,10 +1,9 @@
 package com.sxilverr.quickcraft.network;
 
-import com.sxilverr.quickcraft.QuickCraft;
 import com.sxilverr.quickcraft.craft.CraftPlanner;
-import com.sxilverr.quickcraft.craft.CraftPreview;
 import com.sxilverr.quickcraft.craft.CraftService;
 import com.sxilverr.quickcraft.craft.CraftSummary;
+import com.sxilverr.quickcraft.crafting.ForeignRecipe;
 import com.sxilverr.quickcraft.crafting.ItemKey;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -19,32 +18,36 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class CraftRequestPacket implements IMessage {
     private static final int MAX_OVERRIDES = 8192;
+    private static final int MAX_FOREIGN = 512;
+    private static final int MAX_SLOTS = 32;
+    private static final int MAX_OPTIONS = 32;
 
     private ItemStack target = ItemStack.EMPTY;
     private int quantity;
     private Map<ItemKey, ResourceLocation> overrides = new HashMap<ItemKey, ResourceLocation>();
     private Map<String, Item> ingredientChoices = new HashMap<String, Item>();
     private String destinationId = "";
-    private boolean preview;
+    private Map<ItemKey, ForeignRecipe> foreign = new HashMap<ItemKey, ForeignRecipe>();
 
     public CraftRequestPacket() {
     }
 
     public CraftRequestPacket(ItemStack target, int quantity, Map<ItemKey, ResourceLocation> overrides,
-                              Map<String, Item> ingredientChoices, String destinationId, boolean preview) {
+                              Map<String, Item> ingredientChoices, String destinationId,
+                              Map<ItemKey, ForeignRecipe> foreign) {
         this.target = target;
         this.quantity = quantity;
         this.overrides = overrides;
         this.ingredientChoices = ingredientChoices;
         this.destinationId = destinationId == null ? "" : destinationId;
-        this.preview = preview;
+        this.foreign = foreign == null ? new HashMap<ItemKey, ForeignRecipe>() : foreign;
     }
 
     @Override
@@ -52,7 +55,6 @@ public class CraftRequestPacket implements IMessage {
         Buf.writeStack(buf, target);
         buf.writeInt(quantity);
         Buf.writeString(buf, destinationId);
-        buf.writeBoolean(preview);
         int overrideCount = Math.min(MAX_OVERRIDES, overrides.size());
         buf.writeInt(overrideCount);
         int written = 0;
@@ -69,6 +71,23 @@ public class CraftRequestPacket implements IMessage {
             Buf.writeString(buf, entry.getKey());
             Buf.writeItem(buf, entry.getValue());
         }
+        int foreignCount = Math.min(MAX_FOREIGN, foreign.size());
+        buf.writeInt(foreignCount);
+        written = 0;
+        for (Map.Entry<ItemKey, ForeignRecipe> entry : foreign.entrySet()) {
+            if (written++ >= foreignCount) break;
+            Buf.writeStack(buf, entry.getKey().toStack(1));
+            buf.writeInt(entry.getValue().made());
+            List<List<ItemStack>> slots = entry.getValue().inputs();
+            int slotCount = Math.min(MAX_SLOTS, slots.size());
+            buf.writeInt(slotCount);
+            for (int s = 0; s < slotCount; s++) {
+                List<ItemStack> options = slots.get(s);
+                int optionCount = Math.min(MAX_OPTIONS, options.size());
+                buf.writeInt(optionCount);
+                for (int o = 0; o < optionCount; o++) Buf.writeStack(buf, options.get(o));
+            }
+        }
     }
 
     @Override
@@ -76,7 +95,6 @@ public class CraftRequestPacket implements IMessage {
         target = Buf.readStack(buf);
         quantity = buf.readInt();
         destinationId = Buf.readString(buf);
-        preview = buf.readBoolean();
         int count = Math.min(MAX_OVERRIDES, buf.readInt());
         overrides = new HashMap<ItemKey, ResourceLocation>();
         for (int i = 0; i < count; i++) {
@@ -91,6 +109,24 @@ public class CraftRequestPacket implements IMessage {
             Item item = Buf.readItem(buf);
             if (item != null) ingredientChoices.put(signature, item);
         }
+        int foreignCount = Math.min(MAX_FOREIGN, buf.readInt());
+        foreign = new HashMap<ItemKey, ForeignRecipe>();
+        for (int i = 0; i < foreignCount; i++) {
+            ItemStack output = Buf.readStack(buf);
+            int made = buf.readInt();
+            int slotCount = Math.min(MAX_SLOTS, buf.readInt());
+            List<List<ItemStack>> inputs = new ArrayList<List<ItemStack>>();
+            for (int s = 0; s < slotCount; s++) {
+                int optionCount = Math.min(MAX_OPTIONS, buf.readInt());
+                List<ItemStack> options = new ArrayList<ItemStack>();
+                for (int o = 0; o < optionCount; o++) {
+                    ItemStack option = Buf.readStack(buf);
+                    if (!option.isEmpty()) options.add(option);
+                }
+                if (!options.isEmpty()) inputs.add(options);
+            }
+            if (!output.isEmpty()) foreign.put(ItemKey.of(output), new ForeignRecipe(made, inputs));
+        }
     }
 
     public static class Handler implements IMessageHandler<CraftRequestPacket, IMessage> {
@@ -101,12 +137,8 @@ public class CraftRequestPacket implements IMessage {
                 @Override
                 public void run() {
                     if (msg.target.isEmpty()) return;
-                    if (msg.preview) {
-                        preview(player, msg);
-                        return;
-                    }
                     CraftSummary summary = CraftService.execute(player, msg.target, msg.quantity, msg.overrides,
-                            msg.ingredientChoices, msg.destinationId);
+                            msg.ingredientChoices, msg.destinationId, msg.foreign);
                     player.sendStatusMessage(feedback(summary, msg.target), false);
                 }
             });
@@ -114,22 +146,15 @@ public class CraftRequestPacket implements IMessage {
         }
     }
 
-    private static void preview(EntityPlayerMP player, CraftRequestPacket msg) {
-        CraftPreview.Result result;
-        try {
-            result = CraftService.preview(player, msg.target, msg.quantity, msg.overrides, msg.ingredientChoices);
-        } catch (Throwable t) {
-            QuickCraft.LOGGER.error("Quick Craft preview failed for " + msg.target, t);
-            result = new CraftPreview.Result(0, Math.max(1, msg.quantity), Collections.<CraftPreview.Gain>emptyList());
-        }
-        QuickCraftNetwork.sendCraftPreview(player, result);
-    }
-
     private static ITextComponent feedback(CraftSummary summary, ItemStack target) {
         String name = target.getDisplayName();
         if (summary.aborted()) {
             return colored(new TextComponentTranslation("quickcraft.chat.aborted", summary.blockedCount(),
                     summary.blocked().getDisplayName()), TextFormatting.RED);
+        }
+        if (summary.bought()) {
+            return withPlacements(colored(new TextComponentTranslation("quickcraft.chat.bought", summary.crafted(), name),
+                    TextFormatting.GREEN), summary);
         }
         if (summary.full() || (summary.partial() && summary.requested() >= CraftPlanner.MAX_QUANTITY)) {
             return withPlacements(colored(new TextComponentTranslation("quickcraft.chat.crafted", summary.crafted(), name),
@@ -140,6 +165,11 @@ public class CraftRequestPacket implements IMessage {
                     requestedLabel(summary.requested()), name);
             return withPlacements(colored(msg.appendSibling(limitHint(summary)).appendSibling(blockerText(summary)),
                     TextFormatting.YELLOW), summary);
+        }
+        if (summary.collected()) {
+            ITextComponent msg = withPlacements(colored(new TextComponentTranslation("quickcraft.chat.collected", name),
+                    TextFormatting.YELLOW), summary);
+            return msg.appendSibling(colored(blockerText(summary), TextFormatting.GRAY));
         }
         if (summary.missingStation() != null) {
             return colored(new TextComponentTranslation("quickcraft.chat.needs_station", summary.missingStation(), name),

@@ -1,14 +1,11 @@
 package com.sxilverr.quickcraft.client;
 
-import com.sxilverr.quickcraft.craft.CraftPlanner;
-import com.sxilverr.quickcraft.craft.CraftPreview;
 import com.sxilverr.quickcraft.crafting.ItemKey;
 import com.sxilverr.quickcraft.crafting.Stations;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
 
-import java.util.List;
 import java.util.Map;
 
 public final class ClientNetworkHandler {
@@ -20,14 +17,6 @@ public final class ClientNetworkHandler {
         BookmarkOverlay.setAvailability(counts);
         QuickCraftScreen screen = openScreen();
         if (screen != null) screen.setAvailability(counts, sources, samples, stations);
-    }
-
-    public static void onCraftPreview(int craftable, int requested, List<CraftPreview.Gain> gained,
-                                      List<CraftPlanner.Blocker> blockers) {
-        QuickCraftScreen screen = openScreen();
-        if (screen != null) {
-            screen.onCraftPreviewResult(new CraftPreview.Result(craftable, requested, gained, blockers));
-        }
     }
 
     private static QuickCraftScreen openScreen() {
