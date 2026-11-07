@@ -63,6 +63,9 @@ dependencies {
     modCompileOnly("maven.modrinth:sophisticated-backpacks:1.21.1-3.25.77.2086")
     modCompileOnly("maven.modrinth:sophisticated-storage:1.21.1-1.5.91.2127")
     modCompileOnly("maven.modrinth:travelersbackpack:1.21.1-10.1.39")
+    modCompileOnly("curse.maven:functional-storage-556861:8459097")
+    modCompileOnly("curse.maven:titanium-287342:9129904")
+    modCompileOnly("maven.modrinth:storagedrawers:px0CCB06")
 
     commonBundle(project(common.path, "namedElements")) { isTransitive = false }
     shadowBundle(project(common.path, "transformProductionNeoForge")) { isTransitive = false }

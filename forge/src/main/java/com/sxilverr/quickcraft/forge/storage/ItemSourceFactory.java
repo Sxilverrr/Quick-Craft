@@ -54,15 +54,18 @@ public final class ItemSourceFactory {
         boolean toms = ModList.get().isLoaded("toms_storage");
         boolean backpacks = ModList.get().isLoaded("sophisticatedbackpacks");
         boolean projecte = ModList.get().isLoaded("projecte");
-        Set<Object> seenNetworks = (ae2 || refinedStorage) ? Collections.newSetFromMap(new IdentityHashMap<>()) : null;
+        boolean functionalStorage = ModList.get().isLoaded("functionalstorage");
+        boolean storageDrawers = ModList.get().isLoaded("storagedrawers");
+        Set<Object> seenNetworks = (ae2 || refinedStorage || functionalStorage || storageDrawers)
+                ? Collections.newSetFromMap(new IdentityHashMap<>()) : null;
         Set<Object> tomsSeen = toms ? Collections.newSetFromMap(new IdentityHashMap<>()) : null;
 
         Set<ResourceLocation> extraSources = QuickCraftConfig.extraSources();
         DepositBlacklist blacklist = QuickCraftConfig.depositBlacklist();
 
         if (scanRange > 0) {
-            addNearbyContainers(player, scanRange, out, ae2, refinedStorage, toms, backpacks, seenNetworks, tomsSeen,
-                    blacklist, extraSources);
+            addNearbyContainers(player, scanRange, out, ae2, refinedStorage, toms, backpacks, functionalStorage,
+                    storageDrawers, seenNetworks, tomsSeen, blacklist, extraSources);
         }
         if (ae2) Ae2ItemSource.addWireless(player, seenNetworks, out);
         if (refinedStorage) RsItemSource.addWireless(player, seenNetworks, out);
@@ -80,20 +83,24 @@ public final class ItemSourceFactory {
 
     private static void addNearbyContainers(ServerPlayer player, int range, List<LabeledSource> out,
                                             boolean ae2, boolean refinedStorage, boolean toms, boolean backpacks,
+                                            boolean functionalStorage, boolean storageDrawers,
                                             Set<Object> seenNetworks, Set<Object> tomsSeen,
                                             DepositBlacklist blacklist, Set<ResourceLocation> extraSources) {
         Level level = player.level();
         BlockPos center = player.blockPosition();
         Set<Long> mergedChests = new HashSet<>();
         List<BlockEntity> tomsBlocks = toms ? new ArrayList<>() : null;
+        List<BlockEntity> drawers = storageDrawers ? new ArrayList<>() : null;
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (int x = -range; x <= range; x++) {
             for (int y = -range; y <= range; y++) {
                 for (int z = -range; z <= range; z++) {
                     cursor.set(center.getX() + x, center.getY() + y, center.getZ() + z);
                     BlockEntity be = level.getBlockEntity(cursor);
+                    if (be != null && functionalStorage) be = FunctionalStorageControllers.resolve(level, be, seenNetworks);
+                    if (be != null && storageDrawers) be = StorageDrawersNetworks.resolve(be, seenNetworks, drawers);
                     if (be == null) continue;
-                    BlockPos pos = cursor.immutable();
+                    BlockPos pos = be.getBlockPos();
                     BlockState state = level.getBlockState(pos);
                     Block block = state.getBlock();
 
@@ -114,15 +121,7 @@ public final class ItemSourceFactory {
                         continue;
                     }
 
-                    be.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(handler -> {
-                        ItemStack blockItem = new ItemStack(block);
-                        ItemStack icon = blockItem.isEmpty() ? new ItemStack(Items.CHEST) : blockItem;
-                        ResourceLocation blockId = ForgeRegistries.BLOCKS.getKey(block);
-                        boolean canDeposit = depositable(be, block, blacklist)
-                                || (extraSources.contains(blockId) && !blacklist.matches(block));
-                        out.add(new LabeledSource("block:" + posKey(pos), icon.getHoverName(),
-                                icon, pos, new HandlerItemSource(handler, icon), canDeposit));
-                    });
+                    addBlockSource(be, blacklist, extraSources, out);
                     if (ae2) {
                         LabeledSource network = Ae2ItemSource.tryCreate(be, seenNetworks, player);
                         if (network != null) out.add(network);
@@ -138,6 +137,26 @@ public final class ItemSourceFactory {
         if (toms && !tomsBlocks.isEmpty()) {
             TomsStorageItemSource.addBlocks(tomsBlocks, level, tomsSeen, blacklist, out);
         }
+        if (storageDrawers) {
+            for (BlockEntity drawer : StorageDrawersNetworks.unlinked(drawers, seenNetworks)) {
+                addBlockSource(drawer, blacklist, extraSources, out);
+            }
+        }
+    }
+
+    private static void addBlockSource(BlockEntity be, DepositBlacklist blacklist, Set<ResourceLocation> extraSources,
+                                       List<LabeledSource> out) {
+        IItemHandler handler = be.getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(null);
+        if (handler == null) return;
+        BlockPos pos = be.getBlockPos();
+        Block block = be.getBlockState().getBlock();
+        ItemStack blockItem = new ItemStack(block);
+        ItemStack icon = blockItem.isEmpty() ? new ItemStack(Items.CHEST) : blockItem;
+        ResourceLocation blockId = ForgeRegistries.BLOCKS.getKey(block);
+        boolean canDeposit = depositable(be, block, blacklist)
+                || (extraSources.contains(blockId) && !blacklist.matches(block));
+        out.add(new LabeledSource("block:" + posKey(pos), icon.getHoverName(),
+                icon, pos, new HandlerItemSource(handler, icon), canDeposit));
     }
 
     private static boolean isTomsStorage(Block block) {
