@@ -8,6 +8,7 @@ import com.sxilverr.quickcraft.integration.projecte.ProjectESupport;
 import com.sxilverr.quickcraft.integration.ae2.Ae2Support;
 import com.sxilverr.quickcraft.integration.rs.RsItemSource;
 import com.sxilverr.quickcraft.integration.rs.RsSupport;
+import com.sxilverr.quickcraft.integration.storagedrawers.StorageDrawersSupport;
 import com.sxilverr.quickcraft.util.Reg;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -70,6 +71,8 @@ public final class ItemSourceFactory {
         World world = player.world;
         BlockPos center = player.getPosition();
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        boolean storageDrawers = StorageDrawersSupport.available();
+        List<TileEntity> drawers = new ArrayList<TileEntity>();
 
         for (int x = -range; x <= range; x++) {
             for (int y = -range; y <= range; y++) {
@@ -77,26 +80,16 @@ public final class ItemSourceFactory {
                     cursor.setPos(center.getX() + x, center.getY() + y, center.getZ() + z);
                     if (!world.isBlockLoaded(cursor)) continue;
                     TileEntity tile = world.getTileEntity(cursor);
+                    if (tile != null && storageDrawers) tile = StorageDrawersSupport.resolve(tile, seenNetworks, drawers);
                     if (tile == null) continue;
-                    BlockPos pos = cursor.toImmutable();
+                    BlockPos pos = tile.getPos();
                     Block block = world.getBlockState(pos).getBlock();
 
                     if (tile instanceof TileEntityChest && skipSecondChestHalf((TileEntityChest) tile, pos)) {
                         continue;
                     }
 
-                    IItemHandler handler = handlerOf(tile);
-                    if (handler != null) {
-                        ItemStack icon = iconFor(block);
-                        ResourceLocation blockId = Reg.idOf(block);
-                        boolean canDeposit = depositable(tile, block, blacklist)
-                                || (extraSources.contains(blockId) && !blacklist.matches(block));
-                        ITextComponent name = handler.getSlots() > 27 && tile instanceof TileEntityChest
-                                ? new TextComponentTranslation("quickcraft.source.double_chest")
-                                : new TextComponentString(icon.getDisplayName());
-                        out.add(new LabeledSource("block:" + posKey(pos), name, icon, pos,
-                                new HandlerItemSource(handler, icon), canDeposit));
-                    }
+                    addBlockSource(tile, block, blacklist, extraSources, out);
 
                     if (Ae2Support.available()) {
                         LabeledSource network = Ae2ItemSource.tryCreate(tile, seenNetworks, player);
@@ -109,6 +102,27 @@ public final class ItemSourceFactory {
                 }
             }
         }
+        if (storageDrawers) {
+            for (TileEntity drawer : StorageDrawersSupport.unlinked(drawers, seenNetworks)) {
+                addBlockSource(drawer, world.getBlockState(drawer.getPos()).getBlock(), blacklist, extraSources, out);
+            }
+        }
+    }
+
+    private static void addBlockSource(TileEntity tile, Block block, DepositBlacklist blacklist,
+                                       Set<ResourceLocation> extraSources, List<LabeledSource> out) {
+        IItemHandler handler = handlerOf(tile);
+        if (handler == null) return;
+        BlockPos pos = tile.getPos();
+        ItemStack icon = iconFor(block);
+        ResourceLocation blockId = Reg.idOf(block);
+        boolean canDeposit = depositable(tile, block, blacklist)
+                || (extraSources.contains(blockId) && !blacklist.matches(block));
+        ITextComponent name = handler.getSlots() > 27 && tile instanceof TileEntityChest
+                ? new TextComponentTranslation("quickcraft.source.double_chest")
+                : new TextComponentString(icon.getDisplayName());
+        out.add(new LabeledSource("block:" + posKey(pos), name, icon, pos,
+                new HandlerItemSource(handler, icon), canDeposit));
     }
 
     private static boolean skipSecondChestHalf(TileEntityChest chest, BlockPos pos) {
