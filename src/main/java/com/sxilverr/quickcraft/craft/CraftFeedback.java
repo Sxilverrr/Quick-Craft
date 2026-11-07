@@ -17,6 +17,11 @@ public final class CraftFeedback {
             return Component.translatable("quickcraft.chat.aborted", summary.blockedCount(), summary.blocked().getHoverName())
                     .withStyle(ChatFormatting.RED);
         }
+        if (summary.bought()) {
+            MutableComponent msg = Component.translatable("quickcraft.chat.bought", summary.crafted(), name)
+                    .withStyle(ChatFormatting.GREEN);
+            return appendPlacements(msg, summary);
+        }
         if (summary.full() || (summary.partial() && summary.requested() >= CraftPlanner.MAX_QUANTITY)) {
             MutableComponent msg = Component.translatable("quickcraft.chat.crafted", summary.crafted(), name)
                     .withStyle(ChatFormatting.GREEN);
@@ -25,6 +30,10 @@ public final class CraftFeedback {
         if (summary.partial()) {
             MutableComponent msg = Component.translatable("quickcraft.chat.partial", summary.crafted(),
                     requestedLabel(summary.requested()), name).append(limitHint(summary)).withStyle(ChatFormatting.YELLOW);
+            return appendBlockers(appendPlacements(msg, summary), summary);
+        }
+        if (summary.collected()) {
+            MutableComponent msg = Component.translatable("quickcraft.chat.collected", name).withStyle(ChatFormatting.YELLOW);
             return appendBlockers(appendPlacements(msg, summary), summary);
         }
         if (summary.missingStation() != null) {

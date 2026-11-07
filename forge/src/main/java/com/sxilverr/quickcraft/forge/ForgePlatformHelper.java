@@ -2,6 +2,7 @@ package com.sxilverr.quickcraft.forge;
 
 import com.sxilverr.quickcraft.config.QuickCraftConfig;
 import com.sxilverr.quickcraft.craft.EmcSource;
+import com.sxilverr.quickcraft.crafting.ForeignRecipe;
 import com.sxilverr.quickcraft.crafting.ItemKey;
 import com.sxilverr.quickcraft.integration.jer.MobItemSource;
 import com.sxilverr.quickcraft.forge.integration.jer.JerIntegration;
@@ -40,14 +41,8 @@ public class ForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public void sendCraftRequest(ItemStack target, int quantity, Map<ItemKey, ResourceLocation> overrides,
-                                 Map<String, Item> ingredientChoices, String destinationId) {
-        QuickCraftNetwork.sendCraftRequest(target, quantity, overrides, ingredientChoices, destinationId);
-    }
-
-    @Override
-    public void sendCraftPreviewRequest(ItemStack target, int quantity, Map<ItemKey, ResourceLocation> overrides,
-                                        Map<String, Item> ingredientChoices) {
-        QuickCraftNetwork.sendCraftPreviewRequest(target, quantity, overrides, ingredientChoices);
+                                 Map<String, Item> ingredientChoices, String destinationId, Map<ItemKey, ForeignRecipe> foreign) {
+        QuickCraftNetwork.sendCraftRequest(target, quantity, overrides, ingredientChoices, destinationId, foreign);
     }
 
     @Override

@@ -1,14 +1,19 @@
 package com.sxilverr.quickcraft.integration.jei;
 
 import com.sxilverr.quickcraft.QuickCraftCommon;
+import com.sxilverr.quickcraft.crafting.ForeignRecipe;
 import com.sxilverr.quickcraft.integration.OriginHint;
 import com.sxilverr.quickcraft.integration.QuickCraftIntegrations;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.gui.IRecipeLayoutDrawable;
+import mezz.jei.api.gui.ingredient.IRecipeSlotView;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.IFocus;
 import mezz.jei.api.recipe.IFocusFactory;
+import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.IRecipeManager;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.category.IRecipeCategory;
@@ -88,17 +93,43 @@ public class QuickCraftJeiPlugin implements IModPlugin {
             IRecipeManager recipeManager = runtime.getRecipeManager();
             IFocusFactory focusFactory = runtime.getJeiHelpers().getFocusFactory();
             IFocus<ItemStack> focus = focusFactory.createFocus(RecipeIngredientRole.OUTPUT, VanillaTypes.ITEM_STACK, stack);
+            IFocusGroup group = focusFactory.createFocusGroup(List.of(focus));
             List<OriginHint> hints = new ArrayList<>();
             for (IRecipeCategory<?> category : recipeManager.createRecipeCategoryLookup()
                     .limitFocus(List.of(focus)).get().toList()) {
                 if (SKIP_CATEGORIES.contains(category.getRecipeType().getUid())) continue;
                 ItemStack icon = recipeManager.createRecipeCatalystLookup(category.getRecipeType())
                         .getItemStack().findFirst().orElse(ItemStack.EMPTY);
-                hints.add(new OriginHint(icon, category.getTitle().getString()));
+                hints.add(new OriginHint(icon, category.getTitle().getString(),
+                        recipeOf(recipeManager, category, focus, group, stack)));
             }
             return hints;
         } catch (Throwable t) {
             return List.of();
+        }
+    }
+
+    private static <T> ForeignRecipe recipeOf(IRecipeManager manager, IRecipeCategory<T> category, IFocus<ItemStack> focus,
+                                              IFocusGroup group, ItemStack target) {
+        try {
+            T recipe = manager.createRecipeLookup(category.getRecipeType()).limitFocus(List.of(focus)).get()
+                    .findFirst().orElse(null);
+            if (recipe == null) return null;
+            IRecipeSlotsView view = manager.createRecipeLayoutDrawable(category, recipe, group)
+                    .map(IRecipeLayoutDrawable::getRecipeSlotsView).orElse(null);
+            if (view == null) return null;
+            List<List<ItemStack>> inputs = new ArrayList<>();
+            for (IRecipeSlotView slot : view.getSlotViews(RecipeIngredientRole.INPUT)) {
+                List<ItemStack> options = slot.getIngredients(VanillaTypes.ITEM_STACK).filter(s -> !s.isEmpty()).toList();
+                if (!options.isEmpty()) inputs.add(options);
+            }
+            int made = view.getSlotViews(RecipeIngredientRole.OUTPUT).stream()
+                    .flatMap(slot -> slot.getIngredients(VanillaTypes.ITEM_STACK))
+                    .filter(s -> ItemStack.isSameItem(s, target))
+                    .mapToInt(ItemStack::getCount).findFirst().orElse(1);
+            return inputs.isEmpty() ? null : new ForeignRecipe(made, inputs);
+        } catch (Throwable t) {
+            return null;
         }
     }
 

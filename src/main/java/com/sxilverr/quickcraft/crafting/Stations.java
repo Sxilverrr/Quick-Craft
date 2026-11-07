@@ -1,5 +1,6 @@
 package com.sxilverr.quickcraft.crafting;
 
+import com.sxilverr.quickcraft.config.QuickCraftConfig;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.Item;
@@ -23,7 +24,7 @@ public record Stations(Map<Station, Item> sources) {
     }
 
     public boolean has(Station station) {
-        return sources.containsKey(station);
+        return QuickCraftConfig.craftWithoutStations() || sources.containsKey(station);
     }
 
     public Item sourceFor(Station station) {

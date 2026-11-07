@@ -4,6 +4,7 @@ import com.sxilverr.quickcraft.crafting.Availability;
 import com.sxilverr.quickcraft.crafting.CraftNode;
 import com.sxilverr.quickcraft.crafting.CraftTrees;
 import com.sxilverr.quickcraft.crafting.EmcLookup;
+import com.sxilverr.quickcraft.crafting.ForeignRecipe;
 import com.sxilverr.quickcraft.crafting.ItemKey;
 import com.sxilverr.quickcraft.crafting.Stations;
 import com.sxilverr.quickcraft.crafting.TreeBuilder;
@@ -14,7 +15,6 @@ import net.minecraft.world.item.ItemStack;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -54,7 +54,8 @@ public final class CraftPlanner {
     }
 
     public record Plan(CraftNode root, VirtualPool initial, VirtualPool working, EmcBank bank, Set<ItemKey> keys,
-                       int requested, int craftable, boolean truncated, List<Blocker> blockers) {
+                       int requested, int craftable, boolean truncated, List<Blocker> blockers,
+                       Map<ItemKey, Integer> collected, boolean bought) {
         public boolean full() {
             return requested > 0 && craftable >= requested;
         }
@@ -65,19 +66,6 @@ public final class CraftPlanner {
 
         public BigInteger spentEmc() {
             return bank == null ? BigInteger.ZERO : bank.spentEmc();
-        }
-
-        public CraftPreview.Result toResult() {
-            ItemKey targetKey = ItemKey.of(root.output);
-            List<CraftPreview.Gain> gained = new ArrayList<>();
-            for (ItemKey key : working.counts().keySet()) {
-                int delta = working.exact(key) - initial.exact(key);
-                if (delta > 0) gained.add(new CraftPreview.Gain(key, delta));
-            }
-            gained.sort(Comparator
-                    .comparingInt((CraftPreview.Gain g) -> g.key().equals(targetKey) ? 0 : 1)
-                    .thenComparing(g -> -g.count()));
-            return new CraftPreview.Result(craftable, requested, gained, blockers);
         }
     }
 
@@ -91,16 +79,37 @@ public final class CraftPlanner {
         Set<ItemKey> keys = collectKeys(root, new HashSet<>());
         keys.addAll(builder.loopIngredientKeys());
         EmcBank bank = null;
-        if (emc != null) bank = emc.bank(buyer == null ? Set.of() : keys, budget == null ? emc.emc() : budget);
+        BigInteger start = emc == null ? null : budget == null ? emc.emc() : budget;
+        if (emc != null) bank = emc.bank(buyer == null ? Set.of() : keys, start);
         VirtualPool working = initial.copy();
         working.setEmc(bank);
         CraftExecutor.simulate(root, working);
         ItemKey targetKey = ItemKey.of(target);
         buyTarget(bank, initial, working, targetKey, qty);
         int craftable = Math.max(0, Math.min(qty, working.count(targetKey) - initial.count(targetKey)));
+        if (buyer != null && (craftable < qty || bank.spentEmc().signum() > 0)) {
+            EmcBank direct = buyer.bank(keys, start);
+            BigInteger cost = BigInteger.valueOf(direct.value(targetKey)).multiply(BigInteger.valueOf(qty));
+            if ((craftable < qty || cost.compareTo(bank.spentEmc()) <= 0) && direct.buy(targetKey, qty)) {
+                VirtualPool bought = initial.copy();
+                bought.setEmc(direct);
+                bought.produce(targetKey, qty);
+                return new Plan(root, initial, bought, direct, keys, qty, qty, builder.truncated(), List.of(), Map.of(), true);
+            }
+        }
         List<Blocker> blockers = craftable >= qty ? List.of() : diagnose(root, craftable > 0 ? working : initial, bank, buyer,
                 craftable > 0, qty, qty >= MAX_QUANTITY ? 1 : qty - craftable);
-        return new Plan(root, initial, working, bank, keys, qty, craftable, builder.truncated(), blockers);
+        return new Plan(root, initial, working, bank, keys, qty, craftable, builder.truncated(), blockers, Map.of(), false);
+    }
+
+    public static Plan collect(Plan plan, Map<ItemKey, ForeignRecipe> foreign) {
+        if (plan.craftable() > 0 || plan.requested() >= MAX_QUANTITY) return plan;
+        VirtualPool working = plan.initial().copy();
+        working.setEmc(plan.bank());
+        Map<ItemKey, Integer> collected = CraftExecutor.collect(plan.root(), working, foreign);
+        if (collected.isEmpty()) return plan;
+        return new Plan(plan.root(), plan.initial(), working, plan.bank(), plan.keys(), plan.requested(), 0,
+                plan.truncated(), plan.blockers(), collected, false);
     }
 
     public static Plan fitInventory(Plan plan, List<ItemStack> inventory, IntFunction<Plan> replan) {

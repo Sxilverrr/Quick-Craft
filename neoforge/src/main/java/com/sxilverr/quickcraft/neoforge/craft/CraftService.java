@@ -1,7 +1,6 @@
 package com.sxilverr.quickcraft.neoforge.craft;
 
 import com.sxilverr.quickcraft.craft.CraftPlanner;
-import com.sxilverr.quickcraft.craft.CraftPreview;
 import com.sxilverr.quickcraft.craft.CraftSummary;
 import com.sxilverr.quickcraft.craft.Deposit;
 import com.sxilverr.quickcraft.craft.EmcBank;
@@ -9,6 +8,7 @@ import com.sxilverr.quickcraft.craft.VirtualPool;
 import com.sxilverr.quickcraft.config.QuickCraftConfig;
 import com.sxilverr.quickcraft.crafting.Availability;
 import com.sxilverr.quickcraft.crafting.CraftTrees;
+import com.sxilverr.quickcraft.crafting.ForeignRecipe;
 import com.sxilverr.quickcraft.crafting.ItemKey;
 import com.sxilverr.quickcraft.crafting.RecipeResolver;
 import com.sxilverr.quickcraft.crafting.ServerRecipeCache;
@@ -53,7 +53,7 @@ public final class CraftService {
 
     public static CraftSummary execute(ServerPlayer player, ItemStack target, int quantity,
                                        Map<ItemKey, ResourceLocation> overrides, Map<String, Item> ingredientChoices,
-                                       String destinationId) {
+                                       String destinationId, Map<ItemKey, ForeignRecipe> foreign) {
         if (target.isEmpty()) return CraftSummary.empty();
         int qty = Math.max(1, Math.min(CraftPlanner.MAX_QUANTITY, quantity));
 
@@ -88,7 +88,12 @@ public final class CraftService {
                     builder, target, n, overrides, ingredientChoices, initial, Availability.of(new HashMap<>(initial.counts())),
                     stations, QuickCraftConfig.collapseOwnedItems(), QuickCraftConfig.hideLoopingRecipes(), null, null));
 
-            shortfall = commit(source, deposit, initial, plan.working(), targetKey, emc, plan.bank(), player, destinationId);
+            plan = CraftPlanner.collect(plan, foreign);
+            boolean collecting = !plan.collected().isEmpty();
+            Deposit into = collecting ? Deposit.to(labeled, LabeledSource.SELF_ID, player) : deposit;
+
+            shortfall = commit(source, into, initial, plan.working(), plan.collected(), targetKey, emc, plan.bank(), player,
+                    collecting ? LabeledSource.SELF_ID : destinationId);
             if (shortfall != null) {
                 initial.limit(shortfall.key(), shortfall.got());
                 continue;
@@ -99,29 +104,10 @@ public final class CraftService {
             if (crafted > 0) playCraftSound(player);
             Station missing = CraftTrees.missingStation(plan.root());
             return new CraftSummary(crafted, qty, missing == null ? null : missing.displayName(),
-                    deposit.placements(), deposit.dropped(), deposit.byproducts(), ItemStack.EMPTY, 0,
-                    plan.truncated(), plan.blockers());
+                    into.placements(), into.dropped(), into.byproducts(), ItemStack.EMPTY, 0,
+                    plan.truncated(), plan.blockers(), collecting, plan.bought());
         }
         return CraftSummary.aborted(qty, shortfall.key().toStack(1), shortfall.wanted());
-    }
-
-    public static CraftPreview.Result preview(ServerPlayer player, ItemStack target, int quantity,
-                                              Map<ItemKey, ResourceLocation> overrides, Map<String, Item> ingredientChoices) {
-        int qty = Math.max(1, Math.min(CraftPlanner.MAX_QUANTITY, quantity));
-        if (target.isEmpty()) return new CraftPreview.Result(0, qty, List.of());
-
-        if (QuickCraftConfig.creativeBypass() && player.getAbilities().instabuild) {
-            int given = CraftPlanner.creativeQuantity(target, qty);
-            return new CraftPreview.Result(given, given, List.of(new CraftPreview.Gain(ItemKey.of(target), given)));
-        }
-
-        List<LabeledSource> labeled = ItemSourceFactory.scan(player, QuickCraftConfig.containerScanRange());
-        ServerLevel level = player.serverLevel();
-        VirtualPool initial = poolFrom(extractionSource(labeled).snapshot());
-        CraftPlanner.Plan plan = CraftPlanner.plan(newBuilder(level), target, qty, overrides, ingredientChoices, initial,
-                Availability.of(new HashMap<>(initial.counts())), StationScan.detect(level, player),
-                QuickCraftConfig.collapseOwnedItems(), QuickCraftConfig.hideLoopingRecipes(), openEmcSession(player), null);
-        return plan.toResult();
     }
 
     private static TreeBuilder newBuilder(ServerLevel level) {
@@ -198,8 +184,10 @@ public final class CraftService {
     }
 
     private static Shortfall commit(CompositeItemSource source, Deposit deposit, VirtualPool initial, VirtualPool working,
-                                    ItemKey targetKey, EmcSession emc, EmcBank bank, ServerPlayer player, String destinationId) {
+                                    Map<ItemKey, Integer> collected, ItemKey targetKey, EmcSession emc, EmcBank bank,
+                                    ServerPlayer player, String destinationId) {
         boolean depositToEmc = emc != null && bank != null && EmcDeposit.isEmc(destinationId);
+        boolean leftoversToEmc = emc != null && bank != null && QuickCraftConfig.leftoversToEmc();
 
         Map<ItemKey, Integer> consumed = new LinkedHashMap<>();
         Map<ItemKey, Integer> produced = new LinkedHashMap<>();
@@ -236,16 +224,18 @@ public final class CraftService {
         for (Map.Entry<ItemKey, Integer> entry : produced.entrySet()) {
             ItemKey key = entry.getKey();
             int amount = entry.getValue();
-            if (depositToEmc) {
+            boolean target = key.equals(targetKey);
+            if (depositToEmc || (leftoversToEmc && !target)) {
                 long value = emc.sellValue(key.toStack(1));
                 if (value > 0L) {
                     bank.gain(BigInteger.valueOf(value).multiply(BigInteger.valueOf(amount)));
-                    deposit.toEmc(amount, key.equals(targetKey));
+                    deposit.toEmc(amount, target || !depositToEmc);
                     continue;
                 }
             }
-            deposit.put(key, amount, key.equals(targetKey));
+            deposit.put(key, amount, target);
         }
+        for (Map.Entry<ItemKey, Integer> entry : collected.entrySet()) deposit.put(entry.getKey(), entry.getValue(), true);
         return null;
     }
 

@@ -5,7 +5,6 @@ import com.sxilverr.quickcraft.platform.Services;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.sxilverr.quickcraft.config.QuickCraftClientConfig;
 import com.sxilverr.quickcraft.config.QuickCraftConfig;
-import com.sxilverr.quickcraft.craft.CraftPreview;
 import com.sxilverr.quickcraft.crafting.Availability;
 import com.sxilverr.quickcraft.crafting.CraftNode;
 import com.sxilverr.quickcraft.integration.jer.DropLine;
@@ -15,6 +14,7 @@ import com.sxilverr.quickcraft.craft.CraftPlanner;
 import com.sxilverr.quickcraft.craft.EmcSource;
 import com.sxilverr.quickcraft.craft.VirtualPool;
 import com.sxilverr.quickcraft.crafting.CraftTrees;
+import com.sxilverr.quickcraft.crafting.ForeignRecipe;
 import com.sxilverr.quickcraft.crafting.ItemKey;
 import com.sxilverr.quickcraft.crafting.ItemOrigins;
 import com.sxilverr.quickcraft.crafting.RecipeOption;
@@ -56,6 +56,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -231,8 +232,20 @@ public class QuickCraftScreen extends Screen {
 
     private void sendCraft(int recorded, int requested) {
         CraftHistory.record(target, recorded);
-        Services.PLATFORM.sendCraftRequest(target, requested, overrides, ingredientChoices, ClientDepositTargets.selectedId());
+        Map<ItemKey, ForeignRecipe> foreign = new LinkedHashMap<>();
+        collectForeign(root, foreign);
+        Services.PLATFORM.sendCraftRequest(target, requested, overrides, ingredientChoices, ClientDepositTargets.selectedId(), foreign);
         this.minecraft.setScreen(null);
+    }
+
+    private void collectForeign(CraftNode node, Map<ItemKey, ForeignRecipe> out) {
+        if (node == null) return;
+        for (OriginHint hint : originsFor(node)) {
+            if (hint.recipe() == null) continue;
+            out.putIfAbsent(ItemKey.of(node.output), hint.recipe());
+            break;
+        }
+        for (CraftNode child : node.children) collectForeign(child, out);
     }
 
     private void retarget(ItemStack newTarget, boolean pushHistory) {
@@ -574,6 +587,7 @@ public class QuickCraftScreen extends Screen {
 
         if (showMobs) attachMobSources(root);
         primeOrigins(root);
+        attachMachineInputs(root, requestKeys);
         Station missing = CraftTrees.missingStation(root);
         if (missing != missingStation) stationSelectedIndex = 0;
         missingStation = missing;
@@ -607,6 +621,40 @@ public class QuickCraftScreen extends Screen {
         for (CraftNode child : node.children) detachMobSources(child);
     }
 
+    private void attachMachineInputs(CraftNode node, Set<ItemKey> keys) {
+        for (CraftNode child : new ArrayList<>(node.children)) attachMachineInputs(child, keys);
+        if (node.isCraftable() || node.isDisplayOnly() || node.freeStock >= node.requiredCount) return;
+        ForeignRecipe recipe = null;
+        for (OriginHint hint : originsFor(node)) {
+            if (hint.recipe() == null) continue;
+            recipe = hint.recipe();
+            break;
+        }
+        if (recipe == null) return;
+        int made = Math.max(1, recipe.made());
+        long crafts = ((long) node.requiredCount - node.freeStock + made - 1) / made;
+        Map<ItemKey, CraftNode> inputs = new LinkedHashMap<>();
+        for (List<ItemStack> slot : recipe.inputs()) {
+            ItemStack pick = slot.get(0);
+            for (ItemStack option : slot) {
+                if (haveCounts.getOrDefault(ItemKey.of(option), 0) > haveCounts.getOrDefault(ItemKey.of(pick), 0)) pick = option;
+            }
+            ItemKey key = ItemKey.of(pick);
+            int need = (int) Math.min(Integer.MAX_VALUE, Math.max(1, pick.getCount()) * crafts);
+            CraftNode input = inputs.get(key);
+            if (input != null) {
+                input.requiredCount = (int) Math.min(Integer.MAX_VALUE, (long) input.requiredCount + need);
+                continue;
+            }
+            input = new CraftNode(pick.copyWithCount(1), need, List.of(), node.depth + 1);
+            input.machineInput = true;
+            input.freeStock = haveCounts.getOrDefault(key, 0);
+            inputs.put(key, input);
+            keys.add(key);
+        }
+        node.children.addAll(0, inputs.values());
+    }
+
     private boolean hasEye(CraftNode node) {
         return (node.owned || node.emcBuy) && node.selected() != null;
     }
@@ -628,6 +676,7 @@ public class QuickCraftScreen extends Screen {
                 collectTreeKeys(child, keys);
                 if (showMobs) attachMobSources(child);
                 primeOrigins(child);
+                attachMachineInputs(child, keys);
                 attachPeeks(child, stations, collapse, hideLoop, keys, path);
             }
             path.remove(key);
@@ -1578,7 +1627,7 @@ public class QuickCraftScreen extends Screen {
     }
 
     private List<OriginHint> originsFor(CraftNode node) {
-        if (node.isCraftable() || node.isMobSource()) return List.of();
+        if (node.isCraftable() || node.isDisplayOnly()) return List.of();
         ClientLevel level = Minecraft.getInstance().level;
         if (level == null) return List.of();
         return ItemOrigins.of(level.getRecipeManager(), level.registryAccess(), node.output);
@@ -1708,9 +1757,25 @@ public class QuickCraftScreen extends Screen {
         int cx = child.x;
         int cy = child.y + NodeView.HEIGHT / 2;
         int midX = cx - TreeLayout.H_GAP / 2;
+        if (child.node.machineInput) {
+            dashedH(g, px, midX, py, color);
+            dashedV(g, midX, py, cy, color);
+            dashedH(g, midX, cx, cy, color);
+            return;
+        }
         g.hLine(px, midX, py, color);
         g.vLine(midX, py, cy, color);
         g.hLine(midX, cx, cy, color);
+    }
+
+    private static void dashedH(GuiGraphics g, int x1, int x2, int y, int color) {
+        int end = Math.max(x1, x2);
+        for (int x = Math.min(x1, x2); x <= end; x += 4) g.hLine(x, Math.min(x + 1, end), y, color);
+    }
+
+    private static void dashedV(GuiGraphics g, int x, int y1, int y2, int color) {
+        int end = Math.max(y1, y2);
+        for (int y = Math.min(y1, y2); y <= end; y += 4) g.vLine(x, y - 1, Math.min(y + 1, end), color);
     }
 
     private void drawTooltip(GuiGraphics g, NodeView view, int mouseX, int mouseY) {
@@ -1808,11 +1873,16 @@ public class QuickCraftScreen extends Screen {
                 lines.add(Component.translatable(expanded ? "quickcraft.tooltip.hide_recipe" : "quickcraft.tooltip.reveal_recipe")
                         .withStyle(ChatFormatting.AQUA));
             }
+        } else if (node.machineInput) {
+            lines.add(Component.translatable("quickcraft.tooltip.machine_input").withStyle(ChatFormatting.GRAY));
         } else {
             lines.add(Component.translatable("quickcraft.tooltip.base").withStyle(ChatFormatting.DARK_GRAY));
             String origins = originLabel(node);
             if (!origins.isEmpty()) {
                 lines.add(Component.translatable("quickcraft.tooltip.made_in", origins).withStyle(ChatFormatting.GRAY));
+            }
+            if (node.children.stream().anyMatch(child -> child.machineInput)) {
+                lines.add(Component.translatable("quickcraft.tooltip.machine_inputs").withStyle(ChatFormatting.GRAY));
             }
         }
         if (!ItemKey.of(node.output).equals(ItemKey.of(target))) {
@@ -2161,8 +2231,6 @@ public class QuickCraftScreen extends Screen {
         return true;
     }
 
-    private boolean confirmPending;
-
     private void onConfirm() {
         Minecraft mc = Minecraft.getInstance();
         if (QuickCraftConfig.creativeBypass() && mc.player != null && mc.player.getAbilities().instabuild) {
@@ -2173,19 +2241,7 @@ public class QuickCraftScreen extends Screen {
             onCraftMax();
             return;
         }
-        if (confirmPending) return;
-        confirmPending = true;
-        Services.PLATFORM.sendCraftPreviewRequest(target, quantity, overrides, ingredientChoices);
-    }
-
-    public void onCraftPreviewResult(CraftPreview.Result preview) {
-        confirmPending = false;
-        if (preview.full()) {
-            sendCraft(quantity, quantity);
-            return;
-        }
-        Minecraft.getInstance().setScreen(
-                new ForceCraftConfirmScreen(this, target, quantity, overrides, ingredientChoices, preview));
+        sendCraft(quantity, quantity);
     }
 
     private void onCraftMax() {

@@ -1,5 +1,6 @@
 package com.sxilverr.quickcraft.integration.projecte;
 
+import com.sxilverr.quickcraft.config.QuickCraftConfig;
 import com.sxilverr.quickcraft.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -69,6 +70,6 @@ public final class ProjectEIntegration {
     }
 
     public static boolean hasAccess(Player player, Level level, BlockPos center, int range) {
-        return !findTablet(player).isEmpty() || findTable(level, center, range) != null;
+        return QuickCraftConfig.emcWithoutTransmutation() || !findTablet(player).isEmpty() || findTable(level, center, range) != null;
     }
 }

@@ -42,7 +42,7 @@ public final class CraftTrees {
             return;
         }
         if (node.catalyst && !catalysts.add(ItemKey.of(node.output))) return;
-        if (node.children.stream().allMatch(CraftNode::isMobSource)) {
+        if (node.children.stream().allMatch(CraftNode::isDisplayOnly)) {
             ItemKey key = ItemKey.of(node.output);
             totals.merge(key, required, (a, b) -> clamp((long) a + b));
             if (samples != null) samples.putIfAbsent(key, node);
@@ -51,7 +51,7 @@ public final class CraftTrees {
         int crafts = ceilDiv(required, Math.max(1, node.resultPerCraft));
         int ownCrafts = Math.max(1, node.craftsNeeded);
         for (CraftNode child : node.children) {
-            if (child.isMobSource()) continue;
+            if (child.isDisplayOnly()) continue;
             int childNeed = child.catalyst ? child.requiredCount : clamp((long) (child.requiredCount / ownCrafts) * crafts);
             collect(child, childNeed, totals, samples, catalysts);
         }

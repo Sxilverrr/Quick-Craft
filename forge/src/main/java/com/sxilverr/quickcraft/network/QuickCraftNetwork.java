@@ -2,7 +2,7 @@ package com.sxilverr.quickcraft.network;
 
 import com.sxilverr.quickcraft.QuickCraftCommon;
 import com.sxilverr.quickcraft.client.ClientDepositTargets;
-import com.sxilverr.quickcraft.craft.CraftPreview;
+import com.sxilverr.quickcraft.crafting.ForeignRecipe;
 import com.sxilverr.quickcraft.crafting.ItemKey;
 import com.sxilverr.quickcraft.crafting.Stations;
 import com.sxilverr.quickcraft.storage.LabeledSource;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 public final class QuickCraftNetwork {
-    private static final String PROTOCOL = "3";
+    private static final String PROTOCOL = "4";
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(QuickCraftCommon.MODID, "main"),
@@ -41,23 +41,12 @@ public final class QuickCraftNetwork {
                 DepositTargetsRequestPacket::encode, DepositTargetsRequestPacket::decode, DepositTargetsRequestPacket::handle);
         CHANNEL.registerMessage(id++, DepositTargetsResponsePacket.class,
                 DepositTargetsResponsePacket::encode, DepositTargetsResponsePacket::decode, DepositTargetsResponsePacket::handle);
-        CHANNEL.registerMessage(id++, CraftPreviewResponsePacket.class,
-                CraftPreviewResponsePacket::encode, CraftPreviewResponsePacket::decode, CraftPreviewResponsePacket::handle);
     }
 
     public static void sendCraftRequest(ItemStack target, int quantity, Map<ItemKey, ResourceLocation> overrides,
-                                        Map<String, Item> ingredientChoices, String destinationId) {
-        CHANNEL.sendToServer(new CraftRequestPacket(target, quantity, overrides, ingredientChoices, destinationId, false));
-    }
-
-    public static void sendCraftPreviewRequest(ItemStack target, int quantity, Map<ItemKey, ResourceLocation> overrides,
-                                               Map<String, Item> ingredientChoices) {
-        CHANNEL.sendToServer(new CraftRequestPacket(target, quantity, overrides, ingredientChoices, null, true));
-    }
-
-    public static void sendCraftPreview(ServerPlayer player, CraftPreview.Result result) {
-        CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
-                new CraftPreviewResponsePacket(result.craftable(), result.requested(), result.gained(), result.blockers()));
+                                        Map<String, Item> ingredientChoices, String destinationId,
+                                        Map<ItemKey, ForeignRecipe> foreign) {
+        CHANNEL.sendToServer(new CraftRequestPacket(target, quantity, overrides, ingredientChoices, destinationId, foreign));
     }
 
     public static void requestDepositTargets() {

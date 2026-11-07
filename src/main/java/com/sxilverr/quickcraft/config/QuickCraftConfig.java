@@ -2,6 +2,7 @@ package com.sxilverr.quickcraft.config;
 
 import com.sxilverr.quickcraft.DepositBlacklist;
 import com.sxilverr.quickcraft.craft.CraftPlanner;
+import com.sxilverr.quickcraft.platform.Services;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -40,6 +41,7 @@ public final class QuickCraftConfig {
     private static Supplier<Integer> maxTreeNodes;
     private static Supplier<Boolean> animationsEnabled;
     private static Supplier<Boolean> creativeBypass;
+    private static Supplier<Boolean> craftWithoutStations;
     private static Supplier<Boolean> pinnedListAnimation;
     private static Supplier<Boolean> hideLoopingRecipes;
     private static Supplier<Boolean> openOnlyWithRecipe;
@@ -48,6 +50,8 @@ public final class QuickCraftConfig {
     private static Supplier<String> shiftCraftAmount;
     private static Supplier<Boolean> useProjectEEmc;
     private static Supplier<Boolean> useKleinStarEmc;
+    private static Supplier<Boolean> leftoversToEmc;
+    private static Supplier<Boolean> emcWithoutTransmutation;
 
     private QuickCraftConfig() {
     }
@@ -79,6 +83,8 @@ public final class QuickCraftConfig {
                 .define("animationsEnabled", true);
         creativeBypass = b.comment("Players in creative mode craft the requested item instantly without needing or consuming any ingredients.")
                 .define("creativeBypass", false);
+        craftWithoutStations = b.comment("Craft every recipe without its crafting table or other station nearby.")
+                .define("craftWithoutStations", false);
         pinnedListAnimation = b.comment("The pinned (bookmarked) ingredients list eases its rows in when it appears.")
                 .define("pinnedListAnimation", true);
         hideLoopingRecipes = b.comment("Hide recipes that loop back on themselves as options unless you already have the looping item on hand.")
@@ -97,6 +103,12 @@ public final class QuickCraftConfig {
         useKleinStarEmc = b.comment("Klein Stars carried in your inventory add their stored EMC to what Quick Craft can spend.",
                         "Your own EMC is spent first, then the stars are drained. Requires ProjectE.")
                 .define("useKleinStarEmc", true);
+        if (Services.PLATFORM.isModLoaded("projecte")) {
+            leftoversToEmc = b.comment("Turn leftover items from a craft into EMC.")
+                    .define("leftoversToEmc", false);
+            emcWithoutTransmutation = b.comment("Use EMC without a transmutation table nearby or a transmutation tablet in your inventory.")
+                    .define("emcWithoutTransmutation", false);
+        }
     }
 
     public static List<Item> preferredItems() {
@@ -157,6 +169,10 @@ public final class QuickCraftConfig {
         return creativeBypass.get();
     }
 
+    public static boolean craftWithoutStations() {
+        return craftWithoutStations != null && craftWithoutStations.get();
+    }
+
     public static boolean pinnedListAnimation() {
         return pinnedListAnimation.get();
     }
@@ -187,6 +203,14 @@ public final class QuickCraftConfig {
 
     public static boolean useKleinStarEmc() {
         return useKleinStarEmc.get();
+    }
+
+    public static boolean leftoversToEmc() {
+        return leftoversToEmc != null && leftoversToEmc.get();
+    }
+
+    public static boolean emcWithoutTransmutation() {
+        return emcWithoutTransmutation != null && emcWithoutTransmutation.get();
     }
 
     public static int shiftCraftAmount() {

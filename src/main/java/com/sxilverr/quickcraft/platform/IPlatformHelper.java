@@ -1,6 +1,7 @@
 package com.sxilverr.quickcraft.platform;
 
 import com.sxilverr.quickcraft.craft.EmcSource;
+import com.sxilverr.quickcraft.crafting.ForeignRecipe;
 import com.sxilverr.quickcraft.crafting.ItemKey;
 import com.sxilverr.quickcraft.integration.jer.MobItemSource;
 import net.minecraft.resources.ResourceLocation;
@@ -22,10 +23,7 @@ public interface IPlatformHelper {
     ItemStack getCraftingRemainder(ItemStack stack);
 
     void sendCraftRequest(ItemStack target, int quantity, Map<ItemKey, ResourceLocation> overrides,
-                          Map<String, Item> ingredientChoices, String destinationId);
-
-    void sendCraftPreviewRequest(ItemStack target, int quantity, Map<ItemKey, ResourceLocation> overrides,
-                                 Map<String, Item> ingredientChoices);
+                          Map<String, Item> ingredientChoices, String destinationId, Map<ItemKey, ForeignRecipe> foreign);
 
     void requestDepositTargets();
 

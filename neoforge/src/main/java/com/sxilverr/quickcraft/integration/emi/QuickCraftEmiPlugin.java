@@ -1,5 +1,6 @@
 package com.sxilverr.quickcraft.integration.emi;
 
+import com.sxilverr.quickcraft.crafting.ForeignRecipe;
 import com.sxilverr.quickcraft.crafting.ItemOrigins;
 import com.sxilverr.quickcraft.integration.OriginHint;
 import com.sxilverr.quickcraft.integration.QuickCraftIntegrations;
@@ -68,11 +69,35 @@ public class QuickCraftEmiPlugin implements EmiPlugin {
                     icon = firstItem(workstation);
                     if (!icon.isEmpty()) break;
                 }
-                hints.add(new OriginHint(icon, category.getName().getString()));
+                hints.add(new OriginHint(icon, category.getName().getString(), recipeOf(recipe, stack)));
             }
             return hints;
         } catch (Throwable t) {
             return List.of();
+        }
+    }
+
+    private static ForeignRecipe recipeOf(EmiRecipe recipe, ItemStack target) {
+        try {
+            List<List<ItemStack>> inputs = new ArrayList<>();
+            for (EmiIngredient input : recipe.getInputs()) {
+                int amount = (int) Math.max(1L, Math.min(Integer.MAX_VALUE, input.getAmount()));
+                List<ItemStack> options = new ArrayList<>();
+                for (EmiStack option : input.getEmiStacks()) {
+                    ItemStack item = option.getItemStack();
+                    if (!item.isEmpty()) options.add(item.copyWithCount(amount));
+                }
+                if (!options.isEmpty()) inputs.add(options);
+            }
+            int made = 1;
+            for (EmiStack output : recipe.getOutputs()) {
+                if (!ItemStack.isSameItem(output.getItemStack(), target)) continue;
+                made = (int) Math.max(1L, Math.min(Integer.MAX_VALUE, output.getAmount()));
+                break;
+            }
+            return inputs.isEmpty() ? null : new ForeignRecipe(made, inputs);
+        } catch (Throwable t) {
+            return null;
         }
     }
 
