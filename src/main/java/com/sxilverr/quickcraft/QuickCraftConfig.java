@@ -54,6 +54,8 @@ public final class QuickCraftConfig {
     private static boolean openOnlyWithRecipe = true;
     private static boolean hoverBulge = true;
     private static boolean sizeTabToFit = true;
+    private static boolean maxCraftWarning = true;
+    private static boolean collectOnFailedCraft = true;
     private static String shiftCraftAmount = "64";
     private static boolean useProjectEEmc = true;
     private static boolean useKleinStarEmc = true;
@@ -150,6 +152,11 @@ public final class QuickCraftConfig {
         hoverBulge = config.getBoolean("hoverBulge", GENERAL, true, "Tab bulges when hovering over it");
 
         sizeTabToFit = config.getBoolean("sizeTabToFit", GENERAL, true, "Size a tab to fit a item name");
+
+        maxCraftWarning = config.getBoolean("maxCraftWarning", GENERAL, true, "Gives a warning before a Max craft.");
+
+        collectOnFailedCraft = config.getBoolean("collectOnFailedCraft", GENERAL, true,
+                "A craft that can't make anything puts the ingredients it can gather in your inventory.");
 
         shiftCraftAmount = config.getString("shiftCraftAmount", GENERAL, "64",
                 "How many items should be crafted when holding SHIFT. Accepts Max");
@@ -293,6 +300,14 @@ public final class QuickCraftConfig {
 
     public static boolean sizeTabToFit() {
         return sizeTabToFit;
+    }
+
+    public static boolean maxCraftWarning() {
+        return maxCraftWarning;
+    }
+
+    public static boolean collectOnFailedCraft() {
+        return collectOnFailedCraft;
     }
 
     public static boolean useProjectEEmc() {

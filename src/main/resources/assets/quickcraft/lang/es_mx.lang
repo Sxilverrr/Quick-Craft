@@ -8,6 +8,7 @@ key.quickcraft.show_uses=Ver usos
 quickcraft.max=Máx.
 
 quickcraft.max_count=Máx. (%s)
+quickcraft.max_warning=¿Seguro? Se fabricarán %sx %s.
 
 quickcraft.more=+%s más
 
@@ -47,6 +48,7 @@ quickcraft.controls.view_tree=Clic central: ver el árbol del objeto
 quickcraft.controls.switch_tag=W/S o arriba/abajo: cambiar objeto de etiqueta
 quickcraft.controls.toggle_recipe=Clic der.: mostrar/ocultar receta
 quickcraft.controls.reset=Ctrl+clic: restablecer preferencias
+quickcraft.controls.open_viewer=Alt+clic: abrir en JEI
 
 quickcraft.history.title=Historial de fabricación
 quickcraft.history.empty=Todavía no hay historial
@@ -111,6 +113,9 @@ quickcraft.mob.biomes=Biomas: %s
 quickcraft.mob.experience=Experiencia: %s
 quickcraft.mob.all_drops=Todo lo que suelta:
 quickcraft.mob.next=Clic izq.: siguiente criatura (%s)
+quickcraft.harvest.label=Cosechar
+quickcraft.harvest.tooltip=Cosecha esta planta para conseguir %s.
+quickcraft.harvest.next=Clic izq.: siguiente planta (%s)
 quickcraft.mob.looting=+Saqueo
 
 quickcraft.pinned.top_right=AD
@@ -187,6 +192,10 @@ quickcraft.configuration.hoverBulge=Aumento al pasar el mouse
 quickcraft.configuration.hoverBulge.tooltip=Las pestañas crecen un poco al pasar el mouse por encima.
 quickcraft.configuration.sizeTabToFit=Ajustar pestañas al nombre
 quickcraft.configuration.sizeTabToFit.tooltip=Las pestañas se ensanchan para mostrar el nombre completo del objeto.
+quickcraft.configuration.maxCraftWarning=Aviso de fabricar máx.
+quickcraft.configuration.maxCraftWarning.tooltip=Pregunta antes de fabricar el máximo.
+quickcraft.configuration.collectOnFailedCraft=Recoger al fallar la fabricación
+quickcraft.configuration.collectOnFailedCraft.tooltip=Si no se puede fabricar nada, los ingredientes que se consigan van al inventario.
 quickcraft.configuration.shiftCraftAmount=Cantidad con Shift
 quickcraft.configuration.shiftCraftAmount.tooltip=Cuántos objetos fabricar al mantener Shift: un número de 1 a 1000000, o Max.
 quickcraft.configuration.useProjectEEmc=Usar EMC de ProjectE

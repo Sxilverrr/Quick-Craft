@@ -1,21 +1,24 @@
 package com.sxilverr.quickcraft.integration;
 
-import com.sxilverr.quickcraft.crafting.ForeignRecipe;
+import com.sxilverr.quickcraft.crafting.MachineRecipeOption;
 import net.minecraft.item.ItemStack;
+
+import java.util.Collections;
+import java.util.List;
 
 public final class OriginHint {
     private final ItemStack icon;
     private final String label;
-    private final ForeignRecipe recipe;
+    private final List<MachineRecipeOption> recipes;
 
     public OriginHint(ItemStack icon, String label) {
-        this(icon, label, null);
+        this(icon, label, Collections.<MachineRecipeOption>emptyList());
     }
 
-    public OriginHint(ItemStack icon, String label, ForeignRecipe recipe) {
+    public OriginHint(ItemStack icon, String label, List<MachineRecipeOption> recipes) {
         this.icon = icon;
         this.label = label;
-        this.recipe = recipe;
+        this.recipes = recipes;
     }
 
     public ItemStack icon() {
@@ -26,7 +29,7 @@ public final class OriginHint {
         return label;
     }
 
-    public ForeignRecipe recipe() {
-        return recipe;
+    public List<MachineRecipeOption> recipes() {
+        return recipes;
     }
 }

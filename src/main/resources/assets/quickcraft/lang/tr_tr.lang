@@ -8,6 +8,7 @@ key.quickcraft.show_uses=Kullanımları Göster
 quickcraft.max=Maks.
 
 quickcraft.max_count=Maks. (%s)
+quickcraft.max_warning=Emin misin? %sx %s üretilecek.
 
 quickcraft.more=+%s tane daha
 
@@ -47,6 +48,7 @@ quickcraft.controls.view_tree=Orta tık: eşyanın ağacını gör
 quickcraft.controls.switch_tag=W/S veya Yukarı/Aşağı: etiket eşyasını değiştir
 quickcraft.controls.toggle_recipe=Sağ tık: tarifi göster/gizle
 quickcraft.controls.reset=Ctrl+tık: tercihleri sıfırla
+quickcraft.controls.open_viewer=Alt+tık: JEI'de aç
 
 quickcraft.history.title=Üretim geçmişi
 quickcraft.history.empty=Henüz geçmiş yok
@@ -111,6 +113,9 @@ quickcraft.mob.biomes=Biyomlar: %s
 quickcraft.mob.experience=Tecrübe: %s
 quickcraft.mob.all_drops=Tüm ganimetler:
 quickcraft.mob.next=Sol tık: sonraki canlı (%s)
+quickcraft.harvest.label=Hasat
+quickcraft.harvest.tooltip=%s elde etmek için bu bitkiyi hasat et.
+quickcraft.harvest.next=Sol tık: sonraki bitki (%s)
 quickcraft.mob.looting=+Ganimet
 
 quickcraft.pinned.top_right=↗
@@ -187,6 +192,10 @@ quickcraft.configuration.hoverBulge=Üzerine Gelince Büyüt
 quickcraft.configuration.hoverBulge.tooltip=Sekmeler fareyle üzerine gelindiğinde biraz büyür.
 quickcraft.configuration.sizeTabToFit=Sekmeleri Ada Göre Boyutlandır
 quickcraft.configuration.sizeTabToFit.tooltip=Sekmeler eşyanın tam adı sığacak kadar genişler.
+quickcraft.configuration.maxCraftWarning=Maks. Üretim Uyarısı
+quickcraft.configuration.maxCraftWarning.tooltip=Maksimum üretimden önce onay ister.
+quickcraft.configuration.collectOnFailedCraft=Üretim Başarısız Olunca Topla
+quickcraft.configuration.collectOnFailedCraft.tooltip=Hiçbir şey üretilemediğinde, bulunabilen malzemeler envantere konur.
 quickcraft.configuration.shiftCraftAmount=Shift ile Üretim Miktarı
 quickcraft.configuration.shiftCraftAmount.tooltip=Shift basılıyken kaç eşya üretileceği: 1 ile 1000000 arasında bir sayı veya Max.
 quickcraft.configuration.useProjectEEmc=ProjectE EMC Kullan

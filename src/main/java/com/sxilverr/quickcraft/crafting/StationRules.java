@@ -101,6 +101,7 @@ public final class StationRules {
             block("avaritia", Station.EXTREME_CRAFTING, property("type", "extreme"),
                     "avaritia:extreme_crafting_table", "avaritia:extreme_crafting"),
 
+            block("variedcommodities", Station.CARPENTRY_BENCH, "variedcommodities:carpentry_bench"),
             block("futuremc", Station.STONECUTTER, "futuremc:stonecutter"),
             block("futuremc", Station.SMITHING, "futuremc:smithing_table"),
             block("ubm", Station.SMITHING, "ubm:smithing_table")

@@ -8,6 +8,7 @@ key.quickcraft.show_uses=Voir les utilisations
 quickcraft.max=Max
 
 quickcraft.max_count=Max (%s)
+quickcraft.max_warning=Es-tu sûr? Ça va crafter %sx %s.
 
 quickcraft.more=+%s de plus
 
@@ -47,6 +48,7 @@ quickcraft.controls.view_tree=Clic milieu : voir l'arbre de l'objet
 quickcraft.controls.switch_tag=W/S ou haut/bas : changer l'objet du tag
 quickcraft.controls.toggle_recipe=Clic droit : afficher/masquer la recette
 quickcraft.controls.reset=Ctrl+clic : réinitialiser les préférences
+quickcraft.controls.open_viewer=Alt+clic : ouvrir dans JEI
 
 quickcraft.history.title=Historique de craft
 quickcraft.history.empty=Aucun historique pour l'instant
@@ -111,6 +113,9 @@ quickcraft.mob.biomes=Biomes : %s
 quickcraft.mob.experience=Expérience : %s
 quickcraft.mob.all_drops=Tout ce qu'il lâche :
 quickcraft.mob.next=Clic gauche : mob suivant (%s)
+quickcraft.harvest.label=Récolter
+quickcraft.harvest.tooltip=Récolte cette plante pour obtenir %s.
+quickcraft.harvest.next=Clic gauche : plante suivante (%s)
 quickcraft.mob.looting=+Dépouillage
 
 quickcraft.pinned.top_right=HD
@@ -187,6 +192,10 @@ quickcraft.configuration.hoverBulge=Grossir au survol
 quickcraft.configuration.hoverBulge.tooltip=Les onglets grossissent un peu quand la souris passe dessus.
 quickcraft.configuration.sizeTabToFit=Ajuster les onglets au nom
 quickcraft.configuration.sizeTabToFit.tooltip=Les onglets s'élargissent pour afficher le nom complet de l'objet.
+quickcraft.configuration.maxCraftWarning=Avertissement de craft max
+quickcraft.configuration.maxCraftWarning.tooltip=Demande une confirmation avant de crafter le max.
+quickcraft.configuration.collectOnFailedCraft=Ramasser si le craft échoue
+quickcraft.configuration.collectOnFailedCraft.tooltip=Un craft qui ne peut rien fabriquer met les ingrédients trouvés dans l'inventaire.
 quickcraft.configuration.shiftCraftAmount=Quantité avec Maj
 quickcraft.configuration.shiftCraftAmount.tooltip=Combien d'objets crafter en maintenant Maj : un nombre de 1 à 1000000, ou Max.
 quickcraft.configuration.useProjectEEmc=Utiliser l'EMC de ProjectE

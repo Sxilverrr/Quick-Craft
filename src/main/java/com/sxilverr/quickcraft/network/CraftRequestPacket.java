@@ -3,7 +3,7 @@ package com.sxilverr.quickcraft.network;
 import com.sxilverr.quickcraft.craft.CraftPlanner;
 import com.sxilverr.quickcraft.craft.CraftService;
 import com.sxilverr.quickcraft.craft.CraftSummary;
-import com.sxilverr.quickcraft.crafting.ForeignRecipe;
+import com.sxilverr.quickcraft.crafting.MachineRecipeOption;
 import com.sxilverr.quickcraft.crafting.ItemKey;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -34,20 +34,20 @@ public class CraftRequestPacket implements IMessage {
     private Map<ItemKey, ResourceLocation> overrides = new HashMap<ItemKey, ResourceLocation>();
     private Map<String, Item> ingredientChoices = new HashMap<String, Item>();
     private String destinationId = "";
-    private Map<ItemKey, ForeignRecipe> foreign = new HashMap<ItemKey, ForeignRecipe>();
+    private List<MachineRecipeOption> machines = new ArrayList<MachineRecipeOption>();
 
     public CraftRequestPacket() {
     }
 
     public CraftRequestPacket(ItemStack target, int quantity, Map<ItemKey, ResourceLocation> overrides,
                               Map<String, Item> ingredientChoices, String destinationId,
-                              Map<ItemKey, ForeignRecipe> foreign) {
+                              List<MachineRecipeOption> machines) {
         this.target = target;
         this.quantity = quantity;
         this.overrides = overrides;
         this.ingredientChoices = ingredientChoices;
         this.destinationId = destinationId == null ? "" : destinationId;
-        this.foreign = foreign == null ? new HashMap<ItemKey, ForeignRecipe>() : foreign;
+        this.machines = machines == null ? new ArrayList<MachineRecipeOption>() : machines;
     }
 
     @Override
@@ -71,21 +71,22 @@ public class CraftRequestPacket implements IMessage {
             Buf.writeString(buf, entry.getKey());
             Buf.writeItem(buf, entry.getValue());
         }
-        int foreignCount = Math.min(MAX_FOREIGN, foreign.size());
-        buf.writeInt(foreignCount);
-        written = 0;
-        for (Map.Entry<ItemKey, ForeignRecipe> entry : foreign.entrySet()) {
-            if (written++ >= foreignCount) break;
-            Buf.writeStack(buf, entry.getKey().toStack(1));
-            buf.writeInt(entry.getValue().made());
-            List<List<ItemStack>> slots = entry.getValue().inputs();
+        int machineCount = Math.min(MAX_FOREIGN, machines.size());
+        buf.writeInt(machineCount);
+        for (int m = 0; m < machineCount; m++) {
+            MachineRecipeOption machine = machines.get(m);
+            Buf.writeId(buf, machine.id());
+            Buf.writeStack(buf, machine.result());
+            buf.writeInt(machine.resultCount());
+            List<MachineRecipeOption.Slot> slots = machine.slots();
             int slotCount = Math.min(MAX_SLOTS, slots.size());
             buf.writeInt(slotCount);
             for (int s = 0; s < slotCount; s++) {
-                List<ItemStack> options = slots.get(s);
-                int optionCount = Math.min(MAX_OPTIONS, options.size());
+                MachineRecipeOption.Slot slot = slots.get(s);
+                buf.writeInt(slot.amount());
+                int optionCount = Math.min(MAX_OPTIONS, slot.options().size());
                 buf.writeInt(optionCount);
-                for (int o = 0; o < optionCount; o++) Buf.writeStack(buf, options.get(o));
+                for (int o = 0; o < optionCount; o++) Buf.writeStack(buf, slot.options().get(o));
             }
         }
     }
@@ -109,23 +110,27 @@ public class CraftRequestPacket implements IMessage {
             Item item = Buf.readItem(buf);
             if (item != null) ingredientChoices.put(signature, item);
         }
-        int foreignCount = Math.min(MAX_FOREIGN, buf.readInt());
-        foreign = new HashMap<ItemKey, ForeignRecipe>();
-        for (int i = 0; i < foreignCount; i++) {
+        int machineCount = Math.min(MAX_FOREIGN, buf.readInt());
+        machines = new ArrayList<MachineRecipeOption>();
+        for (int i = 0; i < machineCount; i++) {
+            ResourceLocation id = Buf.readId(buf);
             ItemStack output = Buf.readStack(buf);
             int made = buf.readInt();
             int slotCount = Math.min(MAX_SLOTS, buf.readInt());
-            List<List<ItemStack>> inputs = new ArrayList<List<ItemStack>>();
+            List<MachineRecipeOption.Slot> slots = new ArrayList<MachineRecipeOption.Slot>();
             for (int s = 0; s < slotCount; s++) {
+                int amount = buf.readInt();
                 int optionCount = Math.min(MAX_OPTIONS, buf.readInt());
                 List<ItemStack> options = new ArrayList<ItemStack>();
                 for (int o = 0; o < optionCount; o++) {
                     ItemStack option = Buf.readStack(buf);
                     if (!option.isEmpty()) options.add(option);
                 }
-                if (!options.isEmpty()) inputs.add(options);
+                if (!options.isEmpty()) slots.add(new MachineRecipeOption.Slot(amount, options));
             }
-            if (!output.isEmpty()) foreign.put(ItemKey.of(output), new ForeignRecipe(made, inputs));
+            if (id != null && !output.isEmpty() && !slots.isEmpty()) {
+                machines.add(new MachineRecipeOption(id, output, made, slots, ItemStack.EMPTY, ""));
+            }
         }
     }
 
@@ -138,7 +143,7 @@ public class CraftRequestPacket implements IMessage {
                 public void run() {
                     if (msg.target.isEmpty()) return;
                     CraftSummary summary = CraftService.execute(player, msg.target, msg.quantity, msg.overrides,
-                            msg.ingredientChoices, msg.destinationId, msg.foreign);
+                            msg.ingredientChoices, msg.destinationId, msg.machines);
                     player.sendStatusMessage(feedback(summary, msg.target), false);
                 }
             });

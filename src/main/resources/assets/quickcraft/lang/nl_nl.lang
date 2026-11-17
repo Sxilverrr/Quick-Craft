@@ -8,6 +8,7 @@ key.quickcraft.show_uses=Toepassingen tonen
 quickcraft.max=Max.
 
 quickcraft.max_count=Max. (%s)
+quickcraft.max_warning=Weet je het zeker? Dit maakt %sx %s.
 
 quickcraft.more=+%s meer
 
@@ -47,6 +48,7 @@ quickcraft.controls.view_tree=Middelklik: boom van voorwerp bekijken
 quickcraft.controls.switch_tag=W/S of omhoog/omlaag: tag-voorwerp wisselen
 quickcraft.controls.toggle_recipe=Rechtsklik: recept tonen/verbergen
 quickcraft.controls.reset=Ctrl+klik: voorkeuren herstellen
+quickcraft.controls.open_viewer=Alt+klik: openen in JEI
 
 quickcraft.history.title=Vervaardigingsgeschiedenis
 quickcraft.history.empty=Nog geen geschiedenis
@@ -111,6 +113,9 @@ quickcraft.mob.biomes=Biomen: %s
 quickcraft.mob.experience=Ervaring: %s
 quickcraft.mob.all_drops=Alle buit:
 quickcraft.mob.next=Linksklik: volgend wezen (%s)
+quickcraft.harvest.label=Oogsten
+quickcraft.harvest.tooltip=Oogst deze plant om %s te krijgen.
+quickcraft.harvest.next=Linksklik: volgende plant (%s)
 quickcraft.mob.looting=+Plundering
 
 quickcraft.pinned.top_right=RB
@@ -187,6 +192,10 @@ quickcraft.configuration.hoverBulge=Vergroten bij aanwijzen
 quickcraft.configuration.hoverBulge.tooltip=Tabbladen worden iets groter als je ze met de muis aanwijst.
 quickcraft.configuration.sizeTabToFit=Tabbladen passend maken
 quickcraft.configuration.sizeTabToFit.tooltip=Tabbladen worden breder zodat de hele voorwerpnaam past.
+quickcraft.configuration.maxCraftWarning=Waarschuwing bij Max. maken
+quickcraft.configuration.maxCraftWarning.tooltip=Vraagt om bevestiging voor je het maximum maakt.
+quickcraft.configuration.collectOnFailedCraft=Verzamelen bij mislukt maken
+quickcraft.configuration.collectOnFailedCraft.tooltip=Als er niets gemaakt kan worden, gaan de ingrediënten die te vinden zijn naar je inventaris.
 quickcraft.configuration.shiftCraftAmount=Aantal met Shift
 quickcraft.configuration.shiftCraftAmount.tooltip=Hoeveel voorwerpen je maakt terwijl je Shift ingedrukt houdt: een getal van 1 tot 1000000, of Max.
 quickcraft.configuration.useProjectEEmc=ProjectE-EMC gebruiken

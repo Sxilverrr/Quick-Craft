@@ -8,6 +8,7 @@ key.quickcraft.show_uses=查看用途
 quickcraft.max=最大
 
 quickcraft.max_count=最大（%s）
+quickcraft.max_warning=确定吗？将合成 %sx %s。
 
 quickcraft.more=另有%s项
 
@@ -47,6 +48,7 @@ quickcraft.controls.view_tree=中键：查看该物品的合成树
 quickcraft.controls.switch_tag=W/S 或 上/下：切换标签物品
 quickcraft.controls.toggle_recipe=右键：显示/隐藏配方
 quickcraft.controls.reset=Ctrl+点击：重置偏好
+quickcraft.controls.open_viewer=Alt+点击：在 JEI 中打开
 
 quickcraft.history.title=合成历史
 quickcraft.history.empty=暂无历史记录
@@ -111,6 +113,9 @@ quickcraft.mob.biomes=生物群系：%s
 quickcraft.mob.experience=经验：%s
 quickcraft.mob.all_drops=全部掉落物：
 quickcraft.mob.next=左键：下一个生物（%s）
+quickcraft.harvest.label=收获
+quickcraft.harvest.tooltip=收获这种植物可获得%s。
+quickcraft.harvest.next=左键：下一种植物（%s）
 quickcraft.mob.looting=+抢夺
 
 quickcraft.pinned.top_right=右上
@@ -187,6 +192,10 @@ quickcraft.configuration.hoverBulge=悬停放大
 quickcraft.configuration.hoverBulge.tooltip=鼠标悬停时标签会稍微放大。
 quickcraft.configuration.sizeTabToFit=标签宽度适应名称
 quickcraft.configuration.sizeTabToFit.tooltip=标签会变宽以显示完整的物品名称。
+quickcraft.configuration.maxCraftWarning=最大合成警告
+quickcraft.configuration.maxCraftWarning.tooltip=合成最大数量前先确认。
+quickcraft.configuration.collectOnFailedCraft=合成失败时收集材料
+quickcraft.configuration.collectOnFailedCraft.tooltip=无法合成任何物品时，将能收集到的材料放入物品栏。
 quickcraft.configuration.shiftCraftAmount=按住 Shift 的合成数量
 quickcraft.configuration.shiftCraftAmount.tooltip=按住 Shift 时合成的物品数量：1 到 1000000 之间的数字，或 Max。
 quickcraft.configuration.useProjectEEmc=使用 ProjectE EMC

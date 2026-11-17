@@ -3,7 +3,7 @@ package com.sxilverr.quickcraft.craft;
 import com.sxilverr.quickcraft.QuickCraftConfig;
 import com.sxilverr.quickcraft.crafting.Availability;
 import com.sxilverr.quickcraft.crafting.CraftTrees;
-import com.sxilverr.quickcraft.crafting.ForeignRecipe;
+import com.sxilverr.quickcraft.crafting.MachineRecipeOption;
 import com.sxilverr.quickcraft.crafting.ItemKey;
 import com.sxilverr.quickcraft.crafting.RecipeResolver;
 import com.sxilverr.quickcraft.crafting.ServerRecipeCache;
@@ -36,6 +36,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 public final class CraftService {
     private static final int MAX_COMMIT_ATTEMPTS = 8;
@@ -57,7 +58,7 @@ public final class CraftService {
 
     public static CraftSummary execute(EntityPlayerMP player, ItemStack target, int quantity,
                                        Map<ItemKey, ResourceLocation> overrides, Map<String, Item> ingredientChoices,
-                                       String destinationId, Map<ItemKey, ForeignRecipe> foreign) {
+                                       String destinationId, List<MachineRecipeOption> machines) {
         if (target.isEmpty()) return CraftSummary.empty();
         int qty = Math.max(1, Math.min(CraftPlanner.MAX_QUANTITY, quantity));
 
@@ -75,6 +76,20 @@ public final class CraftService {
         }
 
         TreeBuilder builder = newBuilder();
+        final Map<ItemKey, List<MachineRecipeOption>> machineIndex = new HashMap<ItemKey, List<MachineRecipeOption>>();
+        for (MachineRecipeOption machine : machines) {
+            ItemKey machineKey = ItemKey.of(machine.result());
+            List<MachineRecipeOption> list = machineIndex.get(machineKey);
+            if (list == null) machineIndex.put(machineKey, list = new ArrayList<MachineRecipeOption>());
+            list.add(machine);
+        }
+        builder.setMachines(new Function<ItemStack, List<MachineRecipeOption>>() {
+            @Override
+            public List<MachineRecipeOption> apply(ItemStack stack) {
+                List<MachineRecipeOption> list = machineIndex.get(ItemKey.of(stack));
+                return list == null ? Collections.<MachineRecipeOption>emptyList() : list;
+            }
+        });
         CompositeItemSource source = extractionSource(labeled);
         VirtualPool initial = poolFrom(source.snapshot());
         Stations stations = StationScan.detect(player.world, player);
@@ -92,7 +107,7 @@ public final class CraftService {
                     Availability.Factory.of(new HashMap<ItemKey, Integer>(initial.counts())), stations,
                     QuickCraftConfig.collapseOwnedItems(), QuickCraftConfig.hideLoopingRecipes(), null, null));
 
-            plan = CraftPlanner.collect(plan, foreign);
+            plan = CraftPlanner.collect(plan);
             boolean collecting = !plan.collected().isEmpty();
             Deposit into = collecting ? Deposit.to(labeled, LabeledSource.SELF_ID, player) : deposit;
 

@@ -1,6 +1,7 @@
 package com.sxilverr.quickcraft.crafting;
 
 import com.sxilverr.quickcraft.integration.jer.MobItemSource;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class CraftNode {
     public final int depth;
     public List<MobItemSource> mobSources;
     public int mobIndex;
-    public boolean machineInput;
+    public List<IBlockState> harvest;
 
     public CraftNode(ItemStack output, int requiredCount, List<RecipeOption> alternatives, int depth) {
         this.output = output;
@@ -52,16 +53,28 @@ public class CraftNode {
         return mobSources != null && !mobSources.isEmpty();
     }
 
+    public boolean isHarvestSource() {
+        return harvest != null && !harvest.isEmpty();
+    }
+
+    public IBlockState currentHarvest() {
+        return harvest.get(Math.floorMod(mobIndex, harvest.size()));
+    }
+
     public boolean isDisplayOnly() {
-        return machineInput || isMobSource();
+        return isMobSource() || isHarvestSource();
     }
 
     public MobItemSource currentMob() {
         return mobSources.get(Math.floorMod(mobIndex, mobSources.size()));
     }
 
+    public boolean isMachine() {
+        return selected() instanceof MachineRecipeOption;
+    }
+
     public boolean isBlockedByStation() {
-        return isCraftable() && !fitsStation && selected() != null && !owned;
+        return isCraftable() && !fitsStation && selected() != null && !owned && !isMachine();
     }
 
     public RecipeOption selected() {

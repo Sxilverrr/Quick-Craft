@@ -1,7 +1,6 @@
 package com.sxilverr.quickcraft.craft;
 
 import com.sxilverr.quickcraft.crafting.CraftNode;
-import com.sxilverr.quickcraft.crafting.ForeignRecipe;
 import com.sxilverr.quickcraft.crafting.ItemKey;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeHooks;
@@ -48,25 +47,19 @@ public final class CraftExecutor {
         if (best != null) pool.restore(best);
     }
 
-    public static Map<ItemKey, Integer> collect(CraftNode root, VirtualPool pool, Map<ItemKey, ForeignRecipe> foreign) {
+    public static Map<ItemKey, Integer> collect(CraftNode root, VirtualPool pool) {
         Map<ItemKey, Integer> out = new LinkedHashMap<ItemKey, Integer>();
-        gather(root, clamp((long) pool.count(ItemKey.of(root.output)) + root.requiredCount), pool, foreign, out);
+        gather(root, clamp((long) pool.count(ItemKey.of(root.output)) + root.requiredCount), pool, out);
         return out;
     }
 
-    private static void gather(CraftNode node, int need, VirtualPool pool, Map<ItemKey, ForeignRecipe> foreign,
-                               Map<ItemKey, Integer> out) {
+    private static void gather(CraftNode node, int need, VirtualPool pool, Map<ItemKey, Integer> out) {
         if (node.reference != null) {
-            gather(node.reference, need, pool, foreign, out);
+            gather(node.reference, need, pool, out);
             return;
         }
         int missing = need - pool.count(ItemKey.of(node.output));
         if (missing <= 0) return;
-        if (node.children.isEmpty()) {
-            ForeignRecipe recipe = foreign.get(ItemKey.of(node.output));
-            if (recipe != null) takeInputs(recipe, missing, pool, out);
-            return;
-        }
         int crafts = Math.max(1, node.craftsNeeded);
         int wanted = ceilDiv(missing, Math.max(1, node.resultPerCraft));
         for (CraftNode child : node.children) {
@@ -78,20 +71,7 @@ public final class CraftExecutor {
             int have = Math.min(amount, pool.count(key));
             int got = takeInto(pool, key, amount, out);
             if (got == 0) got = takeInto(pool, key, have, out);
-            if (got < amount) gather(child, amount - got, pool, foreign, out);
-        }
-    }
-
-    private static void takeInputs(ForeignRecipe recipe, int missing, VirtualPool pool, Map<ItemKey, Integer> out) {
-        int crafts = ceilDiv(missing, Math.max(1, recipe.made()));
-        for (List<ItemStack> slot : recipe.inputs()) {
-            if (slot.isEmpty()) continue;
-            ItemStack pick = slot.get(0);
-            for (ItemStack option : slot) {
-                if (pool.count(ItemKey.of(option)) > pool.count(ItemKey.of(pick))) pick = option;
-            }
-            ItemKey key = ItemKey.of(pick);
-            takeInto(pool, key, Math.min(clamp((long) Math.max(1, pick.getCount()) * crafts), pool.count(key)), out);
+            if (got < amount) gather(child, amount - got, pool, out);
         }
     }
 

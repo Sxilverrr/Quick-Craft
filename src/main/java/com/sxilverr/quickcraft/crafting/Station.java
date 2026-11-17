@@ -11,7 +11,8 @@ public enum Station {
     EXTENDED_BASIC("quickcraft.station.basic_crafting_table", "extendedcrafting:table_basic"),
     EXTENDED_ADVANCED("quickcraft.station.advanced_crafting_table", "extendedcrafting:table_advanced"),
     EXTENDED_ELITE("quickcraft.station.elite_crafting_table", "extendedcrafting:table_elite"),
-    EXTENDED_ULTIMATE("quickcraft.station.ultimate_crafting_table", "extendedcrafting:table_ultimate");
+    EXTENDED_ULTIMATE("quickcraft.station.ultimate_crafting_table", "extendedcrafting:table_ultimate"),
+    CARPENTRY_BENCH("tile.carpentry_bench.name", "variedcommodities:carpentry_bench");
 
     private final String translationKey;
     private final String iconId;

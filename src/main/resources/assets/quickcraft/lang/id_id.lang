@@ -8,6 +8,7 @@ key.quickcraft.show_uses=Tampilkan Kegunaan
 quickcraft.max=Maks.
 
 quickcraft.max_count=Maks. (%s)
+quickcraft.max_warning=Yakin? Ini akan membuat %sx %s.
 
 quickcraft.more=+%s lagi
 
@@ -47,6 +48,7 @@ quickcraft.controls.view_tree=Klik tengah: lihat pohon benda
 quickcraft.controls.switch_tag=W/S atau Atas/Bawah: ganti benda tag
 quickcraft.controls.toggle_recipe=Klik kanan: tampilkan/sembunyikan resep
 quickcraft.controls.reset=Ctrl+klik: atur ulang pilihan
+quickcraft.controls.open_viewer=Alt+klik: buka di JEI
 
 quickcraft.history.title=Riwayat kerajinan
 quickcraft.history.empty=Belum ada riwayat
@@ -111,6 +113,9 @@ quickcraft.mob.biomes=Bioma: %s
 quickcraft.mob.experience=Pengalaman: %s
 quickcraft.mob.all_drops=Semua jarahan:
 quickcraft.mob.next=Klik kiri: makhluk berikutnya (%s)
+quickcraft.harvest.label=Panen
+quickcraft.harvest.tooltip=Panen tanaman ini untuk mendapatkan %s.
+quickcraft.harvest.next=Klik kiri: tanaman berikutnya (%s)
 quickcraft.mob.looting=+Penjarahan
 
 quickcraft.pinned.top_right=↗
@@ -187,6 +192,10 @@ quickcraft.configuration.hoverBulge=Membesar Saat Disorot
 quickcraft.configuration.hoverBulge.tooltip=Tab sedikit membesar saat disorot tetikus.
 quickcraft.configuration.sizeTabToFit=Sesuaikan Tab dengan Nama
 quickcraft.configuration.sizeTabToFit.tooltip=Tab melebar agar nama benda terlihat utuh.
+quickcraft.configuration.maxCraftWarning=Peringatan Buat Maks.
+quickcraft.configuration.maxCraftWarning.tooltip=Meminta konfirmasi sebelum membuat jumlah maksimum.
+quickcraft.configuration.collectOnFailedCraft=Kumpulkan Saat Gagal Membuat
+quickcraft.configuration.collectOnFailedCraft.tooltip=Jika tidak ada yang bisa dibuat, bahan yang bisa dikumpulkan masuk ke inventaris.
 quickcraft.configuration.shiftCraftAmount=Jumlah dengan Shift
 quickcraft.configuration.shiftCraftAmount.tooltip=Berapa benda yang dibuat sambil menahan Shift: angka 1 sampai 1000000, atau Max.
 quickcraft.configuration.useProjectEEmc=Pakai EMC ProjectE

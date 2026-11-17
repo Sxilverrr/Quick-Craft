@@ -2,10 +2,14 @@ package com.sxilverr.quickcraft;
 
 import com.sxilverr.quickcraft.crafting.ServerRecipeCache;
 import com.sxilverr.quickcraft.network.QuickCraftNetwork;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = QuickCraft.MODID,
@@ -30,11 +34,17 @@ public class QuickCraft {
         LOGGER = event.getModLog();
         QuickCraftConfig.load(event.getSuggestedConfigurationFile());
         QuickCraftNetwork.register();
+        MinecraftForge.EVENT_BUS.register(this);
         proxy.preInit();
     }
 
     @Mod.EventHandler
     public void serverStopped(FMLServerStoppedEvent event) {
         ServerRecipeCache.clear();
+    }
+
+    @SubscribeEvent
+    public void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.player instanceof EntityPlayerMP) QuickCraftNetwork.sendHarvestSources((EntityPlayerMP) event.player);
     }
 }

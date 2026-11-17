@@ -8,7 +8,7 @@ import com.sxilverr.quickcraft.craft.VirtualPool;
 import com.sxilverr.quickcraft.crafting.Availability;
 import com.sxilverr.quickcraft.crafting.CraftNode;
 import com.sxilverr.quickcraft.crafting.CraftTrees;
-import com.sxilverr.quickcraft.crafting.ForeignRecipe;
+import com.sxilverr.quickcraft.crafting.MachineRecipeOption;
 import com.sxilverr.quickcraft.crafting.ItemKey;
 import com.sxilverr.quickcraft.crafting.ItemOrigins;
 import com.sxilverr.quickcraft.crafting.RecipeOption;
@@ -30,7 +30,9 @@ import com.sxilverr.quickcraft.network.QuickCraftNetwork;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.SoundEvents;
@@ -58,6 +60,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class QuickCraftScreen extends GuiScreen {
@@ -118,6 +121,7 @@ public class QuickCraftScreen extends GuiScreen {
             "quickcraft.controls.switch_tag",
             "quickcraft.controls.toggle_recipe",
             "quickcraft.controls.reset",
+            "quickcraft.controls.open_viewer",
     };
     private static final String[] LEGEND = {"quickcraft.legend.target", "quickcraft.legend.have", "quickcraft.legend.crafted",
             "quickcraft.legend.missing", "quickcraft.legend.no_station"};
@@ -134,6 +138,9 @@ public class QuickCraftScreen extends GuiScreen {
     private ItemStack target;
     private int quantity;
     private final Map<ItemKey, Integer> mobSelection = new HashMap<ItemKey, Integer>();
+    private final Map<ItemKey, Integer> harvestSelection = new HashMap<ItemKey, Integer>();
+    private static final int MAX_WARNING_ID = 9001;
+    private int pendingMax;
     private final Map<ItemKey, ResourceLocation> overrides = new HashMap<ItemKey, ResourceLocation>();
     private final Map<String, Item> ingredientChoices = new HashMap<String, Item>();
     private final Map<ItemKey, Integer> haveCounts = new HashMap<ItemKey, Integer>();
@@ -234,6 +241,12 @@ public class QuickCraftScreen extends GuiScreen {
         RecipeResolver resolver = ClientRecipeCache.get();
         builder = new TreeBuilder(resolver, QuickCraftConfig.preferredItems(),
                 QuickCraftConfig.maxTreeDepth(), QuickCraftConfig.maxTreeNodes());
+        builder.setMachines(new Function<ItemStack, List<MachineRecipeOption>>() {
+            @Override
+            public List<MachineRecipeOption> apply(ItemStack stack) {
+                return ItemOrigins.recipes(stack);
+            }
+        });
 
         overrides.clear();
         overrides.putAll(RecipePreferences.recipeOverrides());
@@ -340,21 +353,16 @@ public class QuickCraftScreen extends GuiScreen {
 
     private void sendCraft(int recorded, int requested) {
         CraftHistory.record(target, recorded);
-        Map<ItemKey, ForeignRecipe> foreign = new LinkedHashMap<ItemKey, ForeignRecipe>();
-        collectForeign(root, foreign);
+        Set<MachineRecipeOption> machines = new LinkedHashSet<MachineRecipeOption>();
+        collectMachines(root, machines);
         QuickCraftNetwork.sendCraftRequest(target, requested, overrides, ingredientChoices,
-                ClientDepositTargets.selectedId(), foreign);
+                ClientDepositTargets.selectedId(), new ArrayList<MachineRecipeOption>(machines));
         this.mc.displayGuiScreen(null);
     }
 
-    private void collectForeign(CraftNode node, Map<ItemKey, ForeignRecipe> out) {
-        if (node == null) return;
-        for (OriginHint hint : originsFor(node)) {
-            if (hint.recipe() == null) continue;
-            if (!out.containsKey(ItemKey.of(node.output))) out.put(ItemKey.of(node.output), hint.recipe());
-            break;
-        }
-        for (CraftNode child : node.children) collectForeign(child, out);
+    private static void collectMachines(CraftNode node, Set<MachineRecipeOption> out) {
+        if (node.selected() instanceof MachineRecipeOption) out.add((MachineRecipeOption) node.selected());
+        for (CraftNode child : node.children) collectMachines(child, out);
     }
 
     private void retarget(ItemStack newTarget, boolean pushHistory) {
@@ -504,8 +512,8 @@ public class QuickCraftScreen extends GuiScreen {
         applyEmcPlan(plan, qty, stations, collapse, hideLoop);
 
         if (showMobs) attachMobSources(root);
+        attachHarvestSources(root);
         primeOrigins(root);
-        attachMachineInputs(root, requestKeys);
         Station missing = CraftTrees.missingStation(root);
         if (missing != missingStation) stationSelectedIndex = 0;
         missingStation = missing;
@@ -524,7 +532,7 @@ public class QuickCraftScreen extends GuiScreen {
     private void attachMobSources(CraftNode node) {
         List<CraftNode> original = new ArrayList<CraftNode>(node.children);
         for (CraftNode child : original) attachMobSources(child);
-        if (node.isMobSource()) return;
+        if (node.isDisplayOnly()) return;
         List<MobItemSource> sources = JerIntegration.sourcesFor(node.output.getItem());
         if (sources.isEmpty()) return;
         if (sources.size() > MAX_MOB_SOURCES) sources = new ArrayList<MobItemSource>(sources.subList(0, MAX_MOB_SOURCES));
@@ -542,40 +550,24 @@ public class QuickCraftScreen extends GuiScreen {
         for (CraftNode child : node.children) detachMobSources(child);
     }
 
-    private void attachMachineInputs(CraftNode node, Set<ItemKey> keys) {
-        for (CraftNode child : new ArrayList<CraftNode>(node.children)) attachMachineInputs(child, keys);
-        if (node.isCraftable() || node.isDisplayOnly() || node.freeStock >= node.requiredCount) return;
-        ForeignRecipe recipe = null;
-        for (OriginHint hint : originsFor(node)) {
-            if (hint.recipe() == null) continue;
-            recipe = hint.recipe();
-            break;
+    private void attachHarvestSources(CraftNode node) {
+        for (CraftNode child : new ArrayList<CraftNode>(node.children)) attachHarvestSources(child);
+        if (node.isDisplayOnly() || (node.selected() != null && !node.isMachine())) return;
+        if (node != root && node.freeStock >= node.requiredCount) return;
+        List<IBlockState> plants = ClientHarvestSources.of(node.output);
+        if (plants.isEmpty()) return;
+        CraftNode harvest = new CraftNode(node.output.copy(), 0, Collections.<RecipeOption>emptyList(), node.depth + 1);
+        harvest.harvest = plants;
+        Integer selected = harvestSelection.get(ItemKey.of(node.output));
+        harvest.mobIndex = selected == null ? 0 : selected;
+        node.children.add(harvest);
+    }
+
+    private static boolean recipeShown(CraftNode node) {
+        for (CraftNode child : node.children) {
+            if (!child.isDisplayOnly()) return true;
         }
-        if (recipe == null) return;
-        int made = Math.max(1, recipe.made());
-        long crafts = ((long) node.requiredCount - node.freeStock + made - 1) / made;
-        Map<ItemKey, CraftNode> inputs = new LinkedHashMap<ItemKey, CraftNode>();
-        for (List<ItemStack> slot : recipe.inputs()) {
-            ItemStack pick = slot.get(0);
-            for (ItemStack option : slot) {
-                if (haveCount(ItemKey.of(option)) > haveCount(ItemKey.of(pick))) pick = option;
-            }
-            ItemKey key = ItemKey.of(pick);
-            int need = (int) Math.min(Integer.MAX_VALUE, Math.max(1, pick.getCount()) * crafts);
-            CraftNode input = inputs.get(key);
-            if (input != null) {
-                input.requiredCount = (int) Math.min(Integer.MAX_VALUE, (long) input.requiredCount + need);
-                continue;
-            }
-            ItemStack shown = pick.copy();
-            shown.setCount(1);
-            input = new CraftNode(shown, need, Collections.<RecipeOption>emptyList(), node.depth + 1);
-            input.machineInput = true;
-            input.freeStock = haveCount(key);
-            inputs.put(key, input);
-            keys.add(key);
-        }
-        node.children.addAll(0, inputs.values());
+        return false;
     }
 
     private int haveCount(ItemKey key) {
@@ -603,8 +595,8 @@ public class QuickCraftScreen extends GuiScreen {
             for (CraftNode child : fresh.children) {
                 collectKeys(child, keys);
                 if (showMobs) attachMobSources(child);
+                attachHarvestSources(child);
                 primeOrigins(child);
-                attachMachineInputs(child, keys);
                 attachPeeks(child, stations, collapse, hideLoop, keys, path);
             }
             path.remove(key);
@@ -1543,6 +1535,7 @@ public class QuickCraftScreen extends GuiScreen {
 
     private int nodeWidth(CraftNode node) {
         if (node.isMobSource()) return mobNodeWidth(node);
+        if (node.isHarvestSource()) return harvestNodeWidth(node);
         if (!QuickCraftConfig.sizeTabToFit()) return NodeView.WIDTH;
         String badge = recipeBadge(node);
         int badgeExtra = badge.isEmpty() ? 0 : this.fontRenderer.getStringWidth(badge) + 4;
@@ -1552,14 +1545,14 @@ public class QuickCraftScreen extends GuiScreen {
         RecipeOption recipe = node.selected();
         boolean hasStationIcon = recipe == null
                 ? hasOriginIcon(node)
-                : !node.owned && !StationIcons.icon(recipe.station()).isEmpty();
+                : !node.owned && !recipeIcon(recipe).isEmpty();
         int subNeeded = 26 + this.fontRenderer.getStringWidth(subLabel(node)) + (hasStationIcon ? 16 : 4);
 
         return MathHelper.clamp(Math.max(nameNeeded, subNeeded), NodeView.WIDTH, MAX_NODE_WIDTH);
     }
 
     private static String recipeBadge(CraftNode node) {
-        if (node.alternatives.size() <= 1 || node.children.isEmpty()) return "";
+        if (node.alternatives.size() <= 1 || !recipeShown(node)) return "";
         return "[" + (node.selectedRecipe + 1) + "/" + node.alternatives.size() + "]";
     }
 
@@ -1580,6 +1573,15 @@ public class QuickCraftScreen extends GuiScreen {
             int nameW = this.fontRenderer.getStringWidth(src.mob.mobName);
             int labelW = this.fontRenderer.getStringWidth(mobDropLabel(src.drop));
             max = Math.max(max, Math.max(nameW, labelW));
+        }
+        return MathHelper.clamp(34 + max + badge, NodeView.WIDTH, MAX_NODE_WIDTH);
+    }
+
+    private int harvestNodeWidth(CraftNode node) {
+        int badge = node.harvest.size() > 1 ? this.fontRenderer.getStringWidth("[9/9]") + 6 : 0;
+        int max = this.fontRenderer.getStringWidth(I18n.format("quickcraft.harvest.label"));
+        for (IBlockState plant : node.harvest) {
+            max = Math.max(max, this.fontRenderer.getStringWidth(plant.getBlock().getLocalizedName()));
         }
         return MathHelper.clamp(34 + max + badge, NodeView.WIDTH, MAX_NODE_WIDTH);
     }
@@ -1651,11 +1653,15 @@ public class QuickCraftScreen extends GuiScreen {
         RecipeOption recipe = node.selected();
         if (recipe == null) return originIcon(node);
         if (recipe.station() == Station.CRAFTING && recipe.fitsInventory()) return PlayerHeadIcon.get();
-        return stationIconFor(recipe.station());
+        return recipeIcon(recipe);
+    }
+
+    private ItemStack recipeIcon(RecipeOption recipe) {
+        return recipe instanceof MachineRecipeOption ? ((MachineRecipeOption) recipe).icon() : stationIconFor(recipe.station());
     }
 
     private List<OriginHint> originsFor(CraftNode node) {
-        if (node.isCraftable() || node.isDisplayOnly()) return Collections.emptyList();
+        if (node.selected() != null || node.isDisplayOnly()) return Collections.emptyList();
         return ItemOrigins.of(node.output);
     }
 
@@ -1706,6 +1712,10 @@ public class QuickCraftScreen extends GuiScreen {
     private void drawNode(NodeView view) {
         if (view.node.isMobSource()) {
             drawMobNode(view);
+            return;
+        }
+        if (view.node.isHarvestSource()) {
+            drawHarvestNode(view);
             return;
         }
         int sx = view.x;
@@ -1763,28 +1773,37 @@ public class QuickCraftScreen extends GuiScreen {
     }
 
     private void drawMobNode(NodeView view) {
+        MobItemSource src = view.node.currentMob();
+        drawSourceNode(view, view.node.mobSources.size(), src.mob.mobName, mobDropLabel(src.drop));
+        EntityIcon.render(view.x + 1, view.y + 1, 28, NodeView.HEIGHT - 2, src.mob.entityId);
+    }
+
+    private void drawHarvestNode(NodeView view) {
+        IBlockState plant = view.node.currentHarvest();
+        drawSourceNode(view, view.node.harvest.size(), plant.getBlock().getLocalizedName(),
+                I18n.format("quickcraft.harvest.label"));
+        BlockIcon.render(view.x + 1, view.y + 1, 28, NodeView.HEIGHT - 2, plant);
+    }
+
+    private void drawSourceNode(NodeView view, int count, String title, String label) {
         int sx = view.x;
         int sy = view.y;
         int w = view.width;
-        MobItemSource src = view.node.currentMob();
 
         Draw.fill(sx - 1, sy - 1, sx + w + 1, sy + NodeView.HEIGHT + 1, COLOR_MOB);
         Draw.fill(sx, sy, sx + w, sy + NodeView.HEIGHT, COLOR_NODE_BG);
 
-        EntityIcon.render(sx + 1, sy + 1, 28, NodeView.HEIGHT - 2, src.mob.entityId);
-
         int textX = sx + 32;
         int textRight = sx + w - 4;
-        if (view.node.mobSources.size() > 1) {
-            String badge = "[" + (Math.floorMod(view.node.mobIndex, view.node.mobSources.size()) + 1)
-                    + "/" + view.node.mobSources.size() + "]";
+        if (count > 1) {
+            String badge = "[" + (Math.floorMod(view.node.mobIndex, count) + 1) + "/" + count + "]";
             int bw = this.fontRenderer.getStringWidth(badge);
             Draw.string(this.fontRenderer, badge, textRight - bw, sy + 5, COLOR_MOB, false);
             textRight -= bw + 4;
         }
-        String name = Draw.ellipsize(this.fontRenderer, src.mob.mobName, Math.max(0, textRight - textX));
+        String name = Draw.ellipsize(this.fontRenderer, title, Math.max(0, textRight - textX));
         Draw.string(this.fontRenderer, name, textX, sy + 5, 0xFFFFFF, false);
-        String sub = Draw.trimToWidth(this.fontRenderer, mobDropLabel(src.drop), Math.max(0, sx + w - 4 - textX));
+        String sub = Draw.trimToWidth(this.fontRenderer, label, Math.max(0, sx + w - 4 - textX));
         Draw.string(this.fontRenderer, sub, textX, sy + 17, 0xB0B0B0, false);
     }
 
@@ -1797,7 +1816,7 @@ public class QuickCraftScreen extends GuiScreen {
         int cx = child.x;
         int cy = child.y + NodeView.HEIGHT / 2;
         int midX = cx - TreeLayout.H_GAP / 2;
-        if (child.node.machineInput) {
+        if (parent.node.isMachine() && !child.node.isDisplayOnly()) {
             dashedH(px, midX, py, color);
             dashedV(midX, py, cy, color);
             dashedH(midX, cx, cy, color);
@@ -1822,6 +1841,10 @@ public class QuickCraftScreen extends GuiScreen {
         CraftNode node = view.node;
         if (node.isMobSource()) {
             drawMobTooltip(node, mouseX, mouseY);
+            return;
+        }
+        if (node.isHarvestSource()) {
+            drawHarvestTooltip(node, mouseX, mouseY);
             return;
         }
         List<String> lines = new ArrayList<String>();
@@ -1898,7 +1921,8 @@ public class QuickCraftScreen extends GuiScreen {
             if (selected != null) {
                 lines.add(TextFormatting.DARK_GRAY + I18n.format("quickcraft.tooltip.recipe", selected.id()));
                 lines.add(TextFormatting.DARK_GRAY + I18n.format("quickcraft.tooltip.yields", node.resultPerCraft,
-                        StationIcons.name(selected.station())));
+                        selected instanceof MachineRecipeOption
+                                ? ((MachineRecipeOption) selected).label() : StationIcons.name(selected.station())));
             } else {
                 lines.add(TextFormatting.YELLOW + I18n.format("quickcraft.tooltip.manual"));
             }
@@ -1908,25 +1932,31 @@ public class QuickCraftScreen extends GuiScreen {
             if (hasEye(node)) {
                 lines.add(TextFormatting.AQUA + I18n.format("quickcraft.tooltip.eye"));
             } else if (node != root && !node.truncated && node.reference == null && !node.emcBuy) {
-                boolean expanded = !node.children.isEmpty();
+                boolean expanded = recipeShown(node);
                 lines.add(TextFormatting.AQUA + I18n.format(expanded
                         ? "quickcraft.tooltip.hide_recipe"
                         : "quickcraft.tooltip.reveal_recipe"));
             }
-        } else if (node.machineInput) {
-            lines.add(TextFormatting.GRAY + I18n.format("quickcraft.tooltip.machine_input"));
         } else {
             lines.add(TextFormatting.DARK_GRAY + I18n.format("quickcraft.tooltip.base"));
             String origins = originLabel(node);
             if (!origins.isEmpty()) lines.add(TextFormatting.GRAY + I18n.format("quickcraft.tooltip.made_in", origins));
-            for (CraftNode child : node.children) {
-                if (!child.machineInput) continue;
-                lines.add(TextFormatting.GRAY + I18n.format("quickcraft.tooltip.machine_inputs"));
-                break;
-            }
+        }
+        if (node.isMachine() && !node.owned && QuickCraftConfig.collectOnFailedCraft()) {
+            lines.add(TextFormatting.GRAY + I18n.format("quickcraft.tooltip.machine_inputs"));
         }
         if (!ItemKey.of(node.output).equals(ItemKey.of(target))) {
             lines.add(TextFormatting.AQUA + I18n.format("quickcraft.tooltip.view_tree"));
+        }
+        Draw.tooltip(this.fontRenderer, lines, mouseX, mouseY);
+    }
+
+    private void drawHarvestTooltip(CraftNode node, int mouseX, int mouseY) {
+        List<String> lines = new ArrayList<String>();
+        lines.add(TextFormatting.WHITE + node.currentHarvest().getBlock().getLocalizedName());
+        lines.add(TextFormatting.GRAY + I18n.format("quickcraft.harvest.tooltip", node.output.copy().getDisplayName()));
+        if (node.harvest.size() > 1) {
+            lines.add(TextFormatting.AQUA + I18n.format("quickcraft.harvest.next", node.harvest.size()));
         }
         Draw.tooltip(this.fontRenderer, lines, mouseX, mouseY);
     }
@@ -1976,7 +2006,7 @@ public class QuickCraftScreen extends GuiScreen {
         if (node.owned) return NodeState.HAVE;
         if (node.emcBuy) return emcCovered(node) ? NodeState.EMC : NodeState.MISSING;
         if (node.freeStock >= node.requiredCount) return NodeState.HAVE;
-        if (node.selected() == null || node.truncated) return NodeState.MISSING;
+        if (node.selected() == null || node.truncated || node.isMachine()) return NodeState.MISSING;
         return NodeState.CRAFT;
     }
 
@@ -2222,6 +2252,19 @@ public class QuickCraftScreen extends GuiScreen {
     }
 
     private void handleNodeClick(CraftNode node, int button) {
+        if (isAltKeyDown() && (button == 0 || button == 1) && QuickCraftIntegrations.canShowRecipes()) {
+            if (button == 0) QuickCraftIntegrations.showRecipe(node.output);
+            else QuickCraftIntegrations.showUses(node.output);
+            return;
+        }
+        if (node.isHarvestSource()) {
+            if (button == 0 && node.harvest.size() > 1) {
+                node.mobIndex = Math.floorMod(node.mobIndex + 1, node.harvest.size());
+                harvestSelection.put(ItemKey.of(node.output), node.mobIndex);
+                playClick();
+            }
+            return;
+        }
         if (node.isMobSource()) {
             if (button == 0 && node.mobSources.size() > 1) {
                 node.mobIndex = Math.floorMod(node.mobIndex + 1, node.mobSources.size());
@@ -2253,7 +2296,7 @@ public class QuickCraftScreen extends GuiScreen {
         }
         if (button == 1) {
             if (node == root || !node.isCraftable()) return;
-            boolean expanded = !node.children.isEmpty();
+            boolean expanded = recipeShown(node);
             ResourceLocation choice;
             if (expanded) {
                 choice = TreeBuilder.MANUAL;
@@ -2374,7 +2417,24 @@ public class QuickCraftScreen extends GuiScreen {
     }
 
     private void onCraftMax() {
-        sendCraft(maxCraftable(), CraftPlanner.MAX_QUANTITY);
+        int count = maxCraftable();
+        if (count <= 0 || !QuickCraftConfig.maxCraftWarning()) {
+            sendCraft(count, CraftPlanner.MAX_QUANTITY);
+            return;
+        }
+        pendingMax = count;
+        this.mc.displayGuiScreen(new GuiYesNo(this, I18n.format("quickcraft.screen.craft_max"),
+                I18n.format("quickcraft.max_warning", count, target.copy().getDisplayName()), MAX_WARNING_ID));
+    }
+
+    @Override
+    public void confirmClicked(boolean result, int id) {
+        if (id != MAX_WARNING_ID) {
+            super.confirmClicked(result, id);
+            return;
+        }
+        if (result) sendCraft(pendingMax, CraftPlanner.MAX_QUANTITY);
+        else this.mc.displayGuiScreen(this);
     }
 
     private static String stackBreakdown(int amount, int stackSize) {

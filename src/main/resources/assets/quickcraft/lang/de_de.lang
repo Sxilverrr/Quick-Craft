@@ -8,6 +8,7 @@ key.quickcraft.show_uses=Verwendungen anzeigen
 quickcraft.max=Max.
 
 quickcraft.max_count=Max. (%s)
+quickcraft.max_warning=Sicher? Das stellt %sx %s her.
 
 quickcraft.more=+%s weitere
 
@@ -47,6 +48,7 @@ quickcraft.controls.view_tree=Mittelklick: Baum des Gegenstands
 quickcraft.controls.switch_tag=W/S oder Hoch/Runter: Tag-Gegenstand wechseln
 quickcraft.controls.toggle_recipe=Rechtsklick: Rezept zeigen/ausblenden
 quickcraft.controls.reset=Strg+Klick: Vorlieben zurücksetzen
+quickcraft.controls.open_viewer=Alt+Klick: in JEI öffnen
 
 quickcraft.history.title=Herstellungsverlauf
 quickcraft.history.empty=Noch kein Verlauf
@@ -111,6 +113,9 @@ quickcraft.mob.biomes=Biome: %s
 quickcraft.mob.experience=Erfahrung: %s
 quickcraft.mob.all_drops=Alle Drops:
 quickcraft.mob.next=Linksklick: nächste Kreatur (%s)
+quickcraft.harvest.label=Ernten
+quickcraft.harvest.tooltip=Ernte diese Pflanze, um %s zu bekommen.
+quickcraft.harvest.next=Linksklick: nächste Pflanze (%s)
 quickcraft.mob.looting=+Plünderung
 
 quickcraft.pinned.top_right=OR
@@ -187,6 +192,10 @@ quickcraft.configuration.hoverBulge=Vergrößern beim Überfahren
 quickcraft.configuration.hoverBulge.tooltip=Tabs werden etwas größer, wenn die Maus darüber ist.
 quickcraft.configuration.sizeTabToFit=Tabs an Namen anpassen
 quickcraft.configuration.sizeTabToFit.tooltip=Tabs werden breiter, damit der ganze Gegenstandsname passt.
+quickcraft.configuration.maxCraftWarning=Warnung bei Max. fertigen
+quickcraft.configuration.maxCraftWarning.tooltip=Fragt nach, bevor die Höchstmenge gefertigt wird.
+quickcraft.configuration.collectOnFailedCraft=Sammeln bei fehlgeschlagener Herstellung
+quickcraft.configuration.collectOnFailedCraft.tooltip=Eine Herstellung, die nichts ergibt, legt die Zutaten, die sie findet, ins Inventar.
 quickcraft.configuration.shiftCraftAmount=Menge mit Umschalt
 quickcraft.configuration.shiftCraftAmount.tooltip=Wie viele Gegenstände bei gehaltener Umschalttaste hergestellt werden: eine Zahl von 1 bis 1000000 oder Max.
 quickcraft.configuration.useProjectEEmc=ProjectE-EMC nutzen

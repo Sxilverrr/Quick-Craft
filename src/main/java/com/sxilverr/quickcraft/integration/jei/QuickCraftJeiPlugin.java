@@ -1,6 +1,7 @@
 package com.sxilverr.quickcraft.integration.jei;
 
-import com.sxilverr.quickcraft.crafting.ForeignRecipe;
+import com.sxilverr.quickcraft.crafting.ItemKey;
+import com.sxilverr.quickcraft.crafting.MachineRecipeOption;
 import com.sxilverr.quickcraft.integration.OriginHint;
 import com.sxilverr.quickcraft.integration.QuickCraftIntegrations;
 import com.sxilverr.quickcraft.util.Reflect;
@@ -15,6 +16,7 @@ import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 
 import java.lang.reflect.Method;
 
@@ -36,6 +38,8 @@ public class QuickCraftJeiPlugin implements IModPlugin {
             VanillaRecipeCategoryUid.FUEL,
             VanillaRecipeCategoryUid.ANVIL,
             VanillaRecipeCategoryUid.INFORMATION));
+
+    private static final int MAX_RECIPES = 4;
 
     private IJeiRuntime runtime;
 
@@ -85,7 +89,9 @@ public class QuickCraftJeiPlugin implements IModPlugin {
                         break;
                     }
                 }
-                hints.add(new OriginHint(icon, category.getTitle(), recipeOf(registry, category, focus, stack)));
+                OriginHint hint = new OriginHint(icon, category.getTitle(), new ArrayList<MachineRecipeOption>());
+                addRecipes(registry, category, focus, stack, hint);
+                hints.add(hint);
             }
             return hints;
         } catch (Throwable t) {
@@ -94,35 +100,44 @@ public class QuickCraftJeiPlugin implements IModPlugin {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private static ForeignRecipe recipeOf(IRecipeRegistry registry, IRecipeCategory category, IFocus<ItemStack> focus,
-                                          ItemStack target) {
+    private static void addRecipes(IRecipeRegistry registry, IRecipeCategory category, IFocus<ItemStack> focus,
+                                   ItemStack target, OriginHint hint) {
         try {
             List wrappers = registry.getRecipeWrappers(category, focus);
             Class<?> type = Reflect.cls("mezz.jei.ingredients.Ingredients");
-            if (wrappers.isEmpty() || type == null) return null;
-            IIngredients ingredients = (IIngredients) type.getConstructor().newInstance();
-            ((IRecipeWrapper) wrappers.get(0)).getIngredients(ingredients);
-            List<List<ItemStack>> inputs = new ArrayList<List<ItemStack>>();
-            for (List<ItemStack> slot : ingredients.getInputs(VanillaTypes.ITEM)) {
-                if (slot == null) continue;
-                List<ItemStack> options = new ArrayList<ItemStack>();
-                for (ItemStack option : slot) {
-                    if (option != null && !option.isEmpty()) options.add(option);
+            if (type == null) return;
+            for (int i = 0; i < wrappers.size() && i < MAX_RECIPES; i++) {
+                IIngredients ingredients = (IIngredients) type.getConstructor().newInstance();
+                ((IRecipeWrapper) wrappers.get(i)).getIngredients(ingredients);
+                List<MachineRecipeOption.Slot> slots = new ArrayList<MachineRecipeOption.Slot>();
+                for (List<ItemStack> slot : ingredients.getInputs(VanillaTypes.ITEM)) {
+                    if (slot == null) continue;
+                    List<ItemStack> options = new ArrayList<ItemStack>();
+                    int amount = 1;
+                    for (ItemStack option : slot) {
+                        if (option == null || option.isEmpty()) continue;
+                        if (options.isEmpty()) amount = option.getCount();
+                        ItemStack single = option.copy();
+                        single.setCount(1);
+                        options.add(single);
+                    }
+                    if (!options.isEmpty()) slots.add(new MachineRecipeOption.Slot(amount, options));
                 }
-                if (!options.isEmpty()) inputs.add(options);
-            }
-            int made = 0;
-            for (List<ItemStack> slot : ingredients.getOutputs(VanillaTypes.ITEM)) {
-                if (slot == null || made > 0) continue;
-                for (ItemStack output : slot) {
-                    if (output == null || output.getItem() != target.getItem()) continue;
-                    made = Math.max(1, output.getCount());
-                    break;
+                if (slots.isEmpty()) continue;
+                int made = 1;
+                for (List<ItemStack> slot : ingredients.getOutputs(VanillaTypes.ITEM)) {
+                    if (slot == null) continue;
+                    for (ItemStack output : slot) {
+                        if (output != null && output.getItem() == target.getItem()) made = Math.max(made, output.getCount());
+                    }
                 }
+                if (VanillaRecipeCategoryUid.BREWING.equals(category.getUid())) made = 3;
+                ItemStack result = target.copy();
+                result.setCount(1);
+                ResourceLocation id = MachineRecipeOption.fallbackId(category.getUid(), ItemKey.of(target).toKey(), i);
+                hint.recipes().add(new MachineRecipeOption(id, result, made, slots, hint.icon(), hint.label()));
             }
-            return inputs.isEmpty() ? null : new ForeignRecipe(Math.max(1, made), inputs);
-        } catch (Throwable t) {
-            return null;
+        } catch (Throwable ignored) {
         }
     }
 

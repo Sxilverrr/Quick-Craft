@@ -8,6 +8,7 @@ key.quickcraft.show_uses=Показати застосування
 quickcraft.max=Макс.
 
 quickcraft.max_count=Макс. (%s)
+quickcraft.max_warning=Ви впевнені? Буде змайстровано %sx %s.
 
 quickcraft.more=ще: +%s
 
@@ -47,6 +48,7 @@ quickcraft.controls.view_tree=СКМ: дерево предмета
 quickcraft.controls.switch_tag=W/S або вгору/вниз: змінити предмет теґу
 quickcraft.controls.toggle_recipe=ПКМ: показати/сховати рецепт
 quickcraft.controls.reset=Ctrl+клік: скинути вподобання
+quickcraft.controls.open_viewer=Alt+клік: відкрити в JEI
 
 quickcraft.history.title=Історія майстрування
 quickcraft.history.empty=Історії ще немає
@@ -111,6 +113,9 @@ quickcraft.mob.biomes=Біоми: %s
 quickcraft.mob.experience=Досвід: %s
 quickcraft.mob.all_drops=Уся здобич:
 quickcraft.mob.next=ЛКМ: наступний моб (%s)
+quickcraft.harvest.label=Збір врожаю
+quickcraft.harvest.tooltip=Зберіть цю рослину, щоб отримати %s.
+quickcraft.harvest.next=ЛКМ: наступна рослина (%s)
 quickcraft.mob.looting=+Продуктивність
 
 quickcraft.pinned.top_right=ПВ
@@ -187,6 +192,10 @@ quickcraft.configuration.hoverBulge=Збільшення під курсором
 quickcraft.configuration.hoverBulge.tooltip=Вкладки трохи збільшуються, коли на них наводите курсор.
 quickcraft.configuration.sizeTabToFit=Вкладки за довжиною назви
 quickcraft.configuration.sizeTabToFit.tooltip=Вкладки розширюються, щоб умістити повну назву предмета.
+quickcraft.configuration.maxCraftWarning=Попередження «Зробити все»
+quickcraft.configuration.maxCraftWarning.tooltip=Питає підтвердження перед майструванням усього.
+quickcraft.configuration.collectOnFailedCraft=Збирати, якщо не вдалося змайструвати
+quickcraft.configuration.collectOnFailedCraft.tooltip=Якщо нічого не вдається змайструвати, знайдені інгредієнти потрапляють в інвентар.
 quickcraft.configuration.shiftCraftAmount=Кількість із Shift
 quickcraft.configuration.shiftCraftAmount.tooltip=Скільки предметів майструвати з затиснутим Shift: число від 1 до 1000000 або Max.
 quickcraft.configuration.useProjectEEmc=Використовувати EMC з ProjectE

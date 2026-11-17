@@ -8,6 +8,7 @@ key.quickcraft.show_uses=Ver utilizações
 quickcraft.max=Máx.
 
 quickcraft.max_count=Máx. (%s)
+quickcraft.max_warning=Tens a certeza? Isto cria %sx %s.
 
 quickcraft.more=+%s mais
 
@@ -47,6 +48,7 @@ quickcraft.controls.view_tree=Botão do meio: ver a árvore do item
 quickcraft.controls.switch_tag=W/S ou cima/baixo: trocar item da etiqueta
 quickcraft.controls.toggle_recipe=Botão direito: mostrar/ocultar receita
 quickcraft.controls.reset=Ctrl+clique: repor preferências
+quickcraft.controls.open_viewer=Alt+clique: abrir no JEI
 
 quickcraft.history.title=Histórico de criação
 quickcraft.history.empty=Ainda sem histórico
@@ -111,6 +113,9 @@ quickcraft.mob.biomes=Biomas: %s
 quickcraft.mob.experience=Experiência: %s
 quickcraft.mob.all_drops=Tudo o que larga:
 quickcraft.mob.next=Botão esq.: criatura seguinte (%s)
+quickcraft.harvest.label=Colher
+quickcraft.harvest.tooltip=Colhe esta planta para obter %s.
+quickcraft.harvest.next=Botão esq.: planta seguinte (%s)
 quickcraft.mob.looting=+Pilhagem
 
 quickcraft.pinned.top_right=CD
@@ -187,6 +192,10 @@ quickcraft.configuration.hoverBulge=Aumentar ao passar o rato
 quickcraft.configuration.hoverBulge.tooltip=Os separadores crescem um pouco quando passas o rato por cima.
 quickcraft.configuration.sizeTabToFit=Ajustar separadores ao nome
 quickcraft.configuration.sizeTabToFit.tooltip=Os separadores alargam para mostrar o nome completo do item.
+quickcraft.configuration.maxCraftWarning=Aviso de criar máx.
+quickcraft.configuration.maxCraftWarning.tooltip=Pede confirmação antes de criar o máximo.
+quickcraft.configuration.collectOnFailedCraft=Recolher quando a criação falha
+quickcraft.configuration.collectOnFailedCraft.tooltip=Quando não dá para criar nada, os ingredientes encontrados vão para o inventário.
 quickcraft.configuration.shiftCraftAmount=Quantidade com Shift
 quickcraft.configuration.shiftCraftAmount.tooltip=Quantos itens criar com Shift premido: um número de 1 a 1000000, ou Max.
 quickcraft.configuration.useProjectEEmc=Usar EMC do ProjectE

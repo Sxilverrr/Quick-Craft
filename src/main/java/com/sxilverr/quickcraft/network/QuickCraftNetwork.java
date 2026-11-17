@@ -1,8 +1,9 @@
 package com.sxilverr.quickcraft.network;
 
 import com.sxilverr.quickcraft.QuickCraft;
-import com.sxilverr.quickcraft.crafting.ForeignRecipe;
+import com.sxilverr.quickcraft.crafting.HarvestSources;
 import com.sxilverr.quickcraft.crafting.ItemKey;
+import com.sxilverr.quickcraft.crafting.MachineRecipeOption;
 import com.sxilverr.quickcraft.crafting.Stations;
 import com.sxilverr.quickcraft.storage.LabeledSource;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -32,12 +33,17 @@ public final class QuickCraftNetwork {
         CHANNEL.registerMessage(AvailabilityResponsePacket.Handler.class, AvailabilityResponsePacket.class, id++, Side.CLIENT);
         CHANNEL.registerMessage(DepositTargetsRequestPacket.Handler.class, DepositTargetsRequestPacket.class, id++, Side.SERVER);
         CHANNEL.registerMessage(DepositTargetsResponsePacket.Handler.class, DepositTargetsResponsePacket.class, id++, Side.CLIENT);
+        CHANNEL.registerMessage(HarvestSourcesPacket.Handler.class, HarvestSourcesPacket.class, id++, Side.CLIENT);
     }
 
     public static void sendCraftRequest(ItemStack target, int quantity, Map<ItemKey, ResourceLocation> overrides,
                                         Map<String, Item> ingredientChoices, String destinationId,
-                                        Map<ItemKey, ForeignRecipe> foreign) {
-        CHANNEL.sendToServer(new CraftRequestPacket(target, quantity, overrides, ingredientChoices, destinationId, foreign));
+                                        List<MachineRecipeOption> machines) {
+        CHANNEL.sendToServer(new CraftRequestPacket(target, quantity, overrides, ingredientChoices, destinationId, machines));
+    }
+
+    public static void sendHarvestSources(EntityPlayerMP player) {
+        CHANNEL.sendTo(new HarvestSourcesPacket(HarvestSources.scan(player.world, player.getPosition())), player);
     }
 
     public static void requestDepositTargets() {

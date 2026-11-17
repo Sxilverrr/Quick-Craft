@@ -15,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 public class TreeBuilder {
     public static final ResourceLocation MANUAL = new ResourceLocation("quickcraft", "manual");
@@ -39,6 +40,16 @@ public class TreeBuilder {
     private int nodeCount;
     private boolean truncated;
     private EmcLookup emcLookup = EmcLookup.NONE;
+    private Function<ItemStack, List<MachineRecipeOption>> machines = new Function<ItemStack, List<MachineRecipeOption>>() {
+        @Override
+        public List<MachineRecipeOption> apply(ItemStack stack) {
+            return Collections.emptyList();
+        }
+    };
+
+    public void setMachines(Function<ItemStack, List<MachineRecipeOption>> machines) {
+        this.machines = machines;
+    }
 
     public void setEmcLookup(EmcLookup lookup) {
         this.emcLookup = lookup == null ? EmcLookup.NONE : lookup;
@@ -72,7 +83,7 @@ public class TreeBuilder {
     private CraftNode buildNode(ItemStack output, int requiredCount, int depth, Set<ItemKey> path, boolean parentReachable,
                                 boolean catalyst) {
         nodeCount++;
-        List<RecipeOption> alternatives = visibleRecipes(output, resolver.recipesFor(output));
+        List<RecipeOption> alternatives = visibleRecipes(output, recipesFor(output));
         CraftNode node = new CraftNode(output.copy(), requiredCount, alternatives, depth);
         node.catalyst = catalyst;
 
@@ -102,7 +113,7 @@ public class TreeBuilder {
         }
 
         node.fitsStation = option.fits(stations);
-        node.craftReachable = parentReachable && node.fitsStation;
+        node.craftReachable = parentReachable && (node.fitsStation || node.isMachine());
 
         CraftNode original = expanded.get(outputKey);
         if (original != null && original.selected() != null && original.selected().id().equals(option.id())) {
@@ -162,6 +173,25 @@ public class TreeBuilder {
         path.remove(outputKey);
         if (!node.children.isEmpty() && !expanded.containsKey(outputKey)) expanded.put(outputKey, node);
         return node;
+    }
+
+    private List<RecipeOption> recipesFor(ItemStack output) {
+        List<RecipeOption> own = resolver.recipesFor(output);
+        List<MachineRecipeOption> extra = machines.apply(output);
+        if (extra.isEmpty()) return own;
+        List<RecipeOption> all = new ArrayList<RecipeOption>(own);
+        for (MachineRecipeOption option : extra) {
+            boolean known = false;
+            for (RecipeOption existing : own) {
+                if (existing.id().equals(option.id())) known = true;
+            }
+            if (!known) all.add(option);
+        }
+        return all;
+    }
+
+    private boolean baseMaterial(ItemStack output) {
+        return resolver.canCraft(output) && !resolver.cookingInputs(output).isEmpty();
     }
 
     private Map<ItemKey, Integer> needs(RecipeOption option, int requiredCount) {
@@ -239,6 +269,8 @@ public class TreeBuilder {
     private int recipeScore(ItemStack output, RecipeOption option, int requiredCount, Set<ItemKey> path) {
         Map<ItemKey, Integer> needs = needs(option, requiredCount);
         if (!Collections.disjoint(needs.keySet(), path)) return Integer.MIN_VALUE;
+        boolean machine = option instanceof MachineRecipeOption;
+        if (machine && baseMaterial(output)) return Integer.MIN_VALUE;
         boolean fits = option.fits(stations);
         boolean selfReferencing = referencesOutput(output, option);
         boolean missingCatalyst = missingCatalyst(option);
@@ -259,6 +291,7 @@ public class TreeBuilder {
         return (fits ? 1000000 : 0)
                 - (selfReferencing ? 500000 : 0)
                 - (missingCatalyst ? 200000 : 0)
+                - (machine ? 300000 : 0)
                 + fullyAvailable * 1000
                 + anyAvailable * 100
                 + preferredHits * 10
