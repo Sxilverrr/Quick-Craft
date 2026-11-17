@@ -1,7 +1,8 @@
 package com.sxilverr.quickcraft.integration.jei;
 
 import com.sxilverr.quickcraft.QuickCraftCommon;
-import com.sxilverr.quickcraft.crafting.ForeignRecipe;
+import com.sxilverr.quickcraft.crafting.ItemKey;
+import com.sxilverr.quickcraft.crafting.MachineRecipeOption;
 import com.sxilverr.quickcraft.integration.OriginHint;
 import com.sxilverr.quickcraft.integration.QuickCraftIntegrations;
 import mezz.jei.api.IModPlugin;
@@ -42,6 +43,8 @@ public class QuickCraftJeiPlugin implements IModPlugin {
             RecipeTypes.FUELING.getUid(),
             RecipeTypes.COMPOSTING.getUid(),
             RecipeTypes.INFORMATION.getUid());
+
+    private static final int MAX_RECIPES = 4;
 
     private IJeiRuntime runtime;
 
@@ -102,8 +105,9 @@ public class QuickCraftJeiPlugin implements IModPlugin {
                 if (SKIP_CATEGORIES.contains(category.getRecipeType().getUid())) continue;
                 ItemStack icon = recipeManager.createRecipeCatalystLookup(category.getRecipeType())
                         .getItemStack().findFirst().orElse(ItemStack.EMPTY);
-                hints.add(new OriginHint(icon, category.getTitle().getString(),
-                        recipeOf(recipeManager, category, focus, group, stack)));
+                OriginHint hint = new OriginHint(icon, category.getTitle().getString(), new ArrayList<>());
+                addRecipes(recipeManager, category, focus, group, stack, hint);
+                hints.add(hint);
             }
             return hints;
         } catch (Throwable t) {
@@ -111,27 +115,35 @@ public class QuickCraftJeiPlugin implements IModPlugin {
         }
     }
 
-    private static <T> ForeignRecipe recipeOf(IRecipeManager manager, IRecipeCategory<T> category, IFocus<ItemStack> focus,
-                                              IFocusGroup group, ItemStack target) {
+    private static <T> void addRecipes(IRecipeManager manager, IRecipeCategory<T> category, IFocus<ItemStack> focus,
+                                       IFocusGroup group, ItemStack target, OriginHint hint) {
         try {
-            T recipe = manager.createRecipeLookup(category.getRecipeType()).limitFocus(List.of(focus)).get()
-                    .findFirst().orElse(null);
-            if (recipe == null) return null;
-            IRecipeSlotsView view = manager.createRecipeLayoutDrawable(category, recipe, group)
-                    .map(IRecipeLayoutDrawable::getRecipeSlotsView).orElse(null);
-            if (view == null) return null;
-            List<List<ItemStack>> inputs = new ArrayList<>();
-            for (IRecipeSlotView slot : view.getSlotViews(RecipeIngredientRole.INPUT)) {
-                List<ItemStack> options = slot.getIngredients(VanillaTypes.ITEM_STACK).filter(s -> !s.isEmpty()).toList();
-                if (!options.isEmpty()) inputs.add(options);
+            List<T> recipes = manager.createRecipeLookup(category.getRecipeType()).limitFocus(List.of(focus)).get()
+                    .limit(MAX_RECIPES).toList();
+            for (T recipe : recipes) {
+                IRecipeSlotsView view = manager.createRecipeLayoutDrawable(category, recipe, group)
+                        .map(IRecipeLayoutDrawable::getRecipeSlotsView).orElse(null);
+                if (view == null) continue;
+                List<MachineRecipeOption.Slot> slots = new ArrayList<>();
+                for (IRecipeSlotView slot : view.getSlotViews(RecipeIngredientRole.INPUT)) {
+                    List<ItemStack> options = slot.getIngredients(VanillaTypes.ITEM_STACK).filter(s -> !s.isEmpty()).toList();
+                    if (options.isEmpty()) continue;
+                    slots.add(new MachineRecipeOption.Slot(options.get(0).getCount(),
+                            options.stream().map(s -> s.copyWithCount(1)).toList()));
+                }
+                if (slots.isEmpty()) continue;
+                int made = view.getSlotViews(RecipeIngredientRole.OUTPUT).stream()
+                        .flatMap(slot -> slot.getIngredients(VanillaTypes.ITEM_STACK))
+                        .filter(s -> ItemStack.isSameItem(s, target))
+                        .mapToInt(ItemStack::getCount).findFirst().orElse(1);
+                if (category.getRecipeType().getUid().equals(RecipeTypes.BREWING.getUid())) made = 3;
+                ResourceLocation id = category.getRegistryName(recipe);
+                if (id == null) {
+                    id = MachineRecipeOption.fallbackId(category.getRecipeType().getUid(), ItemKey.of(target).toKey(), hint.recipes().size());
+                }
+                hint.recipes().add(new MachineRecipeOption(id, target.copyWithCount(1), made, slots, hint.icon(), hint.label()));
             }
-            int made = view.getSlotViews(RecipeIngredientRole.OUTPUT).stream()
-                    .flatMap(slot -> slot.getIngredients(VanillaTypes.ITEM_STACK))
-                    .filter(s -> ItemStack.isSameItem(s, target))
-                    .mapToInt(ItemStack::getCount).findFirst().orElse(1);
-            return inputs.isEmpty() ? null : new ForeignRecipe(made, inputs);
-        } catch (Throwable t) {
-            return null;
+        } catch (Throwable ignored) {
         }
     }
 

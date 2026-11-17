@@ -8,6 +8,7 @@
 
   "quickcraft.max": "最大",
   "quickcraft.max_count": "最大（%s）",
+  "quickcraft.max_warning": "確定嗎？將合成 %sx %s。",
   "quickcraft.more": "還有 %s 項",
   "quickcraft.tree_limit": "已達合成樹上限：請在設定中調高 maxTreeNodes 或 maxTreeDepth",
 
@@ -46,6 +47,7 @@
   "quickcraft.controls.switch_tag": "W/S 或 上/下：切換標籤物品",
   "quickcraft.controls.toggle_recipe": "右鍵：顯示/隱藏配方",
   "quickcraft.controls.reset": "Ctrl+點擊：重設偏好",
+  "quickcraft.controls.open_viewer": "Alt+點擊：在 JEI/EMI 中開啟",
 
   "quickcraft.history.title": "合成紀錄",
   "quickcraft.history.empty": "尚無紀錄",
@@ -111,6 +113,9 @@
   "quickcraft.mob.experience": "經驗：%s",
   "quickcraft.mob.all_drops": "所有掉落物：",
   "quickcraft.mob.next": "左鍵：下一個生物（%s）",
+  "quickcraft.harvest.label": "收穫",
+  "quickcraft.harvest.tooltip": "收穫這種植物可獲得%s。",
+  "quickcraft.harvest.next": "左鍵：下一種植物（%s）",
   "quickcraft.mob.looting": "+掠奪",
 
   "quickcraft.pinned.top_right": "右上",
@@ -185,6 +190,10 @@
   "quickcraft.configuration.hoverBulge.tooltip": "滑鼠懸停時分頁會稍微放大。",
   "quickcraft.configuration.sizeTabToFit": "分頁寬度配合名稱",
   "quickcraft.configuration.sizeTabToFit.tooltip": "分頁會變寬以顯示完整的物品名稱。",
+  "quickcraft.configuration.maxCraftWarning": "最大合成警告",
+  "quickcraft.configuration.maxCraftWarning.tooltip": "合成最大數量前先確認。",
+  "quickcraft.configuration.collectOnFailedCraft": "合成失敗時收集材料",
+  "quickcraft.configuration.collectOnFailedCraft.tooltip": "無法合成任何物品時，將能收集到的材料放入物品欄。",
   "quickcraft.configuration.shiftCraftAmount": "按住 Shift 的合成數量",
   "quickcraft.configuration.shiftCraftAmount.tooltip": "按住 Shift 時合成的物品數量：1 到 1000000 之間的數字，或 Max。",
   "quickcraft.configuration.useProjectEEmc": "使用 ProjectE EMC",

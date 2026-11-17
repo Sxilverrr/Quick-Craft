@@ -8,7 +8,7 @@ import com.sxilverr.quickcraft.craft.VirtualPool;
 import com.sxilverr.quickcraft.config.QuickCraftConfig;
 import com.sxilverr.quickcraft.crafting.Availability;
 import com.sxilverr.quickcraft.crafting.CraftTrees;
-import com.sxilverr.quickcraft.crafting.ForeignRecipe;
+import com.sxilverr.quickcraft.crafting.MachineRecipeOption;
 import com.sxilverr.quickcraft.crafting.ItemKey;
 import com.sxilverr.quickcraft.crafting.RecipeResolver;
 import com.sxilverr.quickcraft.crafting.ServerRecipeCache;
@@ -41,6 +41,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public final class CraftService {
     private static final int MAX_COMMIT_ATTEMPTS = 8;
@@ -53,7 +54,7 @@ public final class CraftService {
 
     public static CraftSummary execute(ServerPlayer player, ItemStack target, int quantity,
                                        Map<ItemKey, ResourceLocation> overrides, Map<String, Item> ingredientChoices,
-                                       String destinationId, Map<ItemKey, ForeignRecipe> foreign) {
+                                       String destinationId, List<MachineRecipeOption> machines) {
         if (target.isEmpty()) return CraftSummary.empty();
         int qty = Math.max(1, Math.min(CraftPlanner.MAX_QUANTITY, quantity));
 
@@ -72,6 +73,9 @@ public final class CraftService {
 
         ServerLevel level = player.serverLevel();
         TreeBuilder builder = newBuilder(level);
+        Map<ItemKey, List<MachineRecipeOption>> machineIndex = machines.stream()
+                .collect(Collectors.groupingBy(option -> ItemKey.of(option.result())));
+        builder.setMachines(stack -> machineIndex.getOrDefault(ItemKey.of(stack), List.of()));
         CompositeItemSource source = extractionSource(labeled);
         VirtualPool initial = poolFrom(source.snapshot());
         Stations stations = StationScan.detect(level, player);
@@ -88,7 +92,7 @@ public final class CraftService {
                     builder, target, n, overrides, ingredientChoices, initial, Availability.of(new HashMap<>(initial.counts())),
                     stations, QuickCraftConfig.collapseOwnedItems(), QuickCraftConfig.hideLoopingRecipes(), null, null));
 
-            plan = CraftPlanner.collect(plan, foreign);
+            plan = CraftPlanner.collect(plan);
             boolean collecting = !plan.collected().isEmpty();
             Deposit into = collecting ? Deposit.to(labeled, LabeledSource.SELF_ID, player) : deposit;
 

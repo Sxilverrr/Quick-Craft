@@ -2,7 +2,7 @@ package com.sxilverr.quickcraft.neoforge;
 
 import com.sxilverr.quickcraft.config.QuickCraftConfig;
 import com.sxilverr.quickcraft.craft.EmcSource;
-import com.sxilverr.quickcraft.crafting.ForeignRecipe;
+import com.sxilverr.quickcraft.crafting.MachineRecipeOption;
 import com.sxilverr.quickcraft.crafting.ItemKey;
 import com.sxilverr.quickcraft.integration.jer.MobItemSource;
 import com.sxilverr.quickcraft.neoforge.integration.jer.JerIntegration;
@@ -41,8 +41,8 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public void sendCraftRequest(ItemStack target, int quantity, Map<ItemKey, ResourceLocation> overrides,
-                                 Map<String, Item> ingredientChoices, String destinationId, Map<ItemKey, ForeignRecipe> foreign) {
-        QuickCraftNetwork.sendCraftRequest(target, quantity, overrides, ingredientChoices, destinationId, foreign);
+                                 Map<String, Item> ingredientChoices, String destinationId, List<MachineRecipeOption> machines) {
+        QuickCraftNetwork.sendCraftRequest(target, quantity, overrides, ingredientChoices, destinationId, machines);
     }
 
     @Override

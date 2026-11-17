@@ -1,7 +1,8 @@
 package com.sxilverr.quickcraft.integration.emi;
 
-import com.sxilverr.quickcraft.crafting.ForeignRecipe;
+import com.sxilverr.quickcraft.crafting.ItemKey;
 import com.sxilverr.quickcraft.crafting.ItemOrigins;
+import com.sxilverr.quickcraft.crafting.MachineRecipeOption;
 import com.sxilverr.quickcraft.integration.OriginHint;
 import com.sxilverr.quickcraft.integration.QuickCraftIntegrations;
 import dev.emi.emi.api.EmiApi;
@@ -15,15 +16,20 @@ import dev.emi.emi.api.recipe.VanillaEmiRecipeCategories;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.stack.EmiStackInteraction;
+import dev.emi.emi.screen.RecipeScreen;
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @EmiEntrypoint
 public class QuickCraftEmiPlugin implements EmiPlugin {
+    private static final int MAX_RECIPES = 4;
 
     private static Set<EmiRecipeCategory> skipped() {
         return Set.of(
@@ -49,8 +55,12 @@ public class QuickCraftEmiPlugin implements EmiPlugin {
     private static ItemStack hoveredItem() {
         if (EmiApi.isSearchFocused()) return ItemStack.EMPTY;
         EmiStackInteraction hovered = EmiApi.getHoveredStack(true);
-        if (hovered == null || hovered.isEmpty()) return ItemStack.EMPTY;
-        return firstItem(hovered.getStack());
+        if (hovered != null && !hovered.isEmpty()) return firstItem(hovered.getStack());
+        try {
+            return Minecraft.getInstance().screen instanceof RecipeScreen recipes ? firstItem(recipes.getHoveredStack()) : ItemStack.EMPTY;
+        } catch (LinkageError e) {
+            return ItemStack.EMPTY;
+        }
     }
 
     private static List<OriginHint> findOrigins(ItemStack stack) {
@@ -59,46 +69,60 @@ public class QuickCraftEmiPlugin implements EmiPlugin {
             EmiRecipeManager manager = EmiApi.getRecipeManager();
             if (manager == null) return List.of();
             Set<EmiRecipeCategory> skip = skipped();
-            Set<EmiRecipeCategory> seen = new LinkedHashSet<>();
-            List<OriginHint> hints = new ArrayList<>();
+            Map<EmiRecipeCategory, OriginHint> hints = new LinkedHashMap<>();
             for (EmiRecipe recipe : manager.getRecipesByOutput(EmiStack.of(stack))) {
                 EmiRecipeCategory category = recipe.getCategory();
-                if (category == null || skip.contains(category) || !seen.add(category)) continue;
-                ItemStack icon = ItemStack.EMPTY;
-                for (EmiIngredient workstation : manager.getWorkstations(category)) {
-                    icon = firstItem(workstation);
-                    if (!icon.isEmpty()) break;
-                }
-                hints.add(new OriginHint(icon, category.getName().getString(), recipeOf(recipe, stack)));
+                if (category == null || skip.contains(category)) continue;
+                OriginHint hint = hints.computeIfAbsent(category,
+                        c -> new OriginHint(workstation(manager, c), c.getName().getString(), new ArrayList<>()));
+                if (hint.recipes().size() >= MAX_RECIPES) continue;
+                MachineRecipeOption option = recipeOf(recipe, stack, hint);
+                if (option != null) hint.recipes().add(option);
             }
-            return hints;
+            return new ArrayList<>(hints.values());
         } catch (Throwable t) {
             return List.of();
         }
     }
 
-    private static ForeignRecipe recipeOf(EmiRecipe recipe, ItemStack target) {
+    private static ItemStack workstation(EmiRecipeManager manager, EmiRecipeCategory category) {
+        for (EmiIngredient workstation : manager.getWorkstations(category)) {
+            ItemStack icon = firstItem(workstation);
+            if (!icon.isEmpty()) return icon;
+        }
+        return ItemStack.EMPTY;
+    }
+
+    private static MachineRecipeOption recipeOf(EmiRecipe recipe, ItemStack target, OriginHint hint) {
         try {
-            List<List<ItemStack>> inputs = new ArrayList<>();
+            List<MachineRecipeOption.Slot> slots = new ArrayList<>();
             for (EmiIngredient input : recipe.getInputs()) {
-                int amount = (int) Math.max(1L, Math.min(Integer.MAX_VALUE, input.getAmount()));
                 List<ItemStack> options = new ArrayList<>();
                 for (EmiStack option : input.getEmiStacks()) {
                     ItemStack item = option.getItemStack();
-                    if (!item.isEmpty()) options.add(item.copyWithCount(amount));
+                    if (!item.isEmpty()) options.add(item.copyWithCount(1));
                 }
-                if (!options.isEmpty()) inputs.add(options);
+                if (!options.isEmpty()) slots.add(new MachineRecipeOption.Slot(amount(input.getAmount()), options));
             }
+            if (slots.isEmpty()) return null;
             int made = 1;
             for (EmiStack output : recipe.getOutputs()) {
                 if (!ItemStack.isSameItem(output.getItemStack(), target)) continue;
-                made = (int) Math.max(1L, Math.min(Integer.MAX_VALUE, output.getAmount()));
+                made = amount(output.getAmount());
                 break;
             }
-            return inputs.isEmpty() ? null : new ForeignRecipe(made, inputs);
+            ResourceLocation id = recipe.getId();
+            if (id == null) {
+                id = MachineRecipeOption.fallbackId(recipe.getCategory().getId(), ItemKey.of(target).toKey(), hint.recipes().size());
+            }
+            return new MachineRecipeOption(id, target.copyWithCount(1), made, slots, hint.icon(), hint.label());
         } catch (Throwable t) {
             return null;
         }
+    }
+
+    private static int amount(long amount) {
+        return (int) Math.max(1L, Math.min(Integer.MAX_VALUE, amount));
     }
 
     private static ItemStack firstItem(EmiIngredient ingredient) {

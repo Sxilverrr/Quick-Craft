@@ -8,6 +8,7 @@
 
   "quickcraft.max": "Tối đa",
   "quickcraft.max_count": "Tối đa (%s)",
+  "quickcraft.max_warning": "Bạn chắc chứ? Sẽ chế tạo %sx %s.",
   "quickcraft.more": "+%s mục nữa",
   "quickcraft.tree_limit": "Đã đạt giới hạn cây: hãy tăng maxTreeNodes hoặc maxTreeDepth trong cấu hình",
 
@@ -46,6 +47,7 @@
   "quickcraft.controls.switch_tag": "W/S hoặc Lên/Xuống: đổi vật phẩm của nhãn",
   "quickcraft.controls.toggle_recipe": "Chuột phải: hiện/ẩn công thức",
   "quickcraft.controls.reset": "Ctrl+nhấp: đặt lại lựa chọn",
+  "quickcraft.controls.open_viewer": "Alt+nhấp: mở trong JEI/EMI",
 
   "quickcraft.history.title": "Lịch sử chế tạo",
   "quickcraft.history.empty": "Chưa có lịch sử",
@@ -111,6 +113,9 @@
   "quickcraft.mob.experience": "Kinh nghiệm: %s",
   "quickcraft.mob.all_drops": "Tất cả lợi phẩm:",
   "quickcraft.mob.next": "Chuột trái: sinh vật tiếp theo (%s)",
+  "quickcraft.harvest.label": "Thu hoạch",
+  "quickcraft.harvest.tooltip": "Thu hoạch cây này để có %s.",
+  "quickcraft.harvest.next": "Chuột trái: cây tiếp theo (%s)",
   "quickcraft.mob.looting": "+Nhặt",
 
   "quickcraft.pinned.top_right": "TP",
@@ -185,6 +190,10 @@
   "quickcraft.configuration.hoverBulge.tooltip": "Thẻ to lên một chút khi bạn trỏ chuột vào.",
   "quickcraft.configuration.sizeTabToFit": "Thẻ vừa với tên",
   "quickcraft.configuration.sizeTabToFit.tooltip": "Thẻ rộng ra để hiện đủ tên vật phẩm.",
+  "quickcraft.configuration.maxCraftWarning": "Cảnh báo chế tạo hết",
+  "quickcraft.configuration.maxCraftWarning.tooltip": "Hỏi xác nhận trước khi chế tạo hết.",
+  "quickcraft.configuration.collectOnFailedCraft": "Gom nguyên liệu khi chế tạo thất bại",
+  "quickcraft.configuration.collectOnFailedCraft.tooltip": "Khi không chế tạo được gì, các nguyên liệu gom được sẽ vào túi đồ.",
   "quickcraft.configuration.shiftCraftAmount": "Số lượng khi giữ Shift",
   "quickcraft.configuration.shiftCraftAmount.tooltip": "Số vật phẩm chế tạo khi giữ Shift: một số từ 1 đến 1000000, hoặc Max.",
   "quickcraft.configuration.useProjectEEmc": "Dùng EMC của ProjectE",

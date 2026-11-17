@@ -8,6 +8,7 @@
 
   "quickcraft.max": "Max.",
   "quickcraft.max_count": "Max. (%s)",
+  "quickcraft.max_warning": "Opravdu? Vyrobí se %sx %s.",
   "quickcraft.more": "další: +%s",
   "quickcraft.tree_limit": "Dosažen limit stromu: zvyš maxTreeNodes nebo maxTreeDepth v konfiguraci",
 
@@ -46,6 +47,7 @@
   "quickcraft.controls.switch_tag": "W/S nebo nahoru/dolů: změnit předmět tagu",
   "quickcraft.controls.toggle_recipe": "Pravé tlačítko: zobrazit/skrýt recept",
   "quickcraft.controls.reset": "Ctrl+klik: obnovit předvolby",
+  "quickcraft.controls.open_viewer": "Alt+klik: otevřít v JEI/EMI",
 
   "quickcraft.history.title": "Historie výroby",
   "quickcraft.history.empty": "Zatím žádná historie",
@@ -111,6 +113,9 @@
   "quickcraft.mob.experience": "Zkušenosti: %s",
   "quickcraft.mob.all_drops": "Veškerá kořist:",
   "quickcraft.mob.next": "Levé tlačítko: další stvoření (%s)",
+  "quickcraft.harvest.label": "Sklizeň",
+  "quickcraft.harvest.tooltip": "Skliď tuhle rostlinu a získáš %s.",
+  "quickcraft.harvest.next": "Levé tlačítko: další rostlina (%s)",
   "quickcraft.mob.looting": "+Kořist",
 
   "quickcraft.pinned.top_right": "PN",
@@ -185,6 +190,10 @@
   "quickcraft.configuration.hoverBulge.tooltip": "Karty se trochu zvětší, když na ně najedeš myší.",
   "quickcraft.configuration.sizeTabToFit": "Přizpůsobit karty názvu",
   "quickcraft.configuration.sizeTabToFit.tooltip": "Karty se rozšíří, aby se vešel celý název předmětu.",
+  "quickcraft.configuration.maxCraftWarning": "Varování u max. výroby",
+  "quickcraft.configuration.maxCraftWarning.tooltip": "Před výrobou maxima se zeptá.",
+  "quickcraft.configuration.collectOnFailedCraft": "Sběr při neúspěšné výrobě",
+  "quickcraft.configuration.collectOnFailedCraft.tooltip": "Když výroba nic nevyrobí, dá suroviny, které sežene, do inventáře.",
   "quickcraft.configuration.shiftCraftAmount": "Množství se Shiftem",
   "quickcraft.configuration.shiftCraftAmount.tooltip": "Kolik předmětů vyrobit při držení Shiftu: číslo od 1 do 1000000, nebo Max.",
   "quickcraft.configuration.useProjectEEmc": "Používat EMC z ProjectE",

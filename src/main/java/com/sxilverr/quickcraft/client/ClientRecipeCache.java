@@ -1,5 +1,6 @@
 package com.sxilverr.quickcraft.client;
 
+import com.sxilverr.quickcraft.crafting.ItemOrigins;
 import com.sxilverr.quickcraft.crafting.RecipeResolver;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.item.ItemStack;
@@ -22,6 +23,8 @@ public final class ClientRecipeCache {
     }
 
     public static boolean hasRecipe(ClientLevel level, ItemStack target) {
-        return get(level).canCraft(target);
+        return get(level).canCraft(target)
+                || !ItemOrigins.recipes(level.getRecipeManager(), level.registryAccess(), target).isEmpty()
+                || !ClientHarvestSources.of(target.getItem()).isEmpty();
     }
 }

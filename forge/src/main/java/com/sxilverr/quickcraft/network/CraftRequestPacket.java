@@ -4,7 +4,7 @@ import com.sxilverr.quickcraft.QuickCraftCommon;
 import com.sxilverr.quickcraft.forge.craft.CraftService;
 import com.sxilverr.quickcraft.craft.CraftFeedback;
 import com.sxilverr.quickcraft.craft.CraftSummary;
-import com.sxilverr.quickcraft.crafting.ForeignRecipe;
+import com.sxilverr.quickcraft.crafting.MachineRecipeOption;
 import com.sxilverr.quickcraft.crafting.ItemKey;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 
 public record CraftRequestPacket(ItemStack target, int quantity, Map<ItemKey, ResourceLocation> overrides,
                                  Map<String, Item> ingredientChoices, String destinationId,
-                                 Map<ItemKey, ForeignRecipe> foreign) {
+                                 List<MachineRecipeOption> machines) {
     private static final int MAX_OVERRIDES = 8192;
     private static final int MAX_FOREIGN = 512;
     private static final int MAX_SLOTS = 32;
@@ -32,7 +32,7 @@ public record CraftRequestPacket(ItemStack target, int quantity, Map<ItemKey, Re
 
     public CraftRequestPacket {
         if (destinationId == null) destinationId = "";
-        if (foreign == null) foreign = Map.of();
+        if (machines == null) machines = List.of();
     }
 
     public static void encode(CraftRequestPacket msg, FriendlyByteBuf buf) {
@@ -51,15 +51,17 @@ public record CraftRequestPacket(ItemStack target, int quantity, Map<ItemKey, Re
             buf.writeUtf(entry.getKey());
             buf.writeResourceLocation(itemId(entry.getValue()));
         }
-        List<Map.Entry<ItemKey, ForeignRecipe>> foreign = msg.foreign().entrySet().stream().limit(MAX_FOREIGN).toList();
-        buf.writeVarInt(foreign.size());
-        for (Map.Entry<ItemKey, ForeignRecipe> entry : foreign) {
-            buf.writeItem(entry.getKey().toStack(1));
-            buf.writeVarInt(entry.getValue().made());
-            List<List<ItemStack>> slots = entry.getValue().inputs().stream().limit(MAX_SLOTS).toList();
+        List<MachineRecipeOption> machines = msg.machines().stream().limit(MAX_FOREIGN).toList();
+        buf.writeVarInt(machines.size());
+        for (MachineRecipeOption machine : machines) {
+            buf.writeResourceLocation(machine.id());
+            buf.writeItem(machine.result());
+            buf.writeVarInt(machine.resultCount());
+            List<MachineRecipeOption.Slot> slots = machine.slots().stream().limit(MAX_SLOTS).toList();
             buf.writeVarInt(slots.size());
-            for (List<ItemStack> slot : slots) {
-                List<ItemStack> options = slot.stream().limit(MAX_OPTIONS).toList();
+            for (MachineRecipeOption.Slot slot : slots) {
+                buf.writeVarInt(slot.amount());
+                List<ItemStack> options = slot.options().stream().limit(MAX_OPTIONS).toList();
                 buf.writeVarInt(options.size());
                 for (ItemStack option : options) buf.writeItem(option);
             }
@@ -84,25 +86,29 @@ public record CraftRequestPacket(ItemStack target, int quantity, Map<ItemKey, Re
             Item item = ForgeRegistries.ITEMS.getValue(buf.readResourceLocation());
             if (item != null) ingredientChoices.put(signature, item);
         }
-        int foreignCount = Math.min(MAX_FOREIGN, buf.readVarInt());
-        Map<ItemKey, ForeignRecipe> foreign = new HashMap<>();
-        for (int i = 0; i < foreignCount; i++) {
+        int machineCount = Math.min(MAX_FOREIGN, buf.readVarInt());
+        List<MachineRecipeOption> machines = new ArrayList<>();
+        for (int i = 0; i < machineCount; i++) {
+            ResourceLocation id = buf.readResourceLocation();
             ItemStack output = buf.readItem();
             int made = buf.readVarInt();
             int slotCount = Math.min(MAX_SLOTS, buf.readVarInt());
-            List<List<ItemStack>> inputs = new ArrayList<>();
+            List<MachineRecipeOption.Slot> slots = new ArrayList<>();
             for (int s = 0; s < slotCount; s++) {
+                int amount = buf.readVarInt();
                 int optionCount = Math.min(MAX_OPTIONS, buf.readVarInt());
                 List<ItemStack> options = new ArrayList<>();
                 for (int o = 0; o < optionCount; o++) {
                     ItemStack option = buf.readItem();
                     if (!option.isEmpty()) options.add(option);
                 }
-                if (!options.isEmpty()) inputs.add(options);
+                if (!options.isEmpty()) slots.add(new MachineRecipeOption.Slot(amount, options));
             }
-            if (!output.isEmpty()) foreign.put(ItemKey.of(output), new ForeignRecipe(made, inputs));
+            if (!output.isEmpty() && !slots.isEmpty()) {
+                machines.add(new MachineRecipeOption(id, output, made, slots, ItemStack.EMPTY, ""));
+            }
         }
-        return new CraftRequestPacket(target, quantity, overrides, ingredientChoices, destinationId, foreign);
+        return new CraftRequestPacket(target, quantity, overrides, ingredientChoices, destinationId, machines);
     }
 
     private static ResourceLocation itemId(Item item) {
@@ -118,7 +124,7 @@ public record CraftRequestPacket(ItemStack target, int quantity, Map<ItemKey, Re
             CraftSummary summary;
             try {
                 summary = CraftService.execute(player, msg.target(), msg.quantity(), msg.overrides(),
-                        msg.ingredientChoices(), msg.destinationId(), msg.foreign());
+                        msg.ingredientChoices(), msg.destinationId(), msg.machines());
             } catch (Throwable t) {
                 QuickCraftCommon.LOGGER.error("Quick Craft craft failed for {}", msg.target(), t);
                 player.displayClientMessage(Component.translatable("quickcraft.chat.error")

@@ -47,6 +47,8 @@ public final class QuickCraftConfig {
     private static Supplier<Boolean> openOnlyWithRecipe;
     private static Supplier<Boolean> hoverBulge;
     private static Supplier<Boolean> sizeTabToFit;
+    private static Supplier<Boolean> maxCraftWarning;
+    private static Supplier<Boolean> collectOnFailedCraft;
     private static Supplier<String> shiftCraftAmount;
     private static Supplier<Boolean> useProjectEEmc;
     private static Supplier<Boolean> useKleinStarEmc;
@@ -95,6 +97,10 @@ public final class QuickCraftConfig {
                 .define("hoverBulge", true);
         sizeTabToFit = b.comment("Size a tab to fit a item name")
                 .define("sizeTabToFit", true);
+        maxCraftWarning = b.comment("Gives a warning before a Max craft.")
+                .define("maxCraftWarning", true);
+        collectOnFailedCraft = b.comment("A craft that can't make anything puts the ingredients it can gather in your inventory.")
+                .define("collectOnFailedCraft", true);
         shiftCraftAmount = b.comment("How many items should be crafted when holding SHIFT. Accepts Max")
                 .define("shiftCraftAmount", "64", QuickCraftConfig::validateShiftAmount);
         useProjectEEmc = b.comment("When ProjectE is installed and a transmutation table is nearby or a transmutation tablet is in your inventory,",
@@ -191,6 +197,14 @@ public final class QuickCraftConfig {
 
     public static boolean sizeTabToFit() {
         return sizeTabToFit.get();
+    }
+
+    public static boolean maxCraftWarning() {
+        return maxCraftWarning.get();
+    }
+
+    public static boolean collectOnFailedCraft() {
+        return collectOnFailedCraft.get();
     }
 
     public static boolean shiftCraftIsMax() {

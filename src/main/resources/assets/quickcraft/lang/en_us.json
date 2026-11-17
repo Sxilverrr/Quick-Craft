@@ -8,6 +8,7 @@
 
   "quickcraft.max": "Max",
   "quickcraft.max_count": "Max (%s)",
+  "quickcraft.max_warning": "Are you sure? This crafts %sx %s.",
   "quickcraft.more": "+%s more",
   "quickcraft.tree_limit": "Tree limit reached: raise maxTreeNodes or maxTreeDepth in the config",
 
@@ -46,6 +47,7 @@
   "quickcraft.controls.switch_tag": "W/S or Up/Down: switch tag item",
   "quickcraft.controls.toggle_recipe": "Right-click: show/hide recipe",
   "quickcraft.controls.reset": "Ctrl-click: reset preferences",
+  "quickcraft.controls.open_viewer": "Alt-click: open in JEI/EMI",
 
   "quickcraft.history.title": "Crafting history",
   "quickcraft.history.empty": "No history yet",
@@ -111,6 +113,9 @@
   "quickcraft.mob.experience": "Experience: %s",
   "quickcraft.mob.all_drops": "All drops:",
   "quickcraft.mob.next": "Left-click: next mob (%s)",
+  "quickcraft.harvest.label": "Harvest",
+  "quickcraft.harvest.tooltip": "Harvest this plant to get %s.",
+  "quickcraft.harvest.next": "Left-click: next plant (%s)",
   "quickcraft.mob.looting": "+Loot",
 
   "quickcraft.pinned.top_right": "TR",
@@ -185,6 +190,10 @@
   "quickcraft.configuration.hoverBulge.tooltip": "Tabs grow slightly while you hover over them.",
   "quickcraft.configuration.sizeTabToFit": "Size Tabs to Fit",
   "quickcraft.configuration.sizeTabToFit.tooltip": "Tabs widen to fit the full item name.",
+  "quickcraft.configuration.maxCraftWarning": "Max Craft Warning",
+  "quickcraft.configuration.maxCraftWarning.tooltip": "Gives a warning before a Max craft.",
+  "quickcraft.configuration.collectOnFailedCraft": "Collect On Failed Craft",
+  "quickcraft.configuration.collectOnFailedCraft.tooltip": "A craft that can't make anything puts the ingredients it can gather in your inventory.",
   "quickcraft.configuration.shiftCraftAmount": "Shift Craft Amount",
   "quickcraft.configuration.shiftCraftAmount.tooltip": "How many items to craft while holding Shift: a number from 1 to 1000000, or Max.",
   "quickcraft.configuration.useProjectEEmc": "Use ProjectE EMC",

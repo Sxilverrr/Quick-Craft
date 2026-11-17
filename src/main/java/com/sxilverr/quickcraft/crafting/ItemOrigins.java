@@ -31,6 +31,7 @@ public final class ItemOrigins {
             "minecraft:campfire_cooking", new Builtin(Items.CAMPFIRE, "Campfire Cooking"));
 
     private static final Map<ItemKey, List<OriginHint>> MEMO = new HashMap<>();
+    private static final Map<ItemKey, List<MachineRecipeOption>> RECIPES = new HashMap<>();
 
     private static Map<Item, Set<String>> typeIndex;
     private static RecipeManager boundManager;
@@ -44,18 +45,26 @@ public final class ItemOrigins {
         boolean viewer = QuickCraftIntegrations.canFindOrigins();
         if (boundManager != manager) {
             MEMO.clear();
+            RECIPES.clear();
             typeIndex = null;
             boundManager = manager;
             boundViewer = viewer;
         } else if (boundViewer != viewer) {
             MEMO.clear();
+            RECIPES.clear();
             boundViewer = viewer;
         }
         return MEMO.computeIfAbsent(ItemKey.of(stack), key -> resolve(manager, registryAccess, key.toStack(1)));
     }
 
+    public static List<MachineRecipeOption> recipes(RecipeManager manager, RegistryAccess registryAccess, ItemStack stack) {
+        List<OriginHint> hints = of(manager, registryAccess, stack);
+        return RECIPES.computeIfAbsent(ItemKey.of(stack), key -> hints.stream().flatMap(hint -> hint.recipes().stream()).toList());
+    }
+
     public static void invalidate() {
         MEMO.clear();
+        RECIPES.clear();
         typeIndex = null;
         boundManager = null;
     }

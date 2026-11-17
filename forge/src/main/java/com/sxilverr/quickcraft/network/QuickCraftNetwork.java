@@ -2,7 +2,7 @@ package com.sxilverr.quickcraft.network;
 
 import com.sxilverr.quickcraft.QuickCraftCommon;
 import com.sxilverr.quickcraft.client.ClientDepositTargets;
-import com.sxilverr.quickcraft.crafting.ForeignRecipe;
+import com.sxilverr.quickcraft.crafting.MachineRecipeOption;
 import com.sxilverr.quickcraft.crafting.ItemKey;
 import com.sxilverr.quickcraft.crafting.Stations;
 import com.sxilverr.quickcraft.storage.LabeledSource;
@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 public final class QuickCraftNetwork {
-    private static final String PROTOCOL = "4";
+    private static final String PROTOCOL = "5";
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(QuickCraftCommon.MODID, "main"),
@@ -41,12 +42,18 @@ public final class QuickCraftNetwork {
                 DepositTargetsRequestPacket::encode, DepositTargetsRequestPacket::decode, DepositTargetsRequestPacket::handle);
         CHANNEL.registerMessage(id++, DepositTargetsResponsePacket.class,
                 DepositTargetsResponsePacket::encode, DepositTargetsResponsePacket::decode, DepositTargetsResponsePacket::handle);
+        CHANNEL.registerMessage(id++, HarvestSourcesPacket.class,
+                HarvestSourcesPacket::encode, HarvestSourcesPacket::decode, HarvestSourcesPacket::handle);
     }
 
     public static void sendCraftRequest(ItemStack target, int quantity, Map<ItemKey, ResourceLocation> overrides,
                                         Map<String, Item> ingredientChoices, String destinationId,
-                                        Map<ItemKey, ForeignRecipe> foreign) {
-        CHANNEL.sendToServer(new CraftRequestPacket(target, quantity, overrides, ingredientChoices, destinationId, foreign));
+                                        List<MachineRecipeOption> machines) {
+        CHANNEL.sendToServer(new CraftRequestPacket(target, quantity, overrides, ingredientChoices, destinationId, machines));
+    }
+
+    public static void sendHarvestSources(ServerPlayer player, Map<Item, List<Block>> sources) {
+        CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new HarvestSourcesPacket(sources));
     }
 
     public static void requestDepositTargets() {

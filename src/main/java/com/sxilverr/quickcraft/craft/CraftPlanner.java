@@ -1,10 +1,10 @@
 package com.sxilverr.quickcraft.craft;
 
 import com.sxilverr.quickcraft.crafting.Availability;
+import com.sxilverr.quickcraft.config.QuickCraftConfig;
 import com.sxilverr.quickcraft.crafting.CraftNode;
 import com.sxilverr.quickcraft.crafting.CraftTrees;
 import com.sxilverr.quickcraft.crafting.EmcLookup;
-import com.sxilverr.quickcraft.crafting.ForeignRecipe;
 import com.sxilverr.quickcraft.crafting.ItemKey;
 import com.sxilverr.quickcraft.crafting.Stations;
 import com.sxilverr.quickcraft.crafting.TreeBuilder;
@@ -102,11 +102,11 @@ public final class CraftPlanner {
         return new Plan(root, initial, working, bank, keys, qty, craftable, builder.truncated(), blockers, Map.of(), false);
     }
 
-    public static Plan collect(Plan plan, Map<ItemKey, ForeignRecipe> foreign) {
-        if (plan.craftable() > 0 || plan.requested() >= MAX_QUANTITY) return plan;
+    public static Plan collect(Plan plan) {
+        if (!QuickCraftConfig.collectOnFailedCraft() || plan.craftable() > 0 || plan.requested() >= MAX_QUANTITY) return plan;
         VirtualPool working = plan.initial().copy();
         working.setEmc(plan.bank());
-        Map<ItemKey, Integer> collected = CraftExecutor.collect(plan.root(), working, foreign);
+        Map<ItemKey, Integer> collected = CraftExecutor.collect(plan.root(), working);
         if (collected.isEmpty()) return plan;
         return new Plan(plan.root(), plan.initial(), working, plan.bank(), plan.keys(), plan.requested(), 0,
                 plan.truncated(), plan.blockers(), collected, false);

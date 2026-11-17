@@ -8,6 +8,7 @@
 
   "quickcraft.max": "最大",
   "quickcraft.max_count": "最大（%s）",
+  "quickcraft.max_warning": "本当によろしいですか？%sx %sをクラフトします。",
   "quickcraft.more": "他%s件",
   "quickcraft.tree_limit": "ツリーの上限に達しました：設定で maxTreeNodes か maxTreeDepth を上げてください",
 
@@ -46,6 +47,7 @@
   "quickcraft.controls.switch_tag": "W/S か 上/下：タグのアイテムを切り替え",
   "quickcraft.controls.toggle_recipe": "右クリック：レシピの表示/非表示",
   "quickcraft.controls.reset": "Ctrl+クリック：選択をリセット",
+  "quickcraft.controls.open_viewer": "Alt+クリック：JEI/EMIで開く",
 
   "quickcraft.history.title": "クラフト履歴",
   "quickcraft.history.empty": "履歴はまだありません",
@@ -111,6 +113,9 @@
   "quickcraft.mob.experience": "経験値：%s",
   "quickcraft.mob.all_drops": "ドロップ一覧：",
   "quickcraft.mob.next": "左クリック：次のMob（%s）",
+  "quickcraft.harvest.label": "収穫",
+  "quickcraft.harvest.tooltip": "この植物を収穫すると%sが手に入ります。",
+  "quickcraft.harvest.next": "左クリック：次の植物（%s）",
   "quickcraft.mob.looting": "+ドロップ増加",
 
   "quickcraft.pinned.top_right": "右上",
@@ -185,6 +190,10 @@
   "quickcraft.configuration.hoverBulge.tooltip": "マウスを乗せるとタブが少し大きくなります。",
   "quickcraft.configuration.sizeTabToFit": "タブを名前に合わせる",
   "quickcraft.configuration.sizeTabToFit.tooltip": "アイテム名が全部入るようにタブを広げます。",
+  "quickcraft.configuration.maxCraftWarning": "最大クラフトの警告",
+  "quickcraft.configuration.maxCraftWarning.tooltip": "最大クラフトの前に確認します。",
+  "quickcraft.configuration.collectOnFailedCraft": "クラフト失敗時に素材を回収",
+  "quickcraft.configuration.collectOnFailedCraft.tooltip": "何もクラフトできないとき、集められる素材をインベントリに入れます。",
   "quickcraft.configuration.shiftCraftAmount": "Shift時のクラフト数",
   "quickcraft.configuration.shiftCraftAmount.tooltip": "Shiftを押している間にクラフトする数：1～1000000の数字、またはMax。",
   "quickcraft.configuration.useProjectEEmc": "ProjectEのEMCを使う",
